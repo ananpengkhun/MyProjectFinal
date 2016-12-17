@@ -1,62 +1,50 @@
 package com.example.ananpengkhun.myprojectfinal.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ananpengkhun.myprojectfinal.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    private DrawerLayout drawerLayout;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.imageView) ImageView imageView;
+    @BindView(R.id.btn_click) Button btnClick;
+    @BindView(R.id.ll_sliding_bar) LinearLayout llSlidingBar;
+    @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
+
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private Toolbar toolbar;
-    private Button btnClick;
     private String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setupId();
+        ButterKnife.bind(this);
         setupPageDrawer();
         init();
 
     }
 
     private void init() {
-        btnClick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new BottomSheet.Builder(MainActivity.this).title("Slide Down").sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case R.id.help:
-                                Log.d(TAG, "onClick: ");
-                                break;
-                        }
-                    }
-                }).show();
-            }
-        });
-    }
-
-    private void setupId() {
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        btnClick = (Button) findViewById(R.id.btn_click);
-
+        btnClick.setOnClickListener(btnSlideUpClicklisner);
     }
 
     private void setupPageDrawer() {
@@ -69,13 +57,11 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -93,6 +79,43 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
+    private View.OnClickListener btnSlideUpClicklisner = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            new BottomSheet.Builder(MainActivity.this,R.style.BottomSheet_CustomizedDialog).title("Slide Down").sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case R.id.help:
+                            Log.d(TAG, "onClick: ");
+                            break;
+                        case R.id.addProduct :
+                            Log.d(TAG, "onClick: add product");
+                            break;
+                        case R.id.prodct :
+                            Intent intent = new Intent(MainActivity.this,MyDataInventory.class);
+                            startActivity(intent);
+                            setDrawerState(true);
+                            break;
+                    }
+                }
+            }).show();
+        }
+    };
+
+    public void setDrawerState(boolean isEnabled) {
+        if ( isEnabled ) {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            actionBarDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_IDLE);
+            actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
+            actionBarDrawerToggle.syncState();
+        }else {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            actionBarDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_DRAGGING);
+            actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
+            actionBarDrawerToggle.syncState();
+        }
+    }
 
 
 }
