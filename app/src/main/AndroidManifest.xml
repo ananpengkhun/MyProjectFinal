@@ -15,7 +15,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MyDataInventory" android:theme="@style/AppTheme">
+        <activity android:name=".activity.MyDataInventoryActivity" android:theme="@style/AppTheme">
         </activity>
     </application>
 

@@ -6,10 +6,13 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.ananpengkhun.myprojectfinal.activity.MyDataInventory">
+    tools:context="com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity">
 
 
     <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/parent"
+        android:orientation="vertical"
+        android:background="#423752"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -26,17 +29,37 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <LinearLayout
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_horizontal_ntb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
+        <devlight.io.library.ntb.NavigationTabBar
+            android:id="@+id/ntb_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            app:ntb_badge_size="12sp"
+            app:ntb_badge_bg_color="#ffff0000"
+            app:ntb_badge_gravity="top"
+            app:ntb_badge_position="left"
+            app:ntb_badge_title_color="#ffffffff"
+            app:ntb_badge_use_typeface="true"
+            app:ntb_badged="true"
+            app:ntb_typeface="fonts/agency.ttf"/>
 
-
-
-
-        </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="76dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            android:tint="#9f90af"
+            android:src="@drawable/ic_first"
+            app:backgroundTint="#605271"/>
 
     </android.support.design.widget.CoordinatorLayout>
 

@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "onClick: add product");
                             break;
                         case R.id.prodct :
-                            Intent intent = new Intent(MainActivity.this,MyDataInventory.class);
+                            Intent intent = new Intent(MainActivity.this,MyDataInventoryActivity.class);
                             startActivity(intent);
                             setDrawerState(true);
                             break;
