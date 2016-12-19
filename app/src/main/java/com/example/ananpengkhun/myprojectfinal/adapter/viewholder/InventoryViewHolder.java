@@ -18,18 +18,17 @@ import butterknife.ButterKnife;
 
 public class InventoryViewHolder extends RecyclerView.ViewHolder {
 
-    //@BindView(R.id.txt_vp_item_list) TextView txtVpItemList;
+    @BindView(R.id.txt_vp_item_list) public TextView txtVpItemList;
 
-    public TextView txtVpItemList;
+
+    //public TextView txtVpItemList;
 
     public InventoryViewHolder(View itemView) {
         super(itemView);
-        //ButterKnife.bind(this,itemView);
-        init(itemView);
+        ButterKnife.bind(this,itemView);
     }
 
-    private void init(View itemView) {
-        txtVpItemList = (TextView) itemView.findViewById(R.id.txt_vp_item_list);
-    }
+
+
 
 }

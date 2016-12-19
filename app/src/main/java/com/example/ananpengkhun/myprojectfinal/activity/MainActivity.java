@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,27 +12,35 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ananpengkhun.myprojectfinal.R;
+import com.example.ananpengkhun.myprojectfinal.adapter.MainMenuAdapter;
+import com.example.ananpengkhun.myprojectfinal.fragment.MainFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainFragment.MoveFragmentPage {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.imageView) ImageView imageView;
-    @BindView(R.id.btn_click) Button btnClick;
+
     @BindView(R.id.ll_sliding_bar) LinearLayout llSlidingBar;
     @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
+    @BindView(R.id.vp_pager_fragment) ViewPager vpPagerFragment;
+    @BindView(R.id.tv_navData) TextView tvNavData;
+    @BindView(R.id.tv_navAddData) TextView tvNavAddData;
+    @BindView(R.id.img_backHome) View imgBackHome;
 
+
+    private BottomSheet dialog;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private MainMenuAdapter mainMenuAdapter;
     private String TAG = MainActivity.class.getSimpleName();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +53,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        btnClick.setOnClickListener(btnSlideUpClicklisner);
+        mainMenuAdapter = new MainMenuAdapter(getSupportFragmentManager());
+        vpPagerFragment.setAdapter(mainMenuAdapter);
+
+        tvNavAddData.setOnClickListener(AddDataClicklistener);
+        tvNavData.setOnClickListener(DataClicklistener);
+        imgBackHome.setOnClickListener(imgBackHomeClicklistener);
+
+        vpPagerFragment.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                Log.d(TAG, "onPageScrollStateChanged: ");
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            }
+        });
     }
 
     private void setupPageDrawer() {
@@ -57,11 +89,13 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            Log.d(TAG, "onOptionsItemSelected: ");
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -79,43 +113,90 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
-    private View.OnClickListener btnSlideUpClicklisner = new View.OnClickListener() {
+
+//    public void setDrawerState(boolean isEnabled) {
+//        if (isEnabled) {
+//            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+//            actionBarDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_IDLE);
+//            actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
+//            actionBarDrawerToggle.syncState();
+//        } else {
+//            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+//            actionBarDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_DRAGGING);
+//            actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
+//            actionBarDrawerToggle.syncState();
+//        }
+//    }
+
+    @Override
+    public void pageSelected(int index) {
+        vpPagerFragment.setCurrentItem(index, true);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (vpPagerFragment.getCurrentItem() == 0) {
+            super.onBackPressed();
+        } else if (vpPagerFragment.getCurrentItem() != 0) {
+            vpPagerFragment.setCurrentItem(0, true);
+        }
+
+    }
+
+    private View.OnClickListener AddDataClicklistener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            new BottomSheet.Builder(MainActivity.this,R.style.BottomSheet_CustomizedDialog).title("Slide Down").sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
+
+
+            dialog = new BottomSheet.Builder(MainActivity.this, R.style.BottomSheet_CustomizedDialog).title("Slide Down").sheet(R.menu.list_by_add).listener(new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
-                        case R.id.help:
-                            Log.d(TAG, "onClick: ");
+                        case R.id.prodctByType:
+                            Log.d(TAG, "prodctByType: ");
+                            vpPagerFragment.setCurrentItem(2, true);
                             break;
-                        case R.id.addProduct :
-                            Log.d(TAG, "onClick: add product");
+                        case R.id.productByAdd:
+                            Log.d(TAG, "onClick: productByAdd");
+                            vpPagerFragment.setCurrentItem(1, true);
                             break;
-                        case R.id.prodct :
-                            Intent intent = new Intent(MainActivity.this,MyDataInventoryActivity.class);
-                            startActivity(intent);
-                            setDrawerState(true);
+                        case R.id.providerByAdd:
+                            Log.d(TAG, "onClick: providerByAdd");
+                            vpPagerFragment.setCurrentItem(3, true);
                             break;
                     }
                 }
             }).show();
+
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    Log.d(TAG, "onDismiss: close");
+                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                }
+            });
+
+            if (dialog.isShowing()) {
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            }
+
         }
     };
 
-    public void setDrawerState(boolean isEnabled) {
-        if ( isEnabled ) {
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            actionBarDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_IDLE);
-            actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
-            actionBarDrawerToggle.syncState();
-        }else {
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            actionBarDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_DRAGGING);
-            actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
-            actionBarDrawerToggle.syncState();
+    private View.OnClickListener DataClicklistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(MainActivity.this, MyDataInventoryActivity.class);
+            startActivity(intent);
         }
-    }
+    };
 
+    private View.OnClickListener imgBackHomeClicklistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            vpPagerFragment.setCurrentItem(0, true);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
+    };
 
 }

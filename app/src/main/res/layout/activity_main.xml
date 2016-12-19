@@ -25,63 +25,12 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <LinearLayout
+        <com.example.ananpengkhun.myprojectfinal.customview.NonSwipeViewPager
+            android:id="@+id/vp_pager_fragment"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_height="match_parent"/>
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/image_title"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal"
-                android:weightSum="1">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:gravity="right"
-                    android:text="100,000"
-                    android:textSize="26dp"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="0.5"
-                    android:text="Item"
-                    android:textSize="20dp"/>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Item In Inventory"
-                android:textSize="20dp"/>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <Button
-                    android:layout_gravity="bottom"
-                    android:id="@+id/btn_click"
-                    android:text="click here"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-        </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>
 
     <LinearLayout
@@ -96,6 +45,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Search..."/>
+
+        <TextView
+            android:clickable="true"
+            android:id="@+id/tv_navData"
+            android:text="ข้อมูล"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:clickable="true"
+            android:id="@+id/tv_navAddData"
+            android:text="เพิ่มข้อมูล"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <View
+            android:id="@+id/img_backHome"
+            android:layout_gravity="center"
+            android:background="#cf1414"
+            android:clickable="true"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
     </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

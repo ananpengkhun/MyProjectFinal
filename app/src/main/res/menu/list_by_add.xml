@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/productByAdd" android:title="@string/productAdd" android:icon="@drawable/perm_group_messages"/>
+    <item android:id="@+id/prodctByType" android:title="@string/productType" android:icon="@drawable/perm_group_messages"/>
+    <item android:id="@+id/providerByAdd" android:title="@string/providerAdd" android:icon="@drawable/perm_group_messages"/>
+</menu>

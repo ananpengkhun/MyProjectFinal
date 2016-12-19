@@ -1,5 +1,7 @@
 package com.example.ananpengkhun.myprojectfinal.activity;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.InventoryAdapter;
 
@@ -63,7 +66,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         vpHorizontalNtb.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
-                return 5;
+                return 3;
             }
 
             @Override
@@ -82,7 +85,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                 recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
                 recyclerView.setHasFixedSize(true);
                 recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
-                recyclerView.setAdapter(new InventoryAdapter());
+                recyclerView.setAdapter(new InventoryAdapter(MyDataInventoryActivity.this));
                 container.addView(mView);
                 return mView;
 
@@ -112,20 +115,20 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                         .title("Diploma")
                         .build()
         );
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.ic_fourth),
-                        Color.parseColor(colors[3]))
-                        .title("Flag")
-                        .build()
-        );
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.ic_fifth),
-                        Color.parseColor(colors[4]))
-                        .title("Medal")
-                        .build()
-        );
+//        models.add(
+//                new NavigationTabBar.Model.Builder(
+//                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.ic_fourth),
+//                        Color.parseColor(colors[3]))
+//                        .title("Flag")
+//                        .build()
+//        );
+//        models.add(
+//                new NavigationTabBar.Model.Builder(
+//                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.ic_fifth),
+//                        Color.parseColor(colors[4]))
+//                        .title("Medal")
+//                        .build()
+//        );
 
         ntbHorizontal.setModels(models);
         ntbHorizontal.setViewPager(vpHorizontalNtb, 2);
@@ -219,30 +222,48 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private View.OnClickListener fabClicklistener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            for (int i = 0; i < ntbHorizontal.getModels().size(); i++) {
-                final NavigationTabBar.Model model = ntbHorizontal.getModels().get(i);
-                ntbHorizontal.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        final String title = String.valueOf(new Random().nextInt(15));
-                        if (!model.isBadgeShowed()) {
-                            model.setBadgeTitle(title);
-                            model.showBadge();
-                        } else model.updateBadgeTitle(title);
-                    }
-                }, i * 100);
-            }
+//            for (int i = 0; i < ntbHorizontal.getModels().size(); i++) {
+//                final NavigationTabBar.Model model = ntbHorizontal.getModels().get(i);
+//                ntbHorizontal.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        final String title = String.valueOf(new Random().nextInt(15));
+//                        if (!model.isBadgeShowed()) {
+//                            model.setBadgeTitle(title);
+//                            model.showBadge();
+//                        } else model.updateBadgeTitle(title);
+//                    }
+//                }, i * 100);
+//            }
+//
+//            paRent.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    snackbar = Snackbar.make(ntbHorizontal, "Coordinator NTB", Snackbar.LENGTH_SHORT);
+//                    snackbar.getView().setBackgroundColor(Color.parseColor("#9b92b3"));
+//                    ((TextView) snackbar.getView().findViewById(R.id.snackbar_text))
+//                            .setTextColor(Color.parseColor("#423752"));
+//                    snackbar.show();
+//                }
+//            },1000);
 
-            paRent.postDelayed(new Runnable() {
+            new BottomSheet.Builder(MyDataInventoryActivity.this,R.style.BottomSheet_CustomizedDialog).title("Slide Down").sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
                 @Override
-                public void run() {
-                    snackbar = Snackbar.make(ntbHorizontal, "Coordinator NTB", Snackbar.LENGTH_SHORT);
-                    snackbar.getView().setBackgroundColor(Color.parseColor("#9b92b3"));
-                    ((TextView) snackbar.getView().findViewById(R.id.snackbar_text))
-                            .setTextColor(Color.parseColor("#423752"));
-                    snackbar.show();
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case R.id.help:
+                            Log.d(TAG, "onClick: ");
+                            break;
+                        case R.id.addProduct :
+                            break;
+                        case R.id.prodct :
+                            Intent intent = new Intent(MyDataInventoryActivity.this,MyDataInventoryActivity.class);
+                            startActivity(intent);
+                            //setDrawerState(true);
+                            break;
+                    }
                 }
-            },1000);
+            }).show();
         }
     };
 
