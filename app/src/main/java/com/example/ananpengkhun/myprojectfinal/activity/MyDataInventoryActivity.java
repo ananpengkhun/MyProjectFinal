@@ -96,22 +96,22 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         final ArrayList<NavigationTabBar.Model> models = new ArrayList<>();
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.ic_first),
-                        Color.parseColor(colors[0]))
+                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.boxes),
+                        Color.parseColor(colors[1]))
                         .title("Heart")
                         .build()
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.ic_second),
+                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.box),
                         Color.parseColor(colors[1]))
                         .title("Cup")
                         .build()
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.ic_third),
-                        Color.parseColor(colors[2]))
+                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.truck),
+                        Color.parseColor(colors[1]))
                         .title("Diploma")
                         .build()
         );
@@ -132,7 +132,8 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
         ntbHorizontal.setModels(models);
         ntbHorizontal.setViewPager(vpHorizontalNtb, 2);
-
+        ntbHorizontal.setBgColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.colorPrimary));
+        ntbHorizontal.setIsTinted(false);
         //IMPORTANT: ENABLE SCROLL BEHAVIOUR IN COORDINATOR LAYOUT
         ntbHorizontal.setBehaviorEnabled(true);
 
