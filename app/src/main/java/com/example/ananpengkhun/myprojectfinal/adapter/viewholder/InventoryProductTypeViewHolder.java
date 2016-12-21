@@ -1,6 +1,7 @@
 package com.example.ananpengkhun.myprojectfinal.adapter.viewholder;
 
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -16,16 +17,14 @@ import butterknife.ButterKnife;
  * Created by ananpengkhun on 12/18/16.
  */
 
-public class InventoryViewHolder extends RecyclerView.ViewHolder {
+public class InventoryProductTypeViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.txt_vp_item_list) public TextView txtVpItemList;
+    @BindView(R.id.tv_nameProType) public TextView tvNameProType;
+    @BindView(R.id.cv_groupView) public CardView cvGroupView;
 
-
-    //public TextView txtVpItemList;
-
-    public InventoryViewHolder(View itemView) {
+    public InventoryProductTypeViewHolder(View itemView) {
         super(itemView);
-        ButterKnife.bind(this,itemView);
+        ButterKnife.bind(this, itemView);
     }
 
 

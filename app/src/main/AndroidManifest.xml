@@ -17,13 +17,18 @@
         </activity>
         <activity
             android:name=".activity.MyDataInventoryActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            >
         </activity>
         <activity
             android:name=".activity.AddDataActivity"
             android:theme="@style/AppTheme">
         </activity>
         <activity android:name=".activity.DetailOfListProductActivity">
+        </activity>
+        <activity android:name=".activity.DetailOfListProductTypeActivity">
+        </activity>
+        <activity android:name=".activity.DetailOfListProviderActivity">
         </activity>
     </application>
 

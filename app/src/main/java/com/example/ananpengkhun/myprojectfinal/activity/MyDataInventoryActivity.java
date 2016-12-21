@@ -27,10 +27,15 @@ import android.widget.TextView;
 
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ananpengkhun.myprojectfinal.R;
-import com.example.ananpengkhun.myprojectfinal.adapter.InventoryAdapter;
+import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProductAdapter;
+import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProductTypeAdapter;
+import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProviderAdapter;
+import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
+import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
+import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,11 +51,16 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.ll_sliding_bar) LinearLayout llSlidingBar;
     @BindView(R.id.parent) CoordinatorLayout paRent;
+    @BindView(R.id.tv_toolbarTitle) TextView tvToolbarTitle;
 
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private RecyclerView recyclerView;
     private Snackbar snackbar;
 
+
+    private List<ProductDao> productList;
+    private List<ProductTypeDao> productTypeList;
+    private List<ProviderDao> providerList;
 
 
     @Override
@@ -59,7 +69,38 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_data_inventory);
         ButterKnife.bind(this);
         setupPageDrawer();
+        dummyValue();
         init();
+    }
+
+    private void dummyValue() {
+        productList = new ArrayList<>();
+        productTypeList = new ArrayList<>();
+        providerList = new ArrayList<>();
+
+
+        // product type list dummy
+        for (int i = 0; i < 10; i++) {
+            ProductTypeDao productTypeDao = new ProductTypeDao();
+            productTypeDao.setProdTypeName("ประเภทที่ " + i);
+            productTypeList.add(productTypeDao);
+        }
+
+        // product list dummy
+        for (int i = 0; i < 20; i++) {
+            ProductDao productDao = new ProductDao();
+            productDao.setProdName("สิ้นค้าชิ้นที่ " + i);
+            productDao.setPrice("1,000");
+            productList.add(productDao);
+        }
+
+        //provider list dummy
+        for (int i = 0; i < 3; i++) {
+            ProviderDao providerDao = new ProviderDao();
+            providerDao.setProvName("บริษัทืั้ " + i);
+            providerList.add(providerDao);
+        }
+
     }
 
     private void init() {
@@ -81,12 +122,29 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
             @Override
             public Object instantiateItem(ViewGroup container, int position) {
-                final View mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_recycler,container,false);
-                recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
-                recyclerView.setAdapter(new InventoryAdapter(MyDataInventoryActivity.this));
-                container.addView(mView);
+                View mView = null;
+                if (0 == position) {
+                    mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_product_type_recycler, container, false);
+                    recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
+                    recyclerView.setAdapter(new InventoryProductTypeAdapter(MyDataInventoryActivity.this, productTypeList));
+                    container.addView(mView);
+                } else if (1 == position) {
+                    mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_product_recycler, container, false);
+                    recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
+                    recyclerView.setAdapter(new InventoryProductAdapter(MyDataInventoryActivity.this, productList));
+                    container.addView(mView);
+                } else if (2 == position) {
+                    mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_provider_recycler, container, false);
+                    recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
+                    recyclerView.setAdapter(new InventoryProviderAdapter(MyDataInventoryActivity.this, providerList));
+                    container.addView(mView);
+                }
                 return mView;
 
             }
@@ -96,21 +154,21 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         final ArrayList<NavigationTabBar.Model> models = new ArrayList<>();
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.boxes),
+                        ContextCompat.getDrawable(MyDataInventoryActivity.this, R.drawable.boxes),
                         Color.parseColor(colors[1]))
                         .title("Heart")
                         .build()
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.box),
+                        ContextCompat.getDrawable(MyDataInventoryActivity.this, R.drawable.box),
                         Color.parseColor(colors[1]))
                         .title("Cup")
                         .build()
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        ContextCompat.getDrawable(MyDataInventoryActivity.this,R.drawable.truck),
+                        ContextCompat.getDrawable(MyDataInventoryActivity.this, R.drawable.truck),
                         Color.parseColor(colors[1]))
                         .title("Diploma")
                         .build()
@@ -131,8 +189,8 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 //        );
 
         ntbHorizontal.setModels(models);
-        ntbHorizontal.setViewPager(vpHorizontalNtb, 2);
-        ntbHorizontal.setBgColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.colorPrimary));
+        ntbHorizontal.setViewPager(vpHorizontalNtb, 0);
+        ntbHorizontal.setBgColor(ContextCompat.getColor(MyDataInventoryActivity.this, R.color.colorPrimary));
         ntbHorizontal.setIsTinted(false);
         //IMPORTANT: ENABLE SCROLL BEHAVIOUR IN COORDINATOR LAYOUT
         ntbHorizontal.setBehaviorEnabled(true);
@@ -154,6 +212,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         setDrawerState(true);
     }
 
@@ -206,17 +265,23 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private ViewPager.OnPageChangeListener pageChanged = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+            //Log.d(TAG, "onPageScrolled: "+position);
+            if(0 == position){
+                tvToolbarTitle.setText("ชนิดสินค้า");
+            }else if(1 == position){
+                tvToolbarTitle.setText("สินค้า");
+            }else if(2 == position){
+                tvToolbarTitle.setText("ผู้จำหน่าย");
+            }
         }
 
         @Override
         public void onPageSelected(int position) {
-
+            //Log.d(TAG, "onPageSelected: "+position);
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {
-
         }
     };
 
@@ -248,17 +313,17 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 //                }
 //            },1000);
 
-            new BottomSheet.Builder(MyDataInventoryActivity.this,R.style.BottomSheet_CustomizedDialog).title("Slide Down").sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
+            new BottomSheet.Builder(MyDataInventoryActivity.this, R.style.BottomSheet_CustomizedDialog).title("Slide Down").sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case R.id.help:
                             Log.d(TAG, "onClick: ");
                             break;
-                        case R.id.addProduct :
+                        case R.id.addProduct:
                             break;
-                        case R.id.prodct :
-                            Intent intent = new Intent(MyDataInventoryActivity.this,MyDataInventoryActivity.class);
+                        case R.id.prodct:
+                            Intent intent = new Intent(MyDataInventoryActivity.this, MyDataInventoryActivity.class);
                             startActivity(intent);
                             //setDrawerState(true);
                             break;
@@ -267,7 +332,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             }).show();
         }
     };
-
 
 
 }
