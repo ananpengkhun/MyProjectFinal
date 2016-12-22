@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -20,8 +21,12 @@ import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.MainMenuAdapter;
 import com.example.ananpengkhun.myprojectfinal.fragment.MainFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.refactor.kmpautotextview.KMPAutoComplTextView;
 
 
 public class MainActivity extends AppCompatActivity implements MainFragment.MoveFragmentPage {
@@ -34,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     @BindView(R.id.tv_navData) TextView tvNavData;
     @BindView(R.id.tv_navAddData) TextView tvNavAddData;
     @BindView(R.id.img_backHome) View imgBackHome;
+    @BindView(R.id.tvAutoCompl) KMPAutoComplTextView tvAutoCompl;
 
 
     private BottomSheet dialog;
@@ -50,6 +56,14 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         setupPageDrawer();
         init();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(drawerLayout.getDrawerLockMode(Gravity.LEFT) == DrawerLayout.LOCK_MODE_LOCKED_CLOSED){
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
     }
 
     private void init() {
@@ -89,6 +103,24 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // dummy data for search on navigationBar
+        List<String> data = new ArrayList<String>();
+        data.add("Red roses for wedding");
+        data.add("Bouquet with red roses");
+        data.add("Single red rose flower");
+
+        tvAutoCompl.setDatas(data);
+        tvAutoCompl.setOnPopupItemClickListener(new KMPAutoComplTextView.OnPopupItemClickListener() {
+            @Override
+            public void onPopupItemClick(CharSequence charSequence) {
+                //Toast.makeText(MainActivity.this, charSequence.toString(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                tvAutoCompl.setText("");
+            }
+        });
 
     }
 

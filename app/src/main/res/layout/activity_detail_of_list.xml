@@ -125,9 +125,17 @@
                     android:layout_height="wrap_content"
                     android:text="ชนิดสินค้า :"/>
 
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    android:id="@+id/spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:hintText="SEKECCTTT"/>
                 <TextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/tv_chooseSpinner"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -159,6 +167,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:gravity="right">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/bg_circle_purple"/>
+
+                    <ImageView
+                        android:id="@+id/imv_box_for_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/box_edit_text_selector"/>
+                </RelativeLayout>
+            </LinearLayout>
+
 
         </LinearLayout>
 

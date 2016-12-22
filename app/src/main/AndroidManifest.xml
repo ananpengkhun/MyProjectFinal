@@ -17,8 +17,7 @@
         </activity>
         <activity
             android:name=".activity.MyDataInventoryActivity"
-            android:theme="@style/AppTheme"
-            >
+            android:theme="@style/AppTheme">
         </activity>
         <activity
             android:name=".activity.AddDataActivity"
@@ -29,6 +28,8 @@
         <activity android:name=".activity.DetailOfListProductTypeActivity">
         </activity>
         <activity android:name=".activity.DetailOfListProviderActivity">
+        </activity>
+        <activity android:name=".activity.SearchActivity">
         </activity>
     </application>
 

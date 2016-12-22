@@ -6,6 +6,7 @@ package com.example.ananpengkhun.myprojectfinal.dao;
 
 public class ProductTypeDao {
     private String prodTypeName;
+    private String prodTypeCode;
 
     public String getProdTypeName() {
         return prodTypeName;
@@ -13,5 +14,13 @@ public class ProductTypeDao {
 
     public void setProdTypeName(String prodTypeName) {
         this.prodTypeName = prodTypeName;
+    }
+
+    public String getProdTypeCode() {
+        return prodTypeCode;
+    }
+
+    public void setProdTypeCode(String prodTypeCode) {
+        this.prodTypeCode = prodTypeCode;
     }
 }

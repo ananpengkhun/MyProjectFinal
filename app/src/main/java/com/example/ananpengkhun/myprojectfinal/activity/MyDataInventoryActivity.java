@@ -83,6 +83,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         for (int i = 0; i < 10; i++) {
             ProductTypeDao productTypeDao = new ProductTypeDao();
             productTypeDao.setProdTypeName("ประเภทที่ " + i);
+            productTypeDao.setProdTypeCode("00"+i);
             productTypeList.add(productTypeDao);
         }
 

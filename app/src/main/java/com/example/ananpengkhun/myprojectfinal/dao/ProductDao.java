@@ -8,6 +8,7 @@ public class ProductDao {
     private String prodName;
     private String price;
 
+
     public String getProdName() {
         return prodName;
     }
