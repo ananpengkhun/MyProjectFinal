@@ -67,17 +67,4 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_sliding_bar"
-        android:layout_width="@dimen/drawer_menu_width"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#ffffff"
-        android:orientation="vertical">
-
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Search..."/>
-    </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

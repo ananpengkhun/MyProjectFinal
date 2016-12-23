@@ -34,29 +34,49 @@
     </android.support.design.widget.CoordinatorLayout>
 
     <LinearLayout
+        android:layout_gravity="start"
         android:id="@+id/ll_sliding_bar"
         android:layout_width="@dimen/drawer_menu_width"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#ffffff"
+        android:background="@drawable/bg_polygon_grey"
         android:orientation="vertical">
 
-        <cn.refactor.kmpautotextview.KMPAutoComplTextView
-            android:id="@+id/tvAutoCompl"
-            android:layout_marginTop="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:hint="search......"
-            android:completionThreshold="1"
-            app:completionHighlightColor="@color/colorAccent"
-            app:completionTextColor="#80000000"
-            app:completionTextSize="18sp"
-            app:completionIgnoreCase="true"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <cn.refactor.kmpautotextview.KMPAutoComplTextView
+                android:id="@+id/tvAutoCompl"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="30dp"
+                android:completionThreshold="1"
+                android:hint="Search"
+                app:completionHighlightColor="@color/colorAccent"
+                app:completionIgnoreCase="true"
+                app:completionTextColor="#80000000"
+                app:completionTextSize="18sp"/>
+
+            <ImageView
+                android:id="@+id/imv_clear_text"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="35dp"
+                android:src="@drawable/error"/>
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/tv_navData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/nav_selected_data_selector"
             android:clickable="true"
             android:text="ข้อมูล"/>
 
@@ -64,6 +84,10 @@
             android:id="@+id/tv_navAddData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/nav_selected_data_selector"
             android:clickable="true"
             android:text="เพิ่มข้อมูล"/>
 
@@ -72,13 +96,13 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <View
+        <ImageView
             android:id="@+id/img_backHome"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_gravity="center"
-            android:background="#cf1414"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/home_button_selector"
             android:clickable="true"/>
     </LinearLayout>
-
 </android.support.v4.widget.DrawerLayout>

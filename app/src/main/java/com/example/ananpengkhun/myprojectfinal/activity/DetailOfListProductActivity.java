@@ -83,6 +83,8 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                 tvChooseSpinner.setVisibility(View.VISIBLE);
                 if(!"SEKECCTTT".equals(spinner.getSelectedItem().toString())){
                     tvChooseSpinner.setText(spinner.getSelectedItem().toString());
+                }else{
+                    tvChooseSpinner.setText("no  choose");
                 }
             } else {
                 imvBoxForEdit.setSelected(true);

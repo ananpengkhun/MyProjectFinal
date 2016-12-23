@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -38,14 +39,16 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     @BindView(R.id.vp_pager_fragment) ViewPager vpPagerFragment;
     @BindView(R.id.tv_navData) TextView tvNavData;
     @BindView(R.id.tv_navAddData) TextView tvNavAddData;
-    @BindView(R.id.img_backHome) View imgBackHome;
+    @BindView(R.id.img_backHome) ImageView imgBackHome;
     @BindView(R.id.tvAutoCompl) KMPAutoComplTextView tvAutoCompl;
+    @BindView(R.id.imv_clear_text) ImageView imvClearText;
 
 
     private BottomSheet dialog;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private MainMenuAdapter mainMenuAdapter;
     private String TAG = MainActivity.class.getSimpleName();
+
 
 
     @Override
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     @Override
     protected void onResume() {
         super.onResume();
-        if(drawerLayout.getDrawerLockMode(Gravity.LEFT) == DrawerLayout.LOCK_MODE_LOCKED_CLOSED){
+        if (drawerLayout.getDrawerLockMode(Gravity.LEFT) == DrawerLayout.LOCK_MODE_LOCKED_CLOSED) {
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }
     }
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         tvNavAddData.setOnClickListener(AddDataClicklistener);
         tvNavData.setOnClickListener(DataClicklistener);
         imgBackHome.setOnClickListener(imgBackHomeClicklistener);
+        imvClearText.setOnClickListener(CleatTextClicklistener);
 
         vpPagerFragment.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -228,6 +232,13 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         public void onClick(View view) {
             vpPagerFragment.setCurrentItem(0, true);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
+    };
+
+    private View.OnClickListener CleatTextClicklistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            tvAutoCompl.getText().clear();
         }
     };
 

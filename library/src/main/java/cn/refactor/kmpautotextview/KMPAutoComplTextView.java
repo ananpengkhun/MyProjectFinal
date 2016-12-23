@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -66,10 +67,13 @@ public class KMPAutoComplTextView extends AutoCompleteTextView {
             a.recycle();
         }
         initListener();
+
     }
 
-    private void initListener() {
 
+
+
+    private void initListener() {
         addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -77,6 +81,7 @@ public class KMPAutoComplTextView extends AutoCompleteTextView {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
             }
 
             @Override
@@ -111,6 +116,11 @@ public class KMPAutoComplTextView extends AutoCompleteTextView {
         mAdapter = new KMPAdapter(getContext(), getResultDatas(strings));
         setAdapter(mAdapter);
     }
+
+
+
+
+
 
     public void setOnPopupItemClickListener(OnPopupItemClickListener listener) {
         mListener = listener;
@@ -275,6 +285,8 @@ public class KMPAutoComplTextView extends AutoCompleteTextView {
         void onPopupItemClick(CharSequence charSequence);
     }
 
+
+
     /**
      * 获得字符串的next函数值
      *
@@ -338,5 +350,7 @@ public class KMPAutoComplTextView extends AutoCompleteTextView {
         } else
             return i - modeArr.length; // 返回模式串在主串中的头下标
     }
+
+
 
 }

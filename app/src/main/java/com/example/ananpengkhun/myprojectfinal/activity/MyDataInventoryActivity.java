@@ -1,5 +1,6 @@
 package com.example.ananpengkhun.myprojectfinal.activity;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -22,8 +23,11 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ananpengkhun.myprojectfinal.R;
@@ -56,7 +60,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private RecyclerView recyclerView;
     private Snackbar snackbar;
-
+    private int changeViewpager;
 
     private List<ProductDao> productList;
     private List<ProductTypeDao> productTypeList;
@@ -83,7 +87,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         for (int i = 0; i < 10; i++) {
             ProductTypeDao productTypeDao = new ProductTypeDao();
             productTypeDao.setProdTypeName("ประเภทที่ " + i);
-            productTypeDao.setProdTypeCode("00"+i);
+            productTypeDao.setProdTypeCode("00" + i);
             productTypeList.add(productTypeDao);
         }
 
@@ -205,51 +209,15 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
     private void setupPageDrawer() {
         setSupportActionBar(toolbar);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(MyDataInventoryActivity.this
-                , drawerLayout
-                , R.string.open_drawer
-                , R.string.close_drawer
-        );
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        setDrawerState(true);
+        toolbar.setNavigationOnClickListener(toolbarClicklistener);
     }
 
-    public void setDrawerState(boolean isEnabled) {
-        if (isEnabled) {
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            actionBarDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_IDLE);
-            actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
-            actionBarDrawerToggle.syncState();
-        } else {
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            actionBarDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_DRAGGING);
-            actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
-            actionBarDrawerToggle.syncState();
-        }
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        actionBarDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        actionBarDrawerToggle.syncState();
-    }
 
     private NavigationTabBar.OnTabBarSelectedIndexListener TabBarSelected = new NavigationTabBar.OnTabBarSelectedIndexListener() {
         @Override
@@ -267,11 +235,12 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             //Log.d(TAG, "onPageScrolled: "+position);
-            if(0 == position){
+            changeViewpager = position;
+            if (0 == position) {
                 tvToolbarTitle.setText("ชนิดสินค้า");
-            }else if(1 == position){
+            } else if (1 == position) {
                 tvToolbarTitle.setText("สินค้า");
-            }else if(2 == position){
+            } else if (2 == position) {
                 tvToolbarTitle.setText("ผู้จำหน่าย");
             }
         }
@@ -314,25 +283,110 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 //                }
 //            },1000);
 
-            new BottomSheet.Builder(MyDataInventoryActivity.this, R.style.BottomSheet_CustomizedDialog).title("Slide Down").sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
+            new BottomSheet.Builder(MyDataInventoryActivity.this, R.style.BottomSheet_CustomizedDialog).title("Slide Down").sheet(R.menu.list_fab).listener(new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case R.id.help:
-                            Log.d(TAG, "onClick: ");
-                            break;
-                        case R.id.addProduct:
-                            break;
-                        case R.id.prodct:
-                            Intent intent = new Intent(MyDataInventoryActivity.this, MyDataInventoryActivity.class);
-                            startActivity(intent);
-                            //setDrawerState(true);
-                            break;
-                    }
+                    selectedViewPager(which);
                 }
             }).show();
         }
     };
+
+    private void selectedViewPager(int which){
+        if (0 == changeViewpager) {
+            if(which == R.id.add_new_record){
+                customDialog(changeViewpager);
+            }
+        }else if(1 == changeViewpager){
+            if(which == R.id.add_new_record){
+                customDialog(changeViewpager);
+            }
+        }else if(2 == changeViewpager){
+            if(which == R.id.add_new_record){
+                customDialog(changeViewpager);
+            }
+        }
+
+    }
+
+    private void customDialog(int target){
+        if(0 == target) {
+            final Dialog dialog = new Dialog(MyDataInventoryActivity.this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.fragment_add_product_type);
+            dialog.setCancelable(true);
+
+//            Button button1 = (Button) dialog.findViewById(R.id.button1);
+//            button1.setOnClickListener(new View.OnClickListener() {
+//                public void onClick(View v) {
+//                    Toast.makeText(getApplicationContext()
+//                            , "Close dialog", Toast.LENGTH_SHORT);
+//                    dialog.cancel();
+//                }
+//            });
+//
+//            TextView textView1 = (TextView) dialog.findViewById(R.id.textView1);
+//            textView1.setText("Custom Dialog");
+//            TextView textView2 = (TextView) dialog.findViewById(R.id.textView2);
+//            textView2.setText("Try it yourself");
+
+            dialog.show();
+        }else if(1 == target){
+            final Dialog dialog = new Dialog(MyDataInventoryActivity.this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.fragment_add_product);
+            dialog.setCancelable(true);
+
+//            Button button1 = (Button) dialog.findViewById(R.id.button1);
+//            button1.setOnClickListener(new View.OnClickListener() {
+//                public void onClick(View v) {
+//                    Toast.makeText(getApplicationContext()
+//                            , "Close dialog", Toast.LENGTH_SHORT);
+//                    dialog.cancel();
+//                }
+//            });
+//
+//            TextView textView1 = (TextView) dialog.findViewById(R.id.textView1);
+//            textView1.setText("Custom Dialog");
+//            TextView textView2 = (TextView) dialog.findViewById(R.id.textView2);
+//            textView2.setText("Try it yourself");
+
+            dialog.show();
+        }else if(2 == target){
+            final Dialog dialog = new Dialog(MyDataInventoryActivity.this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.fragment_add_provider);
+            dialog.setCancelable(true);
+
+//            Button button1 = (Button) dialog.findViewById(R.id.button1);
+//            button1.setOnClickListener(new View.OnClickListener() {
+//                public void onClick(View v) {
+//                    Toast.makeText(getApplicationContext()
+//                            , "Close dialog", Toast.LENGTH_SHORT);
+//                    dialog.cancel();
+//                }
+//            });
+//
+//            TextView textView1 = (TextView) dialog.findViewById(R.id.textView1);
+//            textView1.setText("Custom Dialog");
+//            TextView textView2 = (TextView) dialog.findViewById(R.id.textView2);
+//            textView2.setText("Try it yourself");
+
+            dialog.show();
+        }
+    }
+
+    private View.OnClickListener toolbarClicklistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            finish();
+        }
+    };
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 
 
 }
