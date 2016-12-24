@@ -4,12 +4,18 @@ package com.example.ananpengkhun.myprojectfinal.fragment;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.AppCompatEditText;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +23,13 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +43,7 @@ public class AddProductFragment extends Fragment {
 
 
     private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int TAKE_PHOTO_REQUEST = 2;
     @BindView(R.id.imv_add_picture) ImageView imvAddPicture;
     @BindView(R.id.ed_prod_code) AppCompatEditText edProdCode;
     @BindView(R.id.ed_prod_name) AppCompatEditText edProdName;
@@ -48,6 +58,8 @@ public class AddProductFragment extends Fragment {
 
     private Button takeByCamera;
     private Button takeByGallery;
+    private Uri pathFile;
+
     public AddProductFragment() {
         // Required empty public constructor
     }
@@ -88,6 +100,24 @@ public class AddProductFragment extends Fragment {
             takeByCamera.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
+
+                    File newdir = new File(dir);
+                    if (!newdir.exists()) {
+                        newdir.mkdirs();
+                    }
+                    String file = dir + System.currentTimeMillis() + ".jpg";
+                    File newfile = new File(file);
+                    try {
+                        newfile.createNewFile();
+                    } catch (IOException e) {
+                    }
+
+                    pathFile = Uri.fromFile(newfile);
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, pathFile);
+                    startActivityForResult(cameraIntent, TAKE_PHOTO_REQUEST);
+
 
                 }
             });
@@ -103,7 +133,6 @@ public class AddProductFragment extends Fragment {
             });
 
 
-
             dialog.show();
         }
     };
@@ -116,13 +145,12 @@ public class AddProductFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null){
-            Uri uri = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
-                imvAddPicture.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == PICK_IMAGE_REQUEST) {
+                Uri uri = data.getData();
+                Glide.with(AddProductFragment.this).load(uri).into(imvAddPicture);
+            } else if (requestCode == TAKE_PHOTO_REQUEST) {
+                Glide.with(AddProductFragment.this).load(pathFile).into(imvAddPicture);
             }
         }
     }
