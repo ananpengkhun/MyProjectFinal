@@ -2,53 +2,121 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/bg_polygon_grey"
                 tools:context="com.example.ananpengkhun.myprojectfinal.fragment.AddProductFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_polygon_grey">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="รหัสสินค้า"/>
+                android:layout_margin="20dp"
+                android:orientation="vertical">
 
-            <android.support.design.widget.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <ImageView
+                    android:id="@+id/imv_add_picture"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/add_image"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="ชื่อสินค้า"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="รหัสสินค้า"/>
 
-            <android.support.design.widget.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/ed_prod_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="รหัสสินค้า"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ชื่อสินค้า"/>
 
-            <android.support.design.widget.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/ed_prod_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/button_click_selector"
-                android:text="ยินยัน"/>
-        </LinearLayout>
-    </RelativeLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ราคา"/>
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/ed_prod_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="จำนวน"/>
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/ed_prod_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="หน่วย"/>
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/ed_prod_unit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ชนิดสินค้า"/>
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/ed_prod_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ผู้จำหน่าย"/>
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/ed_prod_provider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="แจ้งเตือนเมื่อ"/>
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/ed_prod_alert"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <Button
+                    android:id="@+id/btn_add_product_confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/button_click_selector"
+                    android:text="ยินยัน"/>
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

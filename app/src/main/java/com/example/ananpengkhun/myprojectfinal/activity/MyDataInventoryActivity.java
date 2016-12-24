@@ -53,7 +53,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     @BindView(R.id.vp_horizontal_ntb) ViewPager vpHorizontalNtb;
     @BindView(R.id.ntb_horizontal) NavigationTabBar ntbHorizontal;
     @BindView(R.id.fab) FloatingActionButton fab;
-    @BindView(R.id.ll_sliding_bar) LinearLayout llSlidingBar;
     @BindView(R.id.parent) CoordinatorLayout paRent;
     @BindView(R.id.tv_toolbarTitle) TextView tvToolbarTitle;
 
@@ -88,14 +87,21 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             ProductTypeDao productTypeDao = new ProductTypeDao();
             productTypeDao.setProdTypeName("ประเภทที่ " + i);
             productTypeDao.setProdTypeCode("00" + i);
+            productTypeDao.setProdTypeDes("รายการที่ "+i);
             productTypeList.add(productTypeDao);
         }
 
         // product list dummy
         for (int i = 0; i < 20; i++) {
             ProductDao productDao = new ProductDao();
+            productDao.setProdCode("000"+i);
             productDao.setProdName("สิ้นค้าชิ้นที่ " + i);
             productDao.setPrice("1,000");
+            productDao.setProdAmount(100);
+            productDao.setProdUnit("m");
+            //productDao.setProdType();
+            //productDao.setProdProvider();
+            productDao.setProdAlert(5);
             productList.add(productDao);
         }
 
@@ -103,6 +109,9 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         for (int i = 0; i < 3; i++) {
             ProviderDao providerDao = new ProviderDao();
             providerDao.setProvName("บริษัทืั้ " + i);
+            providerDao.setProvAddress("street :"+i);
+            providerDao.setProvPhone("080-000-000"+1);
+            providerDao.setProvEmail("men_2537za@"+i+".com");
             providerList.add(providerDao);
         }
 
