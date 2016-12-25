@@ -28,9 +28,9 @@
         </android.support.design.widget.AppBarLayout>
 
         <ScrollView
-            android:fillViewport="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fillViewport="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -77,6 +77,8 @@
                                 <android.support.v7.widget.AppCompatEditText
                                     android:id="@+id/ed_code_prod"
                                     android:layout_width="match_parent"
+                                    android:inputType="numberDecimal"
+                                    android:digits="0123456789"
                                     android:layout_height="wrap_content"
                                     android:visibility="gone"/>
 
@@ -159,6 +161,8 @@
                                     android:id="@+id/ed_amount_prod"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:digits="0123456789"
+                                    android:inputType="numberDecimal"
                                     android:visibility="gone"/>
 
                                 <TextView
@@ -234,11 +238,12 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <android.support.v7.widget.AppCompatEditText
-                                    android:id="@+id/ed_provider_prod"
-                                    android:layout_width="match_parent"
+                                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                                    android:id="@+id/spinner_provider"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:visibility="gone"/>
+                                    android:visibility="gone"
+                                    app:hintText="   "/>
 
                                 <TextView
                                     android:id="@+id/tv_provider_prod"
@@ -265,6 +270,8 @@
                                     android:id="@+id/ed_alert_prod"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:digits="0123456789"
+                                    android:inputType="numberDecimal"
                                     android:visibility="gone"/>
 
                                 <TextView

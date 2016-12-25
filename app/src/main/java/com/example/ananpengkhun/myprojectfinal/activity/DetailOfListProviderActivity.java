@@ -1,16 +1,19 @@
 package com.example.ananpengkhun.myprojectfinal.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.ananpengkhun.myprojectfinal.R;
+import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,12 +32,29 @@ public class DetailOfListProviderActivity extends AppCompatActivity {
     @BindView(R.id.tv_provider_email) TextView tvProviderEmail;
     @BindView(R.id.imv_box_for_edit) ImageView imvBoxForEdit;
 
+    private ProviderDao providerDao;
+    private boolean swap = true;
+    private String provName;
+    private String provAddess;
+    private String provPhone;
+    private String provEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_of_list_provider);
         ButterKnife.bind(this);
         setupView();
+        init();
+    }
+
+    private void init() {
+        Intent intent = getIntent();
+        if(intent.getExtras() != null){
+            providerDao = intent.getParcelableExtra("provider_object_index");
+            setTextView(providerDao.getProvName(),providerDao.getProvAddress(),providerDao.getProvPhone(),providerDao.getProvEmail());
+        }
+
     }
 
     private void setupView() {
@@ -57,6 +77,7 @@ public class DetailOfListProviderActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             if (imvBoxForEdit.isSelected()) {
+                //save data
                 imvBoxForEdit.setSelected(false);
                 //textView Visible
                 tvProviderName.setVisibility(View.VISIBLE);
@@ -70,7 +91,17 @@ public class DetailOfListProviderActivity extends AppCompatActivity {
                 edProviderPhone.setVisibility(View.GONE);
                 edProviderEmail.setVisibility(View.GONE);
 
+                provName = edProviderName.getText().toString();
+                provAddess = edProviderAddress.getText().toString();
+                provPhone = edProviderPhone.getText().toString();
+                provEmail = edProviderEmail.getText().toString();
+
+                setTextView(provName,provAddess,provPhone,provEmail);
+
+
+
             } else {
+                // edit data
                 imvBoxForEdit.setSelected(true);
                 //textView Gone
                 tvProviderName.setVisibility(View.GONE);
@@ -83,9 +114,30 @@ public class DetailOfListProviderActivity extends AppCompatActivity {
                 edProviderAddress.setVisibility(View.VISIBLE);
                 edProviderPhone.setVisibility(View.VISIBLE);
                 edProviderEmail.setVisibility(View.VISIBLE);
+
+                if(swap){
+                    swap = false;
+                    setTextEdit(providerDao.getProvName(),providerDao.getProvAddress(),providerDao.getProvPhone(),providerDao.getProvEmail());
+                }else{
+                    setTextEdit(provName,provAddess,provPhone,provEmail);
+                }
             }
         }
     };
+
+    private void setTextEdit(String provName, String provAddess, String provPhone, String provEmail) {
+        edProviderName.setText(provName);
+        edProviderAddress.setText(provAddess);
+        edProviderPhone.setText(provPhone);
+        edProviderEmail.setText(provEmail);
+    }
+
+    private void setTextView(String provName, String provAddess, String provPhone, String provEmail) {
+        tvProviderName.setText(provName);
+        tvProviderAddress.setText(provAddess);
+        tvProviderPhone.setText(provPhone);
+        tvProviderEmail.setText(provEmail);
+    }
 
     @Override
     public void onBackPressed() {

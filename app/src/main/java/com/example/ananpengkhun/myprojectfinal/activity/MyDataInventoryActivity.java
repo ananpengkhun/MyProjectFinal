@@ -5,7 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -25,10 +29,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProductAdapter;
@@ -37,7 +43,10 @@ import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProviderAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.example.ananpengkhun.myprojectfinal.fragment.AddProductFragment;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +55,8 @@ import butterknife.ButterKnife;
 import devlight.io.library.ntb.NavigationTabBar;
 
 public class MyDataInventoryActivity extends AppCompatActivity {
-
     private static final String TAG = MyDataInventoryActivity.class.getSimpleName();
+
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
     @BindView(R.id.vp_horizontal_ntb) ViewPager vpHorizontalNtb;
@@ -64,6 +73,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private List<ProductDao> productList;
     private List<ProductTypeDao> productTypeList;
     private List<ProviderDao> providerList;
+
 
 
     @Override
@@ -87,32 +97,43 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             ProductTypeDao productTypeDao = new ProductTypeDao();
             productTypeDao.setProdTypeName("ประเภทที่ " + i);
             productTypeDao.setProdTypeCode("00" + i);
-            productTypeDao.setProdTypeDes("รายการที่ "+i);
+            productTypeDao.setProdTypeDes("รายการที่ " + i);
             productTypeList.add(productTypeDao);
-        }
-
-        // product list dummy
-        for (int i = 0; i < 20; i++) {
-            ProductDao productDao = new ProductDao();
-            productDao.setProdCode("000"+i);
-            productDao.setProdName("สิ้นค้าชิ้นที่ " + i);
-            productDao.setPrice("1,000");
-            productDao.setProdAmount(100);
-            productDao.setProdUnit("m");
-            //productDao.setProdType();
-            //productDao.setProdProvider();
-            productDao.setProdAlert(5);
-            productList.add(productDao);
         }
 
         //provider list dummy
         for (int i = 0; i < 3; i++) {
             ProviderDao providerDao = new ProviderDao();
             providerDao.setProvName("บริษัทืั้ " + i);
-            providerDao.setProvAddress("street :"+i);
-            providerDao.setProvPhone("080-000-000"+1);
-            providerDao.setProvEmail("men_2537za@"+i+".com");
+            providerDao.setProvAddress("street :" + i);
+            providerDao.setProvPhone("080000000" + 1);
+            providerDao.setProvEmail("men_2537za@" + i + ".com");
             providerList.add(providerDao);
+        }
+
+        // product list dummy
+        for (int i = 0; i < 20; i++) {
+            ProductDao productDao = new ProductDao();
+            productDao.setProdCode("000" + i);
+            productDao.setProdName("สิ้นค้าชิ้นที่ " + i);
+            productDao.setPrice("1,000");
+            productDao.setProdAmount(100);
+            productDao.setProdUnit("m");
+            if (productTypeList != null) {
+                productDao.setProdType(productTypeList);
+
+            } else {
+                productDao.setProdType(null);
+
+            }
+
+            if (providerList != null) {
+                productDao.setProdProvider(providerList);
+            } else {
+                productDao.setProdProvider(null);
+            }
+            productDao.setProdAlert(5);
+            productList.add(productDao);
         }
 
     }
@@ -226,8 +247,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     }
 
 
-
-
     private NavigationTabBar.OnTabBarSelectedIndexListener TabBarSelected = new NavigationTabBar.OnTabBarSelectedIndexListener() {
         @Override
         public void onStartTabSelected(NavigationTabBar.Model model, int index) {
@@ -301,25 +320,25 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         }
     };
 
-    private void selectedViewPager(int which){
+    private void selectedViewPager(int which) {
         if (0 == changeViewpager) {
-            if(which == R.id.add_new_record){
+            if (which == R.id.add_new_record) {
                 customDialog(changeViewpager);
             }
-        }else if(1 == changeViewpager){
-            if(which == R.id.add_new_record){
+        } else if (1 == changeViewpager) {
+            if (which == R.id.add_new_record) {
                 customDialog(changeViewpager);
             }
-        }else if(2 == changeViewpager){
-            if(which == R.id.add_new_record){
+        } else if (2 == changeViewpager) {
+            if (which == R.id.add_new_record) {
                 customDialog(changeViewpager);
             }
         }
 
     }
 
-    private void customDialog(int target){
-        if(0 == target) {
+    private void customDialog(int target) {
+        if (0 == target) {
             final Dialog dialog = new Dialog(MyDataInventoryActivity.this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.fragment_add_product_type);
@@ -340,28 +359,14 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 //            textView2.setText("Try it yourself");
 
             dialog.show();
-        }else if(1 == target){
-            final Dialog dialog = new Dialog(MyDataInventoryActivity.this);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.fragment_add_product);
-            dialog.setCancelable(true);
+        } else if (1 == target) {
+            Intent intent = new Intent(MyDataInventoryActivity.this,AddProductOnFabActivity.class);
+            startActivity(intent);
 
-//            Button button1 = (Button) dialog.findViewById(R.id.button1);
-//            button1.setOnClickListener(new View.OnClickListener() {
-//                public void onClick(View v) {
-//                    Toast.makeText(getApplicationContext()
-//                            , "Close dialog", Toast.LENGTH_SHORT);
-//                    dialog.cancel();
-//                }
-//            });
-//
-//            TextView textView1 = (TextView) dialog.findViewById(R.id.textView1);
-//            textView1.setText("Custom Dialog");
-//            TextView textView2 = (TextView) dialog.findViewById(R.id.textView2);
-//            textView2.setText("Try it yourself");
 
-            dialog.show();
-        }else if(2 == target){
+
+
+        } else if (2 == target) {
             final Dialog dialog = new Dialog(MyDataInventoryActivity.this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.fragment_add_provider);

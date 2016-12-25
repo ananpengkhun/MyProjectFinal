@@ -53,8 +53,9 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
                 public void onClick(View view) {
                     Log.d(TAG, "onClick: "+position);
                     Intent intent = new Intent(mContext, DetailOfListProductActivity.class);
-                    intent.putExtra("namePro",productList.get(position).getProdName());
-                    intent.putExtra("pricePro",productList.get(position).getPrice());
+                    intent.putExtra("product_object_index",productList.get(position));
+//                    intent.putExtra("namePro",productList.get(position).getProdName());
+//                    intent.putExtra("pricePro",productList.get(position).getPrice());
 
                     mContext.startActivity(intent);
 

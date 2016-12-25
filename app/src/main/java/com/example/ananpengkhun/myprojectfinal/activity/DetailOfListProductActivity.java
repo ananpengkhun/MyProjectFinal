@@ -1,5 +1,6 @@
 package com.example.ananpengkhun.myprojectfinal.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
@@ -12,7 +13,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.ananpengkhun.myprojectfinal.R;
+import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,10 +39,22 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     @BindView(R.id.tv_amount_prod) TextView tvAmountProd;
     @BindView(R.id.ed_unit_prod) AppCompatEditText edUnitProd;
     @BindView(R.id.tv_unit_prod) TextView tvUnitProd;
-    @BindView(R.id.ed_provider_prod) AppCompatEditText edProviderProd;
     @BindView(R.id.tv_provider_prod) TextView tvProviderProd;
     @BindView(R.id.ed_alert_prod) AppCompatEditText edAlertProd;
     @BindView(R.id.tv_alert_prod) TextView tvAlertProd;
+    @BindView(R.id.spinner_provider) SearchableSpinner spinnerProvider;
+
+    private ProductDao productDao;
+    private boolean swap = true;
+
+    private String prodCode;
+    private String prodName;
+    private String prodPrice;
+    private int prodAmount;
+    private String prodUnit;
+    private int prodAlert;
+    private List<String> listProdType;
+    private List<String> listProvider;
 
 
     @Override
@@ -61,23 +78,44 @@ public class DetailOfListProductActivity extends AppCompatActivity {
 
     private void init() {
         if (getIntent().getExtras() != null) {
-            String namePro = getIntent().getStringExtra("namePro");
-            String pricePro = getIntent().getStringExtra("pricePro");
+            Intent intent = getIntent();
+            productDao = intent.getParcelableExtra("product_object_index");
 
-            tvNamePro.setText(namePro);
-            tvPricePro.setText(pricePro);
+            setTextView(productDao.getProdCode(),
+                    productDao.getProdName(),
+                    productDao.getPrice(),
+                    productDao.getProdAmount(),
+                    productDao.getProdUnit(),
+                    productDao.getProdAlert());
         }
         spinnerOfTypeProduct();
     }
 
     private void spinnerOfTypeProduct() {
-        String colors[] = {"Red", "Blue", "White", "Yellow", "Black", "Green", "Purple", "Orange", "Grey"};
+        if(productDao.getProdType() != null){
+            listProdType = new ArrayList<>();
+            for (int i = 0; i < productDao.getProdType().size(); i++) {
+                listProdType.add(productDao.getProdType().get(i).getProdTypeName());
+            }
+        }else{
 
-        //butt = (Button) findViewById(R.id.asd);
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, colors);
+        }
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listProdType);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinner.setAdapter(spinnerArrayAdapter);
 
+
+        if(productDao.getProdProvider() != null){
+            listProvider = new ArrayList<>();
+            for (int i = 0; i < productDao.getProdProvider().size(); i++) {
+                listProvider.add(productDao.getProdProvider().get(i).getProvName());
+            }
+        }else{
+
+        }
+        ArrayAdapter<String> spinnerArrayAdapterProvider = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listProvider);
+        spinnerArrayAdapterProvider.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerProvider.setAdapter(spinnerArrayAdapterProvider);
 
     }
 
@@ -92,6 +130,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             if (imvBoxForEdit.isSelected()) {
+                //save data
                 imvBoxForEdit.setSelected(false);
 
                 //textView Visible
@@ -106,13 +145,21 @@ public class DetailOfListProductActivity extends AppCompatActivity {
 
                 //EditText Gone
                 edAlertProd.setVisibility(View.GONE);
-                edProviderProd.setVisibility(View.GONE);
                 edUnitProd.setVisibility(View.GONE);
                 edAmountProd.setVisibility(View.GONE);
                 edPriceProd.setVisibility(View.GONE);
                 edNameProd.setVisibility(View.GONE);
                 spinner.setVisibility(View.GONE);
+                spinnerProvider.setVisibility(View.GONE);
                 edCodeProd.setVisibility(View.GONE);
+
+                prodCode = edCodeProd.getText().toString();
+                prodName = edNameProd.getText().toString();
+                prodPrice = edPriceProd.getText().toString();
+                prodAmount = Integer.parseInt(edAmountProd.getText().toString());
+                prodUnit = edUnitProd.getText().toString();
+                prodAlert = Integer.parseInt(edAlertProd.getText().toString());
+                setTextView(prodCode, prodName, prodPrice, prodAmount, prodUnit, prodAlert);
 
 
                 if (spinner.getSelectedItem() == null) {
@@ -120,7 +167,15 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                 } else {
                     tvChooseSpinner.setText(spinner.getSelectedItem().toString());
                 }
+
+                if (spinnerProvider.getSelectedItem() == null) {
+                    Log.d("s", "onClick: ");
+                } else {
+                    tvProviderProd.setText(spinnerProvider.getSelectedItem().toString());
+                }
+
             } else {
+                //edit data
                 imvBoxForEdit.setSelected(true);
                 //textView Gone
                 tvAlertProd.setVisibility(View.GONE);
@@ -133,16 +188,48 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                 tvCodeProd.setVisibility(View.GONE);
                 //EditText Visible
                 edAlertProd.setVisibility(View.VISIBLE);
-                edProviderProd.setVisibility(View.VISIBLE);
                 edUnitProd.setVisibility(View.VISIBLE);
                 edAmountProd.setVisibility(View.VISIBLE);
                 edPriceProd.setVisibility(View.VISIBLE);
                 edNameProd.setVisibility(View.VISIBLE);
                 spinner.setVisibility(View.VISIBLE);
+                spinnerProvider.setVisibility(View.VISIBLE);
                 edCodeProd.setVisibility(View.VISIBLE);
+
+                if (swap) {
+                    swap = false;
+                    setTextEdit(productDao.getProdCode(),
+                            productDao.getProdName(),
+                            productDao.getPrice(),
+                            productDao.getProdAmount(),
+                            productDao.getProdUnit(),
+                            productDao.getProdAlert());
+
+                } else {
+                    setTextEdit(prodCode, prodName, prodPrice, prodAmount, prodUnit, prodAlert);
+
+                }
             }
         }
     };
+
+    private void setTextView(String prodCode, String prodName, String prodPrice, int prodAmount, String prodUnit, int prodAlert) {
+        tvCodeProd.setText(prodCode);
+        tvNamePro.setText(prodName);
+        tvPricePro.setText(prodPrice);
+        tvAmountProd.setText(String.valueOf(prodAmount));
+        tvUnitProd.setText(prodUnit);
+        tvAlertProd.setText(String.valueOf(prodAlert));
+    }
+
+    private void setTextEdit(String prodCode, String prodName, String prodPrice, int prodAmount, String prodUnit, int prodAlert) {
+        edCodeProd.setText(prodCode);
+        edNameProd.setText(prodName);
+        edPriceProd.setText(prodPrice);
+        edAmountProd.setText(String.valueOf(prodAmount));
+        edUnitProd.setText(prodUnit);
+        edAlertProd.setText(String.valueOf(prodAlert));
+    }
 
     @Override
     public void onBackPressed() {

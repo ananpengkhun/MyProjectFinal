@@ -133,8 +133,10 @@
                                     android:id="@+id/tv_provider_phone"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:digits="0123456789"
+                                    android:inputType="numberDecimal"
                                     android:paddingLeft="10dp"
-                                    android:text="บลา บลา ~~~~~~"/>
+                                    android:text="080000000"/>
                             </RelativeLayout>
                         </LinearLayout>
 

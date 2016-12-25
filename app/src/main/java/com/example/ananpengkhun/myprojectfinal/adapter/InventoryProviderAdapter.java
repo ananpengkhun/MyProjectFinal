@@ -51,6 +51,7 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
                 public void onClick(View view) {
                     Log.d(TAG, "onClick: "+position);
                     Intent intent = new Intent(mContext, DetailOfListProviderActivity.class);
+                    intent.putExtra("provider_object_index",providerList.get(position));
                     //intent.putExtra("position",position);
                     mContext.startActivity(intent);
 
