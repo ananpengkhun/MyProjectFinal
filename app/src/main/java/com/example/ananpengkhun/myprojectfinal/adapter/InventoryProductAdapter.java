@@ -1,5 +1,6 @@
 package com.example.ananpengkhun.myprojectfinal.adapter;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.ananpengkhun.myprojectfinal.R;
@@ -14,6 +17,7 @@ import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProductActiv
 import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProductViewHolder;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestValueDao;
 
 import java.util.List;
 
@@ -28,6 +32,9 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final String TAG = InventoryProductAdapter.class.getSimpleName();
     private Context mContext;
     private List<ProductDao> productList;
+    private Button btnConfirm;
+    private Button btnCancel;
+
 
     public InventoryProductAdapter(MyDataInventoryActivity myDataInventoryActivity, List<ProductDao> productList) {
         this.mContext = myDataInventoryActivity;
@@ -47,21 +54,55 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
             InventoryProductViewHolder inventoryProductViewHolder = (InventoryProductViewHolder) holder;
             inventoryProductViewHolder.tvNamePro.setText(productList.get(position).getProdName());
             inventoryProductViewHolder.tvPricePro.setText(productList.get(position).getPrice());
+            
+            
+            inventoryProductViewHolder.cvGroupView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Log.d(TAG, "onLongClick: ");
+                    final Dialog dialog = new Dialog(mContext);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.dialog_confirm_deleted);
+                    dialog.setCancelable(true);
+                    bindId(dialog);
 
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d(TAG, "onClick: dismiss");
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btnConfirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d(TAG, "onClick: row deleted.");
+                            //some row deleted
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+                    return true;
+                }
+            });
+            
             inventoryProductViewHolder.cvGroupView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.d(TAG, "onClick: "+position);
                     Intent intent = new Intent(mContext, DetailOfListProductActivity.class);
                     intent.putExtra("product_object_index",productList.get(position));
-//                    intent.putExtra("namePro",productList.get(position).getProdName());
-//                    intent.putExtra("pricePro",productList.get(position).getPrice());
-
                     mContext.startActivity(intent);
 
                 }
             });
         }
+    }
+
+    private void bindId(Dialog dialog) {
+        btnConfirm = (Button) dialog.findViewById(R.id.btn_confirm);
+        btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
     }
 
     @Override

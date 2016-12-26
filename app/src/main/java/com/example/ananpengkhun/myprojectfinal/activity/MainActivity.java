@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.MainMenuAdapter;
+import com.example.ananpengkhun.myprojectfinal.dao.TestValueDao;
 import com.example.ananpengkhun.myprojectfinal.fragment.MainFragment;
 
 import java.util.ArrayList;
@@ -223,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(MainActivity.this, MyDataInventoryActivity.class);
+
             startActivity(intent);
         }
     };

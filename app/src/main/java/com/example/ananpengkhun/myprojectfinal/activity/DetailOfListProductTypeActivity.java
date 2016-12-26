@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.ProductTypeAssociateAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestValueDao;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,6 +42,8 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
     private String des;
     private boolean swap = true;
 
+    private int index;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +59,7 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
         if (getIntent().getExtras() != null) {
             Intent intent = getIntent();
+            index = intent.getIntExtra("index",-1);
             productTypeDao = intent.getParcelableExtra("product_type_object_index");
             setTextView(productTypeDao.getProdTypeName(),
                     productTypeDao.getProdTypeCode(),
@@ -76,6 +80,8 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
     private View.OnClickListener toolbarClicklistener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            Intent intent = new Intent();
+            setResult(MyDataInventoryActivity.PRODUCT_TYPE,intent);
             finish();
         }
     };
@@ -84,7 +90,6 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             if (imvBoxForEdit.isSelected()) {
-                // save data
                 imvBoxForEdit.setSelected(false);
                 //textView Visible
                 tvProductTypeName.setVisibility(View.VISIBLE);
@@ -100,6 +105,9 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
                 des = edProductTypeDes.getText().toString();
 
                 setTextView(name,code,des);
+                // save data
+
+
 
             } else {
                 // edit data
@@ -126,6 +134,14 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
         }
     };
 
+    private void saveData(String name, String code, String des) {
+        TestValueDao.getInstance().setName("asdasdasfsdfasfadf");
+//        productTypeDao.setProdTypeName(name);
+//        productTypeDao.setProdTypeCode(code);
+//        productTypeDao.setProdTypeDes(des);
+
+    }
+
     private void setTextView(String name, String code, String des) {
         tvProductTypeName.setText(name);
         tvProdctTypeCode.setText(code);
@@ -140,6 +156,9 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("index",index);
+        setResult(MyDataInventoryActivity.PRODUCT_TYPE,intent);
         finish();
     }
 }

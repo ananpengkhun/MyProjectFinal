@@ -1,5 +1,6 @@
 package com.example.ananpengkhun.myprojectfinal.adapter;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
@@ -8,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProviderActivity;
@@ -28,6 +31,8 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private Context mContext;
     private List<ProviderDao> providerList;
+    private Button btnConfirm;
+    private Button btnCancel;
 
     public InventoryProviderAdapter(MyDataInventoryActivity myDataInventoryActivity, List<ProviderDao> providerList) {
         this.mContext = myDataInventoryActivity;
@@ -46,6 +51,37 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
             InventoryProviderViewHolder inventoryProviderViewHolder = (InventoryProviderViewHolder) holder;
             inventoryProviderViewHolder.tvProviderName.setText(providerList.get(position).getProvName());
 
+            inventoryProviderViewHolder.cvGroupView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Log.d(TAG, "onLongClick: ");
+                    final Dialog dialog = new Dialog(mContext);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.dialog_confirm_deleted);
+                    dialog.setCancelable(true);
+                    bindId(dialog);
+
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d(TAG, "onClick: dismiss");
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btnConfirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d(TAG, "onClick: row deleted.");
+                            //some row deleted
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+                    return true;
+                }
+            });
+
             inventoryProviderViewHolder.cvGroupView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -58,6 +94,11 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
                 }
             });
         }
+    }
+
+    private void bindId(Dialog dialog) {
+        btnConfirm = (Button) dialog.findViewById(R.id.btn_confirm);
+        btnCancel = (Button) dialog.findViewById(R.id.btn_cancel);
     }
 
     @Override

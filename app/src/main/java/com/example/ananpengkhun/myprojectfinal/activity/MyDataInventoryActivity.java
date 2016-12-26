@@ -43,6 +43,7 @@ import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProviderAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestValueDao;
 import com.example.ananpengkhun.myprojectfinal.fragment.AddProductFragment;
 
 import java.io.File;
@@ -74,6 +75,9 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private List<ProductTypeDao> productTypeList;
     private List<ProviderDao> providerList;
 
+    public static final int PRODUCT_TYPE = 1;
+    public static final int PRODUCT = 2;
+    public static final int PROVIDER = 3;
 
 
     @Override
@@ -84,6 +88,11 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         setupPageDrawer();
         dummyValue();
         init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void dummyValue() {
@@ -101,7 +110,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             productTypeList.add(productTypeDao);
         }
 
-        //provider list dummy
         for (int i = 0; i < 3; i++) {
             ProviderDao providerDao = new ProviderDao();
             providerDao.setProvName("บริษัทืั้ " + i);
@@ -121,7 +129,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             productDao.setProdUnit("m");
             if (productTypeList != null) {
                 productDao.setProdType(productTypeList);
-
             } else {
                 productDao.setProdType(null);
 
@@ -360,12 +367,8 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
             dialog.show();
         } else if (1 == target) {
-            Intent intent = new Intent(MyDataInventoryActivity.this,AddProductOnFabActivity.class);
+            Intent intent = new Intent(MyDataInventoryActivity.this, AddProductOnFabActivity.class);
             startActivity(intent);
-
-
-
-
         } else if (2 == target) {
             final Dialog dialog = new Dialog(MyDataInventoryActivity.this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -402,5 +405,15 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MyDataInventoryActivity.PRODUCT_TYPE) {
+            Log.d(TAG, "onActivityResult: product type");
 
+            if(data.getExtras().getInt("index") != -1){
+                Log.d(TAG, "onActivityResult: "+data.getExtras().getInt("index"));
+            }
+        }
+    }
 }

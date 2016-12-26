@@ -130,7 +130,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             if (imvBoxForEdit.isSelected()) {
-                //save data
+
                 imvBoxForEdit.setSelected(false);
 
                 //textView Visible
@@ -173,6 +173,9 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                 } else {
                     tvProviderProd.setText(spinnerProvider.getSelectedItem().toString());
                 }
+
+                //save data
+
 
             } else {
                 //edit data
