@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.fragment.AddProductFragment;
 import com.example.ananpengkhun.myprojectfinal.fragment.AddProductTypeFragment;
 import com.example.ananpengkhun.myprojectfinal.fragment.AddProviderFragment;
@@ -14,15 +15,18 @@ import com.example.ananpengkhun.myprojectfinal.fragment.MainFragment;
  */
 
 public class MainMenuAdapter extends FragmentStatePagerAdapter {
-    public MainMenuAdapter(FragmentManager fm) {
+    private DataDao dataDao;
+    public MainMenuAdapter(FragmentManager fm, DataDao dataDao) {
         super(fm);
+
+        this.dataDao = dataDao;
     }
 
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
         if(0 == position){
-            fragment = MainFragment.newInstant();
+            fragment = MainFragment.newInstant(dataDao);
         }else if(1 == position){
             fragment = AddProductFragment.newInstant();
         }else if(2 == position){

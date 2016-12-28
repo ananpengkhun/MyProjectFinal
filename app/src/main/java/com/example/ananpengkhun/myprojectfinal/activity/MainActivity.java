@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.MainMenuAdapter;
-import com.example.ananpengkhun.myprojectfinal.dao.TestValueDao;
+import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.fragment.MainFragment;
 
 import java.util.ArrayList;
@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     private MainMenuAdapter mainMenuAdapter;
     private String TAG = MainActivity.class.getSimpleName();
 
+    private DataDao dataDao;
+
+
 
 
     @Override
@@ -71,7 +74,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     }
 
     private void init() {
-        mainMenuAdapter = new MainMenuAdapter(getSupportFragmentManager());
+
+        if(getIntent().getParcelableExtra("data") != null){
+            dataDao = getIntent().getParcelableExtra("data");
+        }
+
+        mainMenuAdapter = new MainMenuAdapter(getSupportFragmentManager(),dataDao);
         vpPagerFragment.setAdapter(mainMenuAdapter);
 
         tvNavAddData.setOnClickListener(AddDataClicklistener);
@@ -224,7 +232,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(MainActivity.this, MyDataInventoryActivity.class);
-
             startActivity(intent);
         }
     };

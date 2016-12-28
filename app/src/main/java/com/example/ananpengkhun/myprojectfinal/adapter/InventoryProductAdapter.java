@@ -10,19 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProductActivity;
 import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProductViewHolder;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
-import com.example.ananpengkhun.myprojectfinal.dao.TestValueDao;
 
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by ananpengkhun on 12/21/16.
@@ -53,7 +48,7 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
         if(holder instanceof InventoryProductViewHolder){
             InventoryProductViewHolder inventoryProductViewHolder = (InventoryProductViewHolder) holder;
             inventoryProductViewHolder.tvNamePro.setText(productList.get(position).getProdName());
-            inventoryProductViewHolder.tvPricePro.setText(productList.get(position).getPrice());
+            inventoryProductViewHolder.tvPricePro.setText(productList.get(position).getProdCode());
             
             
             inventoryProductViewHolder.cvGroupView.setOnLongClickListener(new View.OnLongClickListener() {

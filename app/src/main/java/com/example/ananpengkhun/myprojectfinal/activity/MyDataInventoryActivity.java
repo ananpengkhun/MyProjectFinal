@@ -3,13 +3,9 @@ package com.example.ananpengkhun.myprojectfinal.activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
+import android.provider.ContactsContract;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -24,30 +20,21 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProductAdapter;
 import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProductTypeAdapter;
 import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProviderAdapter;
+import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
-import com.example.ananpengkhun.myprojectfinal.dao.TestValueDao;
-import com.example.ananpengkhun.myprojectfinal.fragment.AddProductFragment;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,9 +62,12 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private List<ProductTypeDao> productTypeList;
     private List<ProviderDao> providerList;
 
+
     public static final int PRODUCT_TYPE = 1;
     public static final int PRODUCT = 2;
     public static final int PROVIDER = 3;
+
+    private DataDao dataDao;
 
 
     @Override
@@ -96,56 +86,73 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     }
 
     private void dummyValue() {
-        productList = new ArrayList<>();
-        productTypeList = new ArrayList<>();
+
+
         providerList = new ArrayList<>();
 
+//        for (int i = 0; i < 6; i++) {
+//            ProductDao productDao = new ProductDao();
+//            productDao.setProdCode("000" + i);
+//            productDao.setProdName("สิ้นค้าชิ้นที่ " + i);
+//            productDao.setPrice("1,000");
+//            productDao.setProdAmount(100);
+//            productDao.setProdUnit("m");
+//            if (productTypeList != null) {
+//                productDao.setProdType(productTypeList);
+//            } else {
+//                productDao.setProdType(null);
+//
+//            }
+//
+//            if (providerList != null) {
+//                productDao.setProdProvider(providerList);
+//            } else {
+//                productDao.setProdProvider(null);
+//            }
+//            productDao.setProdAlert(5);
+//            productList.add(productDao);
+//
+//        }
 
-        // product type list dummy
-        for (int i = 0; i < 10; i++) {
-            ProductTypeDao productTypeDao = new ProductTypeDao();
-            productTypeDao.setProdTypeName("ประเภทที่ " + i);
-            productTypeDao.setProdTypeCode("00" + i);
-            productTypeDao.setProdTypeDes("รายการที่ " + i);
-            productTypeList.add(productTypeDao);
-        }
-
-        for (int i = 0; i < 3; i++) {
-            ProviderDao providerDao = new ProviderDao();
-            providerDao.setProvName("บริษัทืั้ " + i);
-            providerDao.setProvAddress("street :" + i);
-            providerDao.setProvPhone("080000000" + 1);
-            providerDao.setProvEmail("men_2537za@" + i + ".com");
-            providerList.add(providerDao);
-        }
-
-        // product list dummy
-        for (int i = 0; i < 20; i++) {
-            ProductDao productDao = new ProductDao();
-            productDao.setProdCode("000" + i);
-            productDao.setProdName("สิ้นค้าชิ้นที่ " + i);
-            productDao.setPrice("1,000");
-            productDao.setProdAmount(100);
-            productDao.setProdUnit("m");
-            if (productTypeList != null) {
-                productDao.setProdType(productTypeList);
-            } else {
-                productDao.setProdType(null);
-
-            }
-
-            if (providerList != null) {
-                productDao.setProdProvider(providerList);
-            } else {
-                productDao.setProdProvider(null);
-            }
-            productDao.setProdAlert(5);
-            productList.add(productDao);
-        }
 
     }
 
     private void init() {
+        productList = new ArrayList<>();
+        productTypeList = new ArrayList<>();
+
+        if (getIntent().getParcelableExtra("data") != null) {
+            dataDao = getIntent().getParcelableExtra("data");
+            //Log.d(TAG, "init: "+dataDao.getProductType().get(0).getName());
+        }
+
+        // product type list dummy
+        for (int i = 0; i < dataDao.getProductType().size(); i++) {
+            ProductTypeDao productTypeDao = new ProductTypeDao();
+            productTypeDao.setProdTypeName(dataDao.getProductType().get(i).getName());
+            productTypeDao.setProdTypeCode(dataDao.getProductType().get(i).getTypeCode());
+            productTypeDao.setProdTypeDes(dataDao.getProductType().get(i).getTypeDes());
+            productTypeList.add(productTypeDao);
+
+            // product list dummy
+            for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
+                ProductDao productDao = new ProductDao();
+                productDao.setProdCode(dataDao.getProductType().get(i).getData().get(j).getNameCode());
+                productDao.setProdName(dataDao.getProductType().get(i).getData().get(j).getNameItem());
+                productList.add(productDao);
+
+
+                ProviderDao providerDao = new ProviderDao();
+                providerDao.setProvName(dataDao.getProductType().get(i).getData().get(j).getProvider());
+                providerDao.setProvAddress("street :" + j);
+                providerDao.setProvPhone("080000000" + j);
+                providerDao.setProvEmail("men_2537za@" + j + ".com");
+                providerList.add(providerDao);
+
+            }
+        }
+
+
         vpHorizontalNtb.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
@@ -170,7 +177,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
-                    recyclerView.setAdapter(new InventoryProductTypeAdapter(MyDataInventoryActivity.this, productTypeList));
+                    recyclerView.setAdapter(new InventoryProductTypeAdapter(MyDataInventoryActivity.this, productTypeList, dataDao));
                     container.addView(mView);
                 } else if (1 == position) {
                     mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_product_recycler, container, false);
@@ -411,9 +418,11 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         if (requestCode == MyDataInventoryActivity.PRODUCT_TYPE) {
             Log.d(TAG, "onActivityResult: product type");
 
-            if(data.getExtras().getInt("index") != -1){
-                Log.d(TAG, "onActivityResult: "+data.getExtras().getInt("index"));
+            if (data.getExtras().getInt("index") != -1) {
+                Log.d(TAG, "onActivityResult: " + data.getExtras().getInt("index"));
             }
         }
     }
+
+
 }

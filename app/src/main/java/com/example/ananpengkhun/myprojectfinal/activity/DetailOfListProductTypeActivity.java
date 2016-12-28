@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,8 +15,12 @@ import android.widget.TextView;
 
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.ProductTypeAssociateAdapter;
+import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
+import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
-import com.example.ananpengkhun.myprojectfinal.dao.TestValueDao;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,7 +39,7 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
     @BindView(R.id.imv_box_for_edit) ImageView imvBoxForEdit;
 
     private ProductTypeAssociateAdapter productTypeAssociateAdapter;
-    private ProductTypeDao productTypeDao;
+    private DataDao dataDao;
 
     private String name;
     private String code;
@@ -43,6 +47,9 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
     private boolean swap = true;
 
     private int index;
+    private List<ProductDao> productDaoList;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +61,27 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
     }
 
     private void init() {
-        productTypeAssociateAdapter = new ProductTypeAssociateAdapter();
-        rcvAssociateProduct.setAdapter(productTypeAssociateAdapter);
-
-        if (getIntent().getExtras() != null) {
+        productDaoList = new ArrayList<>();
+        if (getIntent().getParcelableExtra("dataDao_item_product") != null) {
             Intent intent = getIntent();
             index = intent.getIntExtra("index",-1);
-            productTypeDao = intent.getParcelableExtra("product_type_object_index");
-            setTextView(productTypeDao.getProdTypeName(),
-                    productTypeDao.getProdTypeCode(),
-                    productTypeDao.getProdTypeDes());
+            dataDao = intent.getParcelableExtra("dataDao_item_product");
+            for(int i=0;i<dataDao.getProductType().get(index).getData().size();i++){
+                ProductDao productDao = new ProductDao();
+                productDao.setProdName(dataDao.getProductType().get(index).getData().get(i).getNameItem());
+                productDao.setProdCode(dataDao.getProductType().get(index).getData().get(i).getNameCode());
+                productDaoList.add(productDao);
+
+                //Log.d("raiwa", "init: "+dataDao.getProductType().get(index).getData().get(i).getNameItem());
+            }
+
+            //productTypeDao = intent.getParcelableExtra("product_type_object_index");
         }
+
+        rcvAssociateProduct.setLayoutManager(new LinearLayoutManager(DetailOfListProductTypeActivity.this));
+        rcvAssociateProduct.setAdapter(new ProductTypeAssociateAdapter(DetailOfListProductTypeActivity.this,productDaoList));
+
+
 
     }
 
@@ -81,6 +98,7 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             Intent intent = new Intent();
+            intent.putExtra("index",index);
             setResult(MyDataInventoryActivity.PRODUCT_TYPE,intent);
             finish();
         }
@@ -104,7 +122,7 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
                 code = edProdctTypeCode.getText().toString();
                 des = edProductTypeDes.getText().toString();
 
-                setTextView(name,code,des);
+                setTextView(name);
                 // save data
 
 
@@ -123,9 +141,9 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
                 if(swap){
                     swap = false;
-                    setTextEdit(productTypeDao.getProdTypeName(),
-                            productTypeDao.getProdTypeCode(),
-                            productTypeDao.getProdTypeDes());
+//                    setTextEdit(productTypeDao.getProdTypeName(),
+//                            productTypeDao.getProdTypeCode(),
+//                            productTypeDao.getProdTypeDes());
                 }else{
                     setTextEdit(name,code,des);
                 }
@@ -135,17 +153,14 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
     };
 
     private void saveData(String name, String code, String des) {
-        TestValueDao.getInstance().setName("asdasdasfsdfasfadf");
 //        productTypeDao.setProdTypeName(name);
 //        productTypeDao.setProdTypeCode(code);
 //        productTypeDao.setProdTypeDes(des);
 
     }
 
-    private void setTextView(String name, String code, String des) {
+    private void setTextView(String name) {
         tvProductTypeName.setText(name);
-        tvProdctTypeCode.setText(code);
-        tvProductTypeDes.setText(des);
     }
 
     private void setTextEdit(String name, String code, String des) {

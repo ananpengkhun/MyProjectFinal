@@ -18,6 +18,7 @@ import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.activity.MainActivity;
 import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
+import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +34,7 @@ public class MainFragment extends Fragment {
     @BindView(R.id.btn_click) Button btnClick;
 
     private MoveFragmentPage moveFragmentPage;
+    private DataDao dataDao;
 
     public interface MoveFragmentPage{
         void pageSelected(int index);
@@ -46,6 +48,16 @@ public class MainFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         moveFragmentPage = (MoveFragmentPage) context;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        //if(bundle != null){
+            dataDao = bundle.getParcelable("data");
+        //}
+
     }
 
     @Override
@@ -100,6 +112,9 @@ public class MainFragment extends Fragment {
                             break;
                         case R.id.prodct :
                             Intent intent = new Intent(getActivity(),MyDataInventoryActivity.class);
+                            if(dataDao != null){
+                                intent.putExtra("data",dataDao);
+                            }
                             startActivity(intent);
                             //setDrawerState(true);
                             break;
@@ -109,7 +124,17 @@ public class MainFragment extends Fragment {
         }
     };
 
-    public static Fragment newInstant() {
-        return new MainFragment();
+    public static Fragment newInstant(DataDao dataDao) {
+        MainFragment mainFragment = new MainFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("data",dataDao);
+
+        //DataDao dataDao1 = bundle.getParcelable("data");
+        //Log.d(TAG, "newInstant: "+dataDao1.getProductType().get(0).getName());
+
+
+        //Log.d(TAG, "newInstant: "+dataDao.getProductType().get(0).getName());
+        mainFragment.setArguments(bundle);
+        return mainFragment;
     }
 }
