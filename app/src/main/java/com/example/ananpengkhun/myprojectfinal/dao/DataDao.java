@@ -12,6 +12,9 @@ import java.util.List;
 public class DataDao implements Parcelable{
 
 
+    public DataDao() {
+    }
+
     /**
      * _id : 58636d022fcc0188ccad5ff6
      * productType : [{"typeId":1,"status":"success","typeCode":"001","typeDes":"ใช้แล้วจะติดใจ","name":"งานรับแรงดัน","data":[{"productId":1,"nameCode":"A","provider":"ตราช้าง SCG","nameItem":"ท่อประปาชนิดปลายเรียบและบานหัว","dataItem":[{"nameItemId":1,"nameItemSize":"18 (1/2\")","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"25","effordUBaht":"1.00","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"-","classEightFive ":"42.00","classOneThreeFive":"53.00"}},{"nameItemId":2,"nameItemSize":"20 (3/4\")","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"25","effordUBaht":"1.00","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"-","classEightFive ":"53.00","classOneThreeFive":"64.00"}},{"nameItemId":3,"nameItemSize":"25 (1\")","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"25","effordUBaht":"2.00","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"-","classEightFive ":"70.00","classOneThreeFive":"101.00"}},{"nameItemId":4,"nameItemSize":"35 (1 1/4\")","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"10","effordUBaht":"2.00","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"66.00","classEightFive ":"87.00","classOneThreeFive":"132.00"}},{"nameItemId":5,"nameItemSize":"40 (1 1/2\")","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"10","effordUBaht":"2.50","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"80.00","classEightFive ":"114.00","classOneThreeFive":"170.00"}},{"nameItemId":6,"nameItemSize":"55 (2\")","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"10","effordUBaht":"3.00","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"120.00","classEightFive ":"180.00","classOneThreeFive":"260.00"}},{"nameItemId":7,"nameItemSize":"65 (2 1/2\")","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"-","effordUBaht":"4.00","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"195.00","classEightFive ":"285.00","classOneThreeFive":"430.00"}},{"nameItemId":8,"nameItemSize":"80 (3\")","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"-","effordUBaht":"5.00","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"265.00","classEightFive ":"395.00","classOneThreeFive":"600.00"}},{"nameItemId":9,"nameItemSize":"100 (4\")","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"-","effordUBaht":"6.00","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"425.00","classEightFive ":"640.00","classOneThreeFive":"965.00"}},{"nameItemId":10,"nameItemSize":"125 (5\")","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"-","effordUBaht":"8.00","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"650.00","classEightFive ":"965.00","classOneThreeFive":"1455.00"}},{"nameItemId":11,"nameItemSize":"150 (6\")","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"-","effordUBaht":"18.00","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"905.00","classEightFive ":"1355.00","classOneThreeFive":"2050.00"}}]},{"productId":2,"nameCode":"B","provider":"ตราช้าง SCG","nameItem":"ท่อเซาะร่องชนิดปลายเรียบและบานหัว","dataItem":[{"nameItemId":1,"nameItemSize":"18 (1/2)","diameterOutsize":"-","weightPerWrap":"-","longPerWrap":"-","amongPerWrap":"25","effordUBaht":"1.00","contrainUPiecePerBox":"-","totalItemBigUnit":"10","priceUBaht":{"perMeter":"-","perWrap":"-","perKilo":"-","perPiece":"-","classOne":"-","classTwo ":"-","classThree":"-","classFive":"-","classEightFive ":"42.00","classOneThreeFive":"53.00"}}]}]}]
@@ -65,6 +68,10 @@ public class DataDao implements Parcelable{
     }
 
     public static class ProductTypeBean implements Parcelable {
+
+        public ProductTypeBean() {
+        }
+
         /**
          * typeId : 1
          * status : success
@@ -166,6 +173,10 @@ public class DataDao implements Parcelable{
         }
 
         public static class DataBean implements Parcelable{
+
+            public DataBean() {
+            }
+
             /**
              * productId : 1
              * nameCode : A
@@ -255,6 +266,10 @@ public class DataDao implements Parcelable{
             }
 
             public static class DataItemBean implements Parcelable{
+
+                public DataItemBean() {
+                }
+
                 /**
                  * nameItemId : 1
                  * nameItemSize : 18 (1/2")
@@ -404,6 +419,10 @@ public class DataDao implements Parcelable{
                 }
 
                 public static class PriceUBahtBean implements Parcelable{
+
+                    public PriceUBahtBean() {
+                    }
+
                     /**
                      * perMeter : -
                      * perWrap : -
@@ -427,6 +446,19 @@ public class DataDao implements Parcelable{
                     private String classFive;
                     private String classEightFive;
                     private String classOneThreeFive;
+
+                    public PriceUBahtBean(String perMeter, String perWrap, String perKilo, String perPiece, String classOne, String classTwo, String classThree, String classFive, String classEightFive, String classOneThreeFive) {
+                        this.perMeter = perMeter;
+                        this.perWrap = perWrap;
+                        this.perKilo = perKilo;
+                        this.perPiece = perPiece;
+                        this.classOne = classOne;
+                        this.classTwo = classTwo;
+                        this.classThree = classThree;
+                        this.classFive = classFive;
+                        this.classEightFive = classEightFive;
+                        this.classOneThreeFive = classOneThreeFive;
+                    }
 
                     protected PriceUBahtBean(Parcel in) {
                         perMeter = in.readString();

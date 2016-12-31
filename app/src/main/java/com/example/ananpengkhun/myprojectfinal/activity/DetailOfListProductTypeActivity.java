@@ -7,7 +7,6 @@ import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,10 +16,14 @@ import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.ProductTypeAssociateAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
-import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,16 +69,21 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
             Intent intent = getIntent();
             index = intent.getIntExtra("index",-1);
             dataDao = intent.getParcelableExtra("dataDao_item_product");
-            for(int i=0;i<dataDao.getProductType().get(index).getData().size();i++){
-                ProductDao productDao = new ProductDao();
-                productDao.setProdName(dataDao.getProductType().get(index).getData().get(i).getNameItem());
-                productDao.setProdCode(dataDao.getProductType().get(index).getData().get(i).getNameCode());
-                productDaoList.add(productDao);
+            if(dataDao.getProductType().get(index).getData() != null) {
+                for (int i = 0; i < dataDao.getProductType().get(index).getData().size(); i++) {
+                    ProductDao productDao = new ProductDao();
+                    productDao.setProdName(dataDao.getProductType().get(index).getData().get(i).getNameItem());
+                    productDao.setProdCode(dataDao.getProductType().get(index).getData().get(i).getNameCode());
+                    productDaoList.add(productDao);
 
-                //Log.d("raiwa", "init: "+dataDao.getProductType().get(index).getData().get(i).getNameItem());
+                    //Log.d("raiwa", "init: "+dataDao.getProductType().get(index).getData().get(i).getNameItem());
+                }
             }
 
             //productTypeDao = intent.getParcelableExtra("product_type_object_index");
+            setTextView(dataDao.getProductType().get(index).getName(),
+                    dataDao.getProductType().get(index).getTypeCode(),
+                    dataDao.getProductType().get(index).getTypeDes());
         }
 
         rcvAssociateProduct.setLayoutManager(new LinearLayoutManager(DetailOfListProductTypeActivity.this));
@@ -122,8 +130,15 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
                 code = edProdctTypeCode.getText().toString();
                 des = edProductTypeDes.getText().toString();
 
-                setTextView(name);
+                setTextView(name, code, des);
+
                 // save data
+                DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+                mRootRef.child("/productType/" + index+"/name").setValue(name);
+                mRootRef.child("/productType/" + index+"/typeCode").setValue(code);
+                mRootRef.child("/productType/" + index+"/typeDes").setValue(des);
+
+
 
 
 
@@ -141,9 +156,9 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
                 if(swap){
                     swap = false;
-//                    setTextEdit(productTypeDao.getProdTypeName(),
-//                            productTypeDao.getProdTypeCode(),
-//                            productTypeDao.getProdTypeDes());
+                    setTextEdit(dataDao.getProductType().get(index).getName(),
+                            dataDao.getProductType().get(index).getTypeCode(),
+                            dataDao.getProductType().get(index).getTypeDes());
                 }else{
                     setTextEdit(name,code,des);
                 }
@@ -159,8 +174,11 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
     }
 
-    private void setTextView(String name) {
+    private void setTextView(String name, String typeCode, String des) {
         tvProductTypeName.setText(name);
+        tvProdctTypeCode.setText(typeCode);
+        tvProductTypeDes.setText(des);
+
     }
 
     private void setTextEdit(String name, String code, String des) {

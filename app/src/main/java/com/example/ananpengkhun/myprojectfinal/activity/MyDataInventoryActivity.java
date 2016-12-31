@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,6 +14,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.cocosw.bottomsheet.BottomSheet;
@@ -34,9 +35,13 @@ import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +57,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.parent) CoordinatorLayout paRent;
     @BindView(R.id.tv_toolbarTitle) TextView tvToolbarTitle;
+
 
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private RecyclerView recyclerView;
@@ -134,21 +140,22 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             productTypeDao.setProdTypeDes(dataDao.getProductType().get(i).getTypeDes());
             productTypeList.add(productTypeDao);
 
-            // product list dummy
-            for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
-                ProductDao productDao = new ProductDao();
-                productDao.setProdCode(dataDao.getProductType().get(i).getData().get(j).getNameCode());
-                productDao.setProdName(dataDao.getProductType().get(i).getData().get(j).getNameItem());
-                productList.add(productDao);
+            if(dataDao.getProductType().get(i).getData() != null) {
+                // product list dummy
+                for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
+                    ProductDao productDao = new ProductDao();
+                    productDao.setProdCode(dataDao.getProductType().get(i).getData().get(j).getNameCode());
+                    productDao.setProdName(dataDao.getProductType().get(i).getData().get(j).getNameItem());
+                    productList.add(productDao);
 
 
-                ProviderDao providerDao = new ProviderDao();
-                providerDao.setProvName(dataDao.getProductType().get(i).getData().get(j).getProvider());
-                providerDao.setProvAddress("street :" + j);
-                providerDao.setProvPhone("080000000" + j);
-                providerDao.setProvEmail("men_2537za@" + j + ".com");
-                providerList.add(providerDao);
-
+                    ProviderDao providerDao = new ProviderDao();
+                    providerDao.setProvName(dataDao.getProductType().get(i).getData().get(j).getProvider());
+                    providerDao.setProvAddress("street :" + j);
+                    providerDao.setProvPhone("080000000" + j);
+                    providerDao.setProvEmail("men_2537za@" + j + ".com");
+                    providerList.add(providerDao);
+                }
             }
         }
 
@@ -358,19 +365,46 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             dialog.setContentView(R.layout.fragment_add_product_type);
             dialog.setCancelable(true);
 
-//            Button button1 = (Button) dialog.findViewById(R.id.button1);
-//            button1.setOnClickListener(new View.OnClickListener() {
-//                public void onClick(View v) {
-//                    Toast.makeText(getApplicationContext()
-//                            , "Close dialog", Toast.LENGTH_SHORT);
-//                    dialog.cancel();
-//                }
-//            });
-//
-//            TextView textView1 = (TextView) dialog.findViewById(R.id.textView1);
-//            textView1.setText("Custom Dialog");
-//            TextView textView2 = (TextView) dialog.findViewById(R.id.textView2);
-//            textView2.setText("Try it yourself");
+            final AppCompatEditText edProdTypeCode = (AppCompatEditText) dialog.findViewById(R.id.ed_prod_type_code);
+            final AppCompatEditText edProdTypeName = (AppCompatEditText) dialog.findViewById(R.id.ed_prod_type_name);
+            final AppCompatEditText edProdTypeDes = (AppCompatEditText) dialog.findViewById(R.id.ed_prod_type_des);
+            Button btnAddProdTypeConfirm = (Button) dialog.findViewById(R.id.btn_add_prod_type_confirm);
+
+            btnAddProdTypeConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(TAG, "onClick: " + dataDao.getProductType().size());
+                    if ((!"".equals(edProdTypeCode.getText().toString())) &&
+                            (!"".equals(edProdTypeName.getText().toString())) &&
+                            (!"".equals(edProdTypeDes.getText().toString()))
+                            ) {
+                        int index = +dataDao.getProductType().size();
+                        DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+
+                        HashMap<String, Object> postValues = new HashMap<>();
+                        postValues.put("name", edProdTypeName.getText().toString());
+                        postValues.put("status", "success");
+                        postValues.put("typeCode", edProdTypeCode.getText().toString());
+                        postValues.put("typeDes", edProdTypeDes.getText().toString());
+                        postValues.put("typeId", index+1);
+
+                        Map<String, Object> childUpdates = new HashMap<>();
+                        childUpdates.put("/productType/" +index, postValues);
+                        mRootRef.updateChildren(childUpdates);
+
+
+                        ProductTypeDao productTypeDao = new ProductTypeDao();
+                        productTypeDao.setProdTypeName(edProdTypeName.getText().toString());
+                        productTypeDao.setProdTypeCode(edProdTypeCode.getText().toString());
+                        productTypeDao.setProdTypeDes(edProdTypeDes.getText().toString());
+                        productTypeList.add(productTypeDao);
+                        dialog.dismiss();
+
+                    }
+
+                }
+            });
+
 
             dialog.show();
         } else if (1 == target) {

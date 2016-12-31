@@ -15,6 +15,11 @@ import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
 import com.example.ananpengkhun.myprojectfinal.httpmanager.DataHttpManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +36,8 @@ public class StartAppActivity extends AppCompatActivity {
     @BindView(R.id.activity_start_app) RelativeLayout activityStartApp;
 
     private DataDao dataDao;
-
+    private DatabaseReference mRootRef;
+    private ValueEventListener valueEventListener;
 
 
     @Override
@@ -40,31 +46,50 @@ public class StartAppActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start_app);
         ButterKnife.bind(this);
 
-
-        DataHttpManager.getInstance().getDataInterface().listRepos().enqueue(new Callback<DataDao>() {
+        mRootRef = FirebaseDatabase.getInstance().getReference();
+        valueEventListener = new ValueEventListener() {
             @Override
-            public void onResponse(Call<DataDao> call, Response<DataDao> response) {
-                //Log.d("start", "onResponse: "+response.body().getProductType().get(0).getName());
-                dataDao = response.body();
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(StartAppActivity.this,MainActivity.class);
-                        intent.putExtra("data",dataDao);
-                        startActivity(intent);
-                    }
-                }, 3000);
+                dataDao = dataSnapshot.getValue(DataDao.class);
+
+                //Log.d("start", "onDataChange: " + dataDao.getProductType().get(0).getData().get(0).getDataItem().get(0).getContrainUPiecePerBox());
+                Intent intent = new Intent(StartAppActivity.this, MainActivity.class);
+                intent.putExtra("data", dataDao);
+                startActivity(intent);
+
             }
 
             @Override
-            public void onFailure(Call<DataDao> call, Throwable t) {
-                Toast.makeText(StartAppActivity.this,"Start App Fail:"+t.toString(),Toast.LENGTH_LONG).show();
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("start", "onCancelled: "+databaseError.getMessage());
             }
-        });
+        };
+        mRootRef.addValueEventListener(valueEventListener);
 
 
 
+//        DataHttpManager.getInstance().getDataInterface().listRepos().enqueue(new Callback<DataDao>() {
+//            @Override
+//            public void onResponse(Call<DataDao> call, Response<DataDao> response) {
+//                //Log.d("start", "onResponse: "+response.body().getProductType().get(0).getName());
+//                dataDao = response.body();
+//
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Intent intent = new Intent(StartAppActivity.this,MainActivity.class);
+//                        intent.putExtra("data",dataDao);
+//                        startActivity(intent);
+//                    }
+//                }, 3000);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<DataDao> call, Throwable t) {
+//                Toast.makeText(StartAppActivity.this,"Start App Fail:"+t.toString(),Toast.LENGTH_LONG).show();
+//            }
+//        });
 
 
     }
@@ -72,6 +97,10 @@ public class StartAppActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+
+        if (valueEventListener != null) {
+            mRootRef.removeEventListener(valueEventListener);
+        }
     }
 
 }

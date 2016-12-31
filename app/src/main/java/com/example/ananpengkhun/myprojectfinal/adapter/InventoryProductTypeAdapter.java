@@ -16,6 +16,8 @@ import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProductTypeViewHolder;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -76,6 +78,11 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
                         public void onClick(View view) {
                             Log.d(TAG, "onClick: row deleted.");
                             //some row deleted
+                            DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+                            DatabaseReference mType = mRootRef.child("/productType/"+position);
+                            productTypeList.remove(position);
+                            mType.removeValue();
+                            notifyDataSetChanged();
                             dialog.dismiss();
                         }
                     });
