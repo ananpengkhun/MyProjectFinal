@@ -17,8 +17,17 @@ import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProviderActi
 import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProviderViewHolder;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.gson.internal.bind.DateTypeAdapter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 
@@ -74,6 +83,44 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
                         public void onClick(View view) {
                             Log.d(TAG, "onClick: row deleted.");
                             //some row deleted
+                            DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com");
+                            Query reference = mRootRef.child("provider").orderByChild("provId").equalTo(providerList.get(position).getProvId());
+
+                            Log.d(TAG, "onClick: "+providerList.get(position).getProvId());
+                            providerList.remove(position);
+                            //reference.removeValue();
+
+                            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                                        appleSnapshot.getRef().removeValue();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+//                            // position: 2 size : 3
+//                            Log.d(TAG, "onClick position: "+position);
+//                            Log.d(TAG, "onClick size: "+productTypeList.size());
+//                            for (int i = position; i < productTypeList.size(); i++) {
+//
+//                                HashMap<String, Object> postValues = new HashMap<>();
+//                                postValues.put("name", productTypeList.get(position).getProdTypeName());
+//                                postValues.put("status", "success");
+//                                postValues.put("typeCode", productTypeList.get(position).getProdTypeCode());
+//                                postValues.put("typeDes", productTypeList.get(position).getProdTypeDes());
+//                                postValues.put("typeId", position + 1);
+//
+//                                Map<String, Object> childUpdates = new HashMap<>();
+//                                childUpdates.put("/productType/" + position, postValues);
+//                                mRootRef.updateChildren(childUpdates);
+//                            }
+                            notifyDataSetChanged();
                             dialog.dismiss();
                         }
                     });

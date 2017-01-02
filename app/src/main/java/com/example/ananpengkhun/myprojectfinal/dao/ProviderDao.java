@@ -8,7 +8,7 @@ import android.os.Parcelable;
  */
 
 public class ProviderDao implements Parcelable{
-
+    private int provId;
     private String provName;
     private String provAddress;
     private String provPhone;
@@ -18,6 +18,7 @@ public class ProviderDao implements Parcelable{
     }
 
     protected ProviderDao(Parcel in) {
+        provId = in.readInt();
         provName = in.readString();
         provAddress = in.readString();
         provPhone = in.readString();
@@ -35,6 +36,14 @@ public class ProviderDao implements Parcelable{
             return new ProviderDao[size];
         }
     };
+
+    public int getProvId() {
+        return provId;
+    }
+
+    public void setProvId(int provId) {
+        this.provId = provId;
+    }
 
     public String getProvName() {
         return provName;
@@ -75,6 +84,7 @@ public class ProviderDao implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(provId);
         parcel.writeString(provName);
         parcel.writeString(provAddress);
         parcel.writeString(provPhone);

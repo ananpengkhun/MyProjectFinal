@@ -19,9 +19,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,6 +42,9 @@ public class StartAppActivity extends AppCompatActivity {
     private ValueEventListener valueEventListener;
 
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,12 +52,12 @@ public class StartAppActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mRootRef = FirebaseDatabase.getInstance().getReference();
+
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 dataDao = dataSnapshot.getValue(DataDao.class);
-
                 //Log.d("start", "onDataChange: " + dataDao.getProductType().get(0).getData().get(0).getDataItem().get(0).getContrainUPiecePerBox());
                 Intent intent = new Intent(StartAppActivity.this, MainActivity.class);
                 intent.putExtra("data", dataDao);
@@ -66,6 +71,11 @@ public class StartAppActivity extends AppCompatActivity {
             }
         };
         mRootRef.addValueEventListener(valueEventListener);
+
+
+
+
+
 
 
 

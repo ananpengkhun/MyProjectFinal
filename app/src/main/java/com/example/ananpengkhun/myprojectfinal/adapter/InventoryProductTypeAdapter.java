@@ -2,6 +2,7 @@ package com.example.ananpengkhun.myprojectfinal.adapter;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +20,9 @@ import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -30,7 +33,8 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
 
     private static final String TAG = InventoryProductTypeAdapter.class.getSimpleName();
     private final MyDataInventoryActivity mContext;
-
+    private DatabaseReference mRootRef;
+    private DatabaseReference mType;
 
     private List<ProductTypeDao> productTypeList;
     private DataDao dataDao;
@@ -78,10 +82,29 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
                         public void onClick(View view) {
                             Log.d(TAG, "onClick: row deleted.");
                             //some row deleted
-                            DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-                            DatabaseReference mType = mRootRef.child("/productType/"+position);
+                            mRootRef = FirebaseDatabase.getInstance().getReference();
+                            mType = mRootRef.child("/productType/" + position);
                             productTypeList.remove(position);
                             mType.removeValue();
+
+                            // position: 2 size : 3
+                            Log.d(TAG, "onClick position: "+position);
+                            Log.d(TAG, "onClick size: "+productTypeList.size());
+                            for (int i = position; i < productTypeList.size(); i++) {
+
+                                HashMap<String, Object> postValues = new HashMap<>();
+                                postValues.put("name", productTypeList.get(position).getProdTypeName());
+                                postValues.put("status", "success");
+                                postValues.put("typeCode", productTypeList.get(position).getProdTypeCode());
+                                postValues.put("typeDes", productTypeList.get(position).getProdTypeDes());
+                                postValues.put("typeId", position + 1);
+
+                                Map<String, Object> childUpdates = new HashMap<>();
+                                childUpdates.put("/productType/" + position, postValues);
+                                mRootRef.updateChildren(childUpdates);
+                            }
+
+
                             notifyDataSetChanged();
                             dialog.dismiss();
                         }
@@ -94,16 +117,16 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
             inventoryProductTypeViewHolder.cvGroupView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG, "onClick: "+position);
+                    Log.d(TAG, "onClick: " + position);
                     Intent intent = new Intent(mContext, DetailOfListProductTypeActivity.class);
-                    intent.putExtra("dataDao_item_product",dataDao);
+                    intent.putExtra("dataDao_item_product", dataDao);
                     //intent.putExtra("product_type_object_index",productTypeList.get(position).g);
-                    intent.putExtra("index",position);
-                    Log.d(TAG, "onClick: "+position);
+                    intent.putExtra("index", position);
+                    Log.d(TAG, "onClick: " + position);
 //                    intent.putExtra("pro_type_name",productTypeList.get(position).getProdTypeName());
 //                    intent.putExtra("pro_type_code",productTypeList.get(position).getProdTypeCode());
 //                    intent.putExtra("pro_type_des",productTypeList.get(position).getProdTypeDes());
-                    mContext.startActivityForResult(intent,MyDataInventoryActivity.PRODUCT_TYPE);
+                    mContext.startActivityForResult(intent, MyDataInventoryActivity.PRODUCT_TYPE);
 
 
                 }

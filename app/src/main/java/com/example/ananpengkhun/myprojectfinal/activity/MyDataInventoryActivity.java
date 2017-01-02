@@ -3,6 +3,7 @@ package com.example.ananpengkhun.myprojectfinal.activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -31,14 +32,20 @@ import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProductAdapter;
 import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProductTypeAdapter;
 import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProviderAdapter;
+import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProviderViewHolder;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +79,13 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     public static final int PRODUCT_TYPE = 1;
     public static final int PRODUCT = 2;
     public static final int PROVIDER = 3;
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
 
     private DataDao dataDao;
+    private static final String MyPreference = "ProdType_index";
+    private List<ProviderDao> providerDaoList;
+
 
 
     @Override
@@ -126,6 +138,8 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private void init() {
         productList = new ArrayList<>();
         productTypeList = new ArrayList<>();
+        providerDaoList = new ArrayList<>();
+
 
         if (getIntent().getParcelableExtra("data") != null) {
             dataDao = getIntent().getParcelableExtra("data");
@@ -134,13 +148,14 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
         // product type list dummy
         for (int i = 0; i < dataDao.getProductType().size(); i++) {
+
             ProductTypeDao productTypeDao = new ProductTypeDao();
             productTypeDao.setProdTypeName(dataDao.getProductType().get(i).getName());
             productTypeDao.setProdTypeCode(dataDao.getProductType().get(i).getTypeCode());
             productTypeDao.setProdTypeDes(dataDao.getProductType().get(i).getTypeDes());
             productTypeList.add(productTypeDao);
 
-            if(dataDao.getProductType().get(i).getData() != null) {
+            if (dataDao.getProductType().get(i).getData() != null) {
                 // product list dummy
                 for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
                     ProductDao productDao = new ProductDao();
@@ -148,16 +163,32 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     productDao.setProdName(dataDao.getProductType().get(i).getData().get(j).getNameItem());
                     productList.add(productDao);
 
-
-                    ProviderDao providerDao = new ProviderDao();
-                    providerDao.setProvName(dataDao.getProductType().get(i).getData().get(j).getProvider());
-                    providerDao.setProvAddress("street :" + j);
-                    providerDao.setProvPhone("080000000" + j);
-                    providerDao.setProvEmail("men_2537za@" + j + ".com");
-                    providerList.add(providerDao);
                 }
             }
         }
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/provider");
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    ProviderDao providerDao = new ProviderDao();
+                    providerDao.setProvId(snapshot.getValue(ProviderDao.class).getProvId());
+                    providerDao.setProvName(snapshot.getValue(ProviderDao.class).getProvName());
+                    providerDao.setProvPhone(snapshot.getValue(ProviderDao.class).getProvPhone());
+                    providerDao.setProvEmail(snapshot.getValue(ProviderDao.class).getProvEmail());
+                    providerDao.setProvAddress(snapshot.getValue(ProviderDao.class).getProvAddress());
+                    providerDaoList.add(providerDao);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        databaseReference.addListenerForSingleValueEvent(valueEventListener);
 
 
         vpHorizontalNtb.setAdapter(new PagerAdapter() {
@@ -194,12 +225,16 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     recyclerView.setAdapter(new InventoryProductAdapter(MyDataInventoryActivity.this, productList));
                     container.addView(mView);
                 } else if (2 == position) {
-                    mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_provider_recycler, container, false);
-                    recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
-                    recyclerView.setHasFixedSize(true);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
-                    recyclerView.setAdapter(new InventoryProviderAdapter(MyDataInventoryActivity.this, providerList));
-                    container.addView(mView);
+                    if (providerDaoList.size() > 0) {
+                        mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_provider_recycler, container, false);
+                        recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
+                        recyclerView.setHasFixedSize(true);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
+                        recyclerView.setAdapter(new InventoryProviderAdapter(MyDataInventoryActivity.this, providerDaoList));
+                        container.addView(mView);
+                    }
+
+
                 }
                 return mView;
 
@@ -378,7 +413,19 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                             (!"".equals(edProdTypeName.getText().toString())) &&
                             (!"".equals(edProdTypeDes.getText().toString()))
                             ) {
-                        int index = +dataDao.getProductType().size();
+                        sp = getSharedPreferences(MyPreference, MODE_PRIVATE);
+                        if (0 == sp.getInt("index", 0)) {
+                            editor = sp.edit();
+                            editor.putInt("index", dataDao.getProductType().size());
+                            editor.apply();
+                        } else {
+                            editor = sp.edit();
+                            int i = sp.getInt("index", 0);
+                            editor.putInt("index", i + 1);
+                            editor.apply();
+                        }
+
+                        int index = sp.getInt("index", 0);
                         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
                         HashMap<String, Object> postValues = new HashMap<>();
@@ -386,10 +433,10 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                         postValues.put("status", "success");
                         postValues.put("typeCode", edProdTypeCode.getText().toString());
                         postValues.put("typeDes", edProdTypeDes.getText().toString());
-                        postValues.put("typeId", index+1);
+                        postValues.put("typeId", index + 1);
 
                         Map<String, Object> childUpdates = new HashMap<>();
-                        childUpdates.put("/productType/" +index, postValues);
+                        childUpdates.put("/productType/" + index, postValues);
                         mRootRef.updateChildren(childUpdates);
 
 
@@ -416,19 +463,45 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             dialog.setContentView(R.layout.fragment_add_provider);
             dialog.setCancelable(true);
 
-//            Button button1 = (Button) dialog.findViewById(R.id.button1);
-//            button1.setOnClickListener(new View.OnClickListener() {
-//                public void onClick(View v) {
-//                    Toast.makeText(getApplicationContext()
-//                            , "Close dialog", Toast.LENGTH_SHORT);
-//                    dialog.cancel();
-//                }
-//            });
-//
-//            TextView textView1 = (TextView) dialog.findViewById(R.id.textView1);
-//            textView1.setText("Custom Dialog");
-//            TextView textView2 = (TextView) dialog.findViewById(R.id.textView2);
-//            textView2.setText("Try it yourself");
+            final AppCompatEditText edProvName = (AppCompatEditText) dialog.findViewById(R.id.ed_prov_name);
+            final AppCompatEditText edProvAddress = (AppCompatEditText) dialog.findViewById(R.id.ed_prov_address);
+            final AppCompatEditText edProvPhone = (AppCompatEditText) dialog.findViewById(R.id.ed_prov_phone);
+            final AppCompatEditText edProvEmail = (AppCompatEditText) dialog.findViewById(R.id.ed_prov_email);
+            Button btnAddProvConfirm = (Button) dialog.findViewById(R.id.btn_add_prov_confirm);
+
+            btnAddProvConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ProviderDao providerDao = new ProviderDao();
+                    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+                    DatabaseReference databaseReference = mRootRef.child("provider");
+
+
+                    String key = databaseReference.push().getKey();
+                    HashMap<String, Object> postValues = new HashMap<>();
+                    int index = providerDaoList.size()+1;
+                    postValues.put("provId", index);
+                    postValues.put("provName", edProvName.getText().toString());
+                    postValues.put("provAddress", edProvAddress.getText().toString());
+                    postValues.put("provEmail", edProvEmail.getText().toString());
+                    postValues.put("provPhone", edProvPhone.getText().toString());
+
+                    Map<String, Object> childUpdates = new HashMap<>();
+                    childUpdates.put("/provider/" + key, postValues);
+                    mRootRef.updateChildren(childUpdates);
+
+                    ProviderDao providerDao1 = new ProviderDao();
+                    providerDao1.setProvId(index);
+                    providerDao1.setProvName(edProvName.getText().toString());
+                    providerDao1.setProvAddress(edProvAddress.getText().toString());
+                    providerDao1.setProvEmail(edProvEmail.getText().toString());
+                    providerDao1.setProvPhone(edProvPhone.getText().toString());
+                    providerDaoList.add(providerDao1);
+
+
+                    dialog.dismiss();
+                }
+            });
 
             dialog.show();
         }
@@ -458,5 +531,12 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         }
     }
 
+    private void getUpdate(DataSnapshot dataSnapshot) {
+
+        // Log.d("start", "onDataChange: "+dataSnapshot.toString());
+
+        //Log.d("start", "onDataChange: "+providerDaos.get(0).getProvName());
+
+    }
 
 }
