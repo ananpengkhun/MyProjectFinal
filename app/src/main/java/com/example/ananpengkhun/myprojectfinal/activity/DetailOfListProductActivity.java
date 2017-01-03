@@ -71,7 +71,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
             productDao = intent.getParcelableExtra("product_object_index");
             rcSizeItem.setHasFixedSize(true);
             rcSizeItem.setLayoutManager(new LinearLayoutManager(DetailOfListProductActivity.this));
-            eachItemSizeAdapter = new EachItemSizeAdapter(DetailOfListProductActivity.this);
+            eachItemSizeAdapter = new EachItemSizeAdapter(DetailOfListProductActivity.this,productDao.getProductEachSizes());
             rcSizeItem.setAdapter(eachItemSizeAdapter);
         }
         spinnerOfTypeProduct();

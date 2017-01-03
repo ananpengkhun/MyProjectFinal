@@ -35,6 +35,7 @@ import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProviderAdapter;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProviderViewHolder;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
+import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
 import com.google.firebase.database.ChildEventListener;
@@ -43,6 +44,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.ls.LSException;
 
 import java.util.ArrayList;
 import java.util.EventListener;
@@ -75,6 +78,8 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private List<ProductTypeDao> productTypeList;
     private List<ProviderDao> providerList;
 
+    private List<ProductEachSize> productEachSizes;
+
 
     public static final int PRODUCT_TYPE = 1;
     public static final int PRODUCT = 2;
@@ -87,14 +92,12 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private List<ProviderDao> providerDaoList;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_data_inventory);
         ButterKnife.bind(this);
         setupPageDrawer();
-        dummyValue();
         init();
     }
 
@@ -103,42 +106,13 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    private void dummyValue() {
-
-
-        providerList = new ArrayList<>();
-
-//        for (int i = 0; i < 6; i++) {
-//            ProductDao productDao = new ProductDao();
-//            productDao.setProdCode("000" + i);
-//            productDao.setProdName("สิ้นค้าชิ้นที่ " + i);
-//            productDao.setPrice("1,000");
-//            productDao.setProdAmount(100);
-//            productDao.setProdUnit("m");
-//            if (productTypeList != null) {
-//                productDao.setProdType(productTypeList);
-//            } else {
-//                productDao.setProdType(null);
-//
-//            }
-//
-//            if (providerList != null) {
-//                productDao.setProdProvider(providerList);
-//            } else {
-//                productDao.setProdProvider(null);
-//            }
-//            productDao.setProdAlert(5);
-//            productList.add(productDao);
-//
-//        }
-
-
-    }
 
     private void init() {
         productList = new ArrayList<>();
         productTypeList = new ArrayList<>();
         providerDaoList = new ArrayList<>();
+
+        providerList = new ArrayList<>();
 
 
         if (getIntent().getParcelableExtra("data") != null) {
@@ -158,10 +132,51 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             if (dataDao.getProductType().get(i).getData() != null) {
                 // product list dummy
                 for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
+                    productEachSizes = new ArrayList<>();
                     ProductDao productDao = new ProductDao();
                     productDao.setProdCode(dataDao.getProductType().get(i).getData().get(j).getNameCode());
                     productDao.setProdName(dataDao.getProductType().get(i).getData().get(j).getNameItem());
+                    productDao.setProviderId(dataDao.getProductType().get(i).getData().get(j).getProvider());
+
+                    DataDao.ProductTypeBean.DataBean list = dataDao.getProductType().get(i).getData().get(j);
+
+                    for (int z = 0; z < list.getDataItem().size(); z++) {
+
+                        Log.d(TAG, "init: "+list.getDataItem().size());
+                        //productDao.setProductEachSizes();
+                        ProductEachSize productEachSize = new ProductEachSize();
+                        productEachSize.setAmongPerWrap(list.getDataItem().get(z).getAmongPerWrap());
+                        productEachSize.setContrainUPiecePerBox(list.getDataItem().get(z).getContrainUPiecePerBox());
+                        productEachSize.setDiameterOutsize(list.getDataItem().get(z).getDiameterOutsize());
+                        productEachSize.setEffordUBaht(list.getDataItem().get(z).getEffordUBaht());
+                        productEachSize.setLongPerWrap(list.getDataItem().get(z).getLongPerWrap());
+                        productEachSize.setNameItemId(list.getDataItem().get(z).getNameItemId());
+                        productEachSize.setNameItemSize(list.getDataItem().get(z).getNameItemSize());
+                        productEachSize.setTotalItemBigUnit(list.getDataItem().get(z).getTotalItemBigUnit());
+                        productEachSize.setUnit(list.getDataItem().get(z).getUnit());
+                        productEachSize.setWeightPerWrap(list.getDataItem().get(z).getWeightPerWrap());
+
+                        ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
+                        priceUBahtBean.setClassEightFive(list.getDataItem().get(z).getPriceUBaht().getClassEightFive());
+                        priceUBahtBean.setClassFive(list.getDataItem().get(z).getPriceUBaht().getClassFive());
+                        priceUBahtBean.setClassOne(list.getDataItem().get(z).getPriceUBaht().getClassOne());
+                        priceUBahtBean.setClassOneThreeFive(list.getDataItem().get(z).getPriceUBaht().getClassOneThreeFive());
+                        priceUBahtBean.setClassThree(list.getDataItem().get(z).getPriceUBaht().getClassThree());
+                        priceUBahtBean.setClassTwo(list.getDataItem().get(z).getPriceUBaht().getClassTwo());
+                        priceUBahtBean.setPerKilo(list.getDataItem().get(z).getPriceUBaht().getPerKilo());
+                        priceUBahtBean.setPerMeter(list.getDataItem().get(z).getPriceUBaht().getPerMeter());
+                        priceUBahtBean.setPerPiece(list.getDataItem().get(z).getPriceUBaht().getPerPiece());
+                        priceUBahtBean.setPerWrap(list.getDataItem().get(z).getPriceUBaht().getPerWrap());
+                        productEachSize.setPriceUBaht(priceUBahtBean);
+
+                        productEachSizes.add(productEachSize);
+
+                        //productEachSizes.add(productEachSize);
+                    }
+
+                    productDao.setProductEachSizes(productEachSizes);
                     productList.add(productDao);
+
 
                 }
             }
@@ -171,8 +186,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ProviderDao providerDao = new ProviderDao();
                     providerDao.setProvId(snapshot.getValue(ProviderDao.class).getProvId());
@@ -183,6 +196,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     providerDaoList.add(providerDao);
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -472,34 +486,57 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             btnAddProvConfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ProviderDao providerDao = new ProviderDao();
-                    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-                    DatabaseReference databaseReference = mRootRef.child("provider");
+                    if ((!"".equals(edProvName.getText().toString())) &&
+                            (!"".equals(edProvAddress.getText().toString())) &&
+                            (!"".equals(edProvPhone.getText().toString())) &&
+                            (!"".equals(edProvEmail.getText().toString()))
+                            ) {
+
+                        sp = getSharedPreferences(MyPreference, MODE_PRIVATE);
+                        if (0 == sp.getInt("index_provider", 0)) {
+                            editor = sp.edit();
+                            editor.putInt("index_provider", providerDaoList.size() + 1);
+                            editor.apply();
+                        } else {
+                            editor = sp.edit();
+                            int i = sp.getInt("index_provider", 0);
+                            editor.putInt("index_provider", i + 1);
+                            editor.apply();
+                        }
+
+                        int index = sp.getInt("index_provider", 0);
+
+                        //ProviderDao providerDao = new ProviderDao();
+                        DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+                        DatabaseReference databaseReference = mRootRef.child("provider");
 
 
-                    String key = databaseReference.push().getKey();
-                    HashMap<String, Object> postValues = new HashMap<>();
-                    int index = providerDaoList.size()+1;
-                    postValues.put("provId", index);
-                    postValues.put("provName", edProvName.getText().toString());
-                    postValues.put("provAddress", edProvAddress.getText().toString());
-                    postValues.put("provEmail", edProvEmail.getText().toString());
-                    postValues.put("provPhone", edProvPhone.getText().toString());
+                        String key = databaseReference.push().getKey();
+                        HashMap<String, Object> postValues = new HashMap<>();
 
-                    Map<String, Object> childUpdates = new HashMap<>();
-                    childUpdates.put("/provider/" + key, postValues);
-                    mRootRef.updateChildren(childUpdates);
+                        postValues.put("provId", index);
+                        postValues.put("provName", edProvName.getText().toString());
+                        postValues.put("provAddress", edProvAddress.getText().toString());
+                        postValues.put("provEmail", edProvEmail.getText().toString());
+                        postValues.put("provPhone", edProvPhone.getText().toString());
 
-                    ProviderDao providerDao1 = new ProviderDao();
-                    providerDao1.setProvId(index);
-                    providerDao1.setProvName(edProvName.getText().toString());
-                    providerDao1.setProvAddress(edProvAddress.getText().toString());
-                    providerDao1.setProvEmail(edProvEmail.getText().toString());
-                    providerDao1.setProvPhone(edProvPhone.getText().toString());
-                    providerDaoList.add(providerDao1);
+                        Map<String, Object> childUpdates = new HashMap<>();
+                        childUpdates.put("/provider/" + key, postValues);
+                        mRootRef.updateChildren(childUpdates);
+
+                        ProviderDao providerDao1 = new ProviderDao();
+                        providerDao1.setProvId(index);
+                        providerDao1.setProvName(edProvName.getText().toString());
+                        providerDao1.setProvAddress(edProvAddress.getText().toString());
+                        providerDao1.setProvEmail(edProvEmail.getText().toString());
+                        providerDao1.setProvPhone(edProvPhone.getText().toString());
+                        providerDaoList.add(providerDao1);
 
 
-                    dialog.dismiss();
+                        dialog.dismiss();
+                    } else {
+
+                    }
                 }
             });
 

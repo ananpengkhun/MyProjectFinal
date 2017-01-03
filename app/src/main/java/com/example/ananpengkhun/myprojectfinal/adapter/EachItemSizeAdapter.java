@@ -2,7 +2,6 @@ package com.example.ananpengkhun.myprojectfinal.adapter;
 
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,11 @@ import android.widget.TextView;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProductActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.EachItemSizeViewHolder;
+import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
+import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,9 +26,12 @@ import butterknife.ButterKnife;
 
 public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private DetailOfListProductActivity detailOfListProductActivity;
+    private List<ProductEachSize> productDao;
 
-    public EachItemSizeAdapter(DetailOfListProductActivity detailOfListProductActivity) {
+
+    public EachItemSizeAdapter(DetailOfListProductActivity detailOfListProductActivity, List<ProductEachSize> productDao) {
         this.detailOfListProductActivity = detailOfListProductActivity;
+        this.productDao = productDao;
     }
 
     @Override
@@ -36,7 +42,7 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof EachItemSizeViewHolder){
+        if (holder instanceof EachItemSizeViewHolder) {
 //            setTextView(productDao.getProdCode(),
 //                    productDao.getProdName(),
 //                    productDao.getPrice(),
@@ -52,24 +58,24 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         eachItemSizeViewHolder.imvBoxForEdit.setSelected(false);
 
                         //textView Visible
-                        eachItemSizeViewHolder.tvChooseSpinner.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.tvCodeProd.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.tvNamePro.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.tvPricePro.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.tvAmountProd.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.tvUnitProd.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.tvProviderProd.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.tvAlertProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvChooseSpinner.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvCodeProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvNamePro.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvPricePro.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvAmountProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvUnitProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvProviderProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvAlertProd.setVisibility(View.VISIBLE);
 
                         //EditText Gone
-                        eachItemSizeViewHolder.edAlertProd.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.edUnitProd.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.edAmountProd.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.edPriceProd.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.edNameProd.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.spinner.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.spinnerProvider.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.edCodeProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.edAlertProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.edUnitProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.edAmountProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.edPriceProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.edNameProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.spinner.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.spinnerProvider.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.edCodeProd.setVisibility(View.GONE);
 
 //                        prodCode = edCodeProd.getText().toString();
 //                        prodName = edNameProd.getText().toString();
@@ -99,23 +105,23 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         //edit data
                         eachItemSizeViewHolder.imvBoxForEdit.setSelected(true);
                         //textView Gone
-                        eachItemSizeViewHolder.tvAlertProd.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.tvProviderProd.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.tvUnitProd.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.tvAmountProd.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.tvPricePro.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.tvNamePro.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.tvChooseSpinner.setVisibility(View.GONE);
-                        eachItemSizeViewHolder.tvCodeProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.tvAlertProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.tvProviderProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.tvUnitProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.tvAmountProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.tvPricePro.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.tvNamePro.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.tvChooseSpinner.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.tvCodeProd.setVisibility(View.GONE);
                         //EditText Visible
-                        eachItemSizeViewHolder.edAlertProd.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.edUnitProd.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.edAmountProd.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.edPriceProd.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.edNameProd.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.spinner.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.spinnerProvider.setVisibility(View.VISIBLE);
-                        eachItemSizeViewHolder.edCodeProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.edAlertProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.edUnitProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.edAmountProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.edPriceProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.edNameProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.spinner.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.spinnerProvider.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.edCodeProd.setVisibility(View.VISIBLE);
 
 //                        if (swap) {
 //                            swap = false;
@@ -139,7 +145,8 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return 10;
+        return productDao.size();
     }
+
 
 }

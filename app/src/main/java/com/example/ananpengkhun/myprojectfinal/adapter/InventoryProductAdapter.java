@@ -16,6 +16,7 @@ import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProductActiv
 import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProductViewHolder;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
+import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final String TAG = InventoryProductAdapter.class.getSimpleName();
     private Context mContext;
     private List<ProductDao> productList;
+
     private Button btnConfirm;
     private Button btnCancel;
 
@@ -34,7 +36,6 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
     public InventoryProductAdapter(MyDataInventoryActivity myDataInventoryActivity, List<ProductDao> productList) {
         this.mContext = myDataInventoryActivity;
         this.productList = productList;
-
     }
 
     @Override
@@ -88,6 +89,7 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
                     Log.d(TAG, "onClick: "+position);
                     Intent intent = new Intent(mContext, DetailOfListProductActivity.class);
                     intent.putExtra("product_object_index",productList.get(position));
+                    //Log.d(TAG, "onClick: "+productList.get(position).getProductEachSizes());
                     mContext.startActivity(intent);
 
                 }

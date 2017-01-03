@@ -284,6 +284,7 @@ public class DataDao implements Parcelable{
                 private String effordUBaht;
                 private String contrainUPiecePerBox;
                 private String totalItemBigUnit;
+                private String unit;
                 private PriceUBahtBean priceUBaht;
 
                 protected DataItemBean(Parcel in) {
@@ -296,6 +297,7 @@ public class DataDao implements Parcelable{
                     effordUBaht = in.readString();
                     contrainUPiecePerBox = in.readString();
                     totalItemBigUnit = in.readString();
+                    unit = in.readString();
                     priceUBaht = in.readParcelable(PriceUBahtBean.class.getClassLoader());
                 }
 
@@ -310,6 +312,14 @@ public class DataDao implements Parcelable{
                         return new DataItemBean[size];
                     }
                 };
+
+                public String getUnit() {
+                    return unit;
+                }
+
+                public void setUnit(String unit) {
+                    this.unit = unit;
+                }
 
                 public int getNameItemId() {
                     return nameItemId;
@@ -407,6 +417,7 @@ public class DataDao implements Parcelable{
                     parcel.writeString(effordUBaht);
                     parcel.writeString(contrainUPiecePerBox);
                     parcel.writeString(totalItemBigUnit);
+                    parcel.writeString(unit);
                     parcel.writeParcelable(priceUBaht, i);
                 }
 

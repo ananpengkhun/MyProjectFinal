@@ -13,12 +13,8 @@ import java.util.List;
 public class ProductDao implements Parcelable{
     private String prodCode;
     private String prodName;
-    private String price;
-    private int prodAmount;
-    private String prodUnit;
-    private List<ProductTypeDao> prodType;
-    private List<ProviderDao> prodProvider;
-    private int prodAlert;
+    private int providerId;
+    private List<ProductEachSize> productEachSizes;
 
     public ProductDao() {
     }
@@ -26,12 +22,8 @@ public class ProductDao implements Parcelable{
     protected ProductDao(Parcel in) {
         prodCode = in.readString();
         prodName = in.readString();
-        price = in.readString();
-        prodAmount = in.readInt();
-        prodUnit = in.readString();
-        prodType = in.createTypedArrayList(ProductTypeDao.CREATOR);
-        prodProvider = in.createTypedArrayList(ProviderDao.CREATOR);
-        prodAlert = in.readInt();
+        providerId = in.readInt();
+        productEachSizes = in.createTypedArrayList(ProductEachSize.CREATOR);
     }
 
     public static final Creator<ProductDao> CREATOR = new Creator<ProductDao>() {
@@ -54,13 +46,6 @@ public class ProductDao implements Parcelable{
         this.prodName = prodName;
     }
 
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
-    }
 
     public String getProdCode() {
         return prodCode;
@@ -70,46 +55,21 @@ public class ProductDao implements Parcelable{
         this.prodCode = prodCode;
     }
 
-    public int getProdAmount() {
-        return prodAmount;
+    public int getProviderId() {
+        return providerId;
     }
 
-    public void setProdAmount(int prodAmount) {
-        this.prodAmount = prodAmount;
+    public void setProviderId(int providerId) {
+        this.providerId = providerId;
     }
 
-    public String getProdUnit() {
-        return prodUnit;
+    public List<ProductEachSize> getProductEachSizes() {
+        return productEachSizes;
     }
 
-    public void setProdUnit(String prodUnit) {
-        this.prodUnit = prodUnit;
+    public void setProductEachSizes(List<ProductEachSize> productEachSizes) {
+        this.productEachSizes = productEachSizes;
     }
-
-    public List<ProductTypeDao> getProdType() {
-        return prodType;
-    }
-
-    public void setProdType(List<ProductTypeDao> prodType) {
-        this.prodType = prodType;
-    }
-
-    public List<ProviderDao> getProdProvider() {
-        return prodProvider;
-    }
-
-    public void setProdProvider(List<ProviderDao> prodProvider) {
-        this.prodProvider = prodProvider;
-    }
-
-    public int getProdAlert() {
-        return prodAlert;
-    }
-
-    public void setProdAlert(int prodAlert) {
-        this.prodAlert = prodAlert;
-    }
-
 
     @Override
     public int describeContents() {
@@ -120,11 +80,7 @@ public class ProductDao implements Parcelable{
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(prodCode);
         parcel.writeString(prodName);
-        parcel.writeString(price);
-        parcel.writeInt(prodAmount);
-        parcel.writeString(prodUnit);
-        parcel.writeTypedList(prodType);
-        parcel.writeTypedList(prodProvider);
-        parcel.writeInt(prodAlert);
+        parcel.writeInt(providerId);
+        parcel.writeTypedList(productEachSizes);
     }
 }

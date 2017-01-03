@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -18,34 +18,6 @@
             android:layout_margin="20dp"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="รหัสสินค้า :"/>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <android.support.v7.widget.AppCompatEditText
-                        android:id="@+id/ed_code_prod"
-                        android:layout_width="match_parent"
-                        android:inputType="numberDecimal"
-                        android:digits="0123456789"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"/>
-
-                    <TextView
-                        android:id="@+id/tv_code_prod"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </RelativeLayout>
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -55,80 +27,23 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ชื่อสินค้า :"/>
+                    android:text="ชื่อขนาด :"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <android.support.v7.widget.AppCompatEditText
-                        android:id="@+id/ed_name_prod"
+                        android:id="@+id/ed_name_prod_size"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone"/>
 
                     <TextView
-                        android:id="@+id/tv_namePro"
+                        android:id="@+id/tv_name_prod_size"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
                 </RelativeLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ราคา :"/>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <android.support.v7.widget.AppCompatEditText
-                        android:id="@+id/ed_price_prod"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"/>
-
-                    <TextView
-                        android:id="@+id/tv_pricePro"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </RelativeLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="จำนวน :"/>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <android.support.v7.widget.AppCompatEditText
-                        android:id="@+id/ed_amount_prod"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:digits="0123456789"
-                        android:inputType="numberDecimal"
-                        android:visibility="gone"/>
-
-                    <TextView
-                        android:id="@+id/tv_amount_prod"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </RelativeLayout>
-
             </LinearLayout>
 
             <LinearLayout
@@ -166,19 +81,219 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ชนิดสินค้า :"/>
+                    android:text="ราคา :"/>
 
-                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                    android:id="@+id/spinner"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:hintText="   "/>
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ชั้นคุณภาพ 1 : "/>
+
+                        <TextView
+                            android:id="@+id/tv_price_class_one"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="333"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ชั้นคุณภาพ 2 : "/>
+
+                        <TextView
+                            android:id="@+id/tv_price_class_two"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="333"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ชั้นคุณภาพ 3 : "/>
+
+                        <TextView
+                            android:id="@+id/tv_price_class_three"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="333"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ชั้นคุณภาพ 5 : "/>
+
+                        <TextView
+                            android:id="@+id/tv_price_class_five"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="333"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ชั้นคุณภาพ 8.5 : "/>
+
+                        <TextView
+                            android:id="@+id/tv_price_class_eight_five"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="333"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ชั้นคุณภาพ 13.5 : "/>
+
+                        <TextView
+                            android:id="@+id/tv_price_class_one_three_five"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="333"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ต่อกิโล : "/>
+
+                        <TextView
+                            android:id="@+id/tv_price_per_kilo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="333"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ต่อเมตร : "/>
+
+                        <TextView
+                            android:id="@+id/tv_price_per_meter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="333"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ต่อชิ้น : "/>
+
+                        <TextView
+                            android:id="@+id/tv_price_per_piece"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="333"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ต่อม้วน : "/>
+
+                        <TextView
+                            android:id="@+id/tv_price_per_wrap"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="333"/>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tv_chooseSpinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="ค่าแรงบานปลายท่อ :"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.AppCompatEditText
+                        android:id="@+id/ed_amount_prod"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:digits="0123456789"
+                        android:inputType="numberDecimal"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/tv_efford"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
 
             </LinearLayout>
 
@@ -190,24 +305,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ผู้จำหน่าย :"/>
+                    android:text="จำนวนท่อ/มัด :"/>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    android:id="@+id/spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:hintText="   "/>
 
-                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                        android:id="@+id/spinner_provider"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        app:hintText="   "/>
+                <TextView
+                    android:id="@+id/tv_amount_per_wrap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
-                    <TextView
-                        android:id="@+id/tv_provider_prod"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
