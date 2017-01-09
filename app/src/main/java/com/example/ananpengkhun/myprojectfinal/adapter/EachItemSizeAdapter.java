@@ -145,6 +145,9 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
+        if(productDao == null){
+            return 0;
+        }
         return productDao.size();
     }
 

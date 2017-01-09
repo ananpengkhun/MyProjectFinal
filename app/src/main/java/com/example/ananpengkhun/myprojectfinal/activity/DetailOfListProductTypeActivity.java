@@ -42,8 +42,8 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
     @BindView(R.id.imv_box_for_edit) ImageView imvBoxForEdit;
 
     private ProductTypeAssociateAdapter productTypeAssociateAdapter;
-    private DataDao dataDao;
-
+    //    private DataDao dataDao;
+    private List<DataDao.ProductTypeBean> productTypeDaos;
     private String name;
     private String code;
     private String des;
@@ -51,7 +51,6 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
     private int index;
     private List<ProductDao> productDaoList;
-
 
 
     @Override
@@ -65,15 +64,15 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
     private void init() {
         productDaoList = new ArrayList<>();
-        if (getIntent().getParcelableExtra("dataDao_item_product") != null) {
+        if (getIntent().getParcelableArrayListExtra("dataDao_item_product") != null) {
             Intent intent = getIntent();
-            index = intent.getIntExtra("index",-1);
-            dataDao = intent.getParcelableExtra("dataDao_item_product");
-            if(dataDao.getProductType().get(index).getData() != null) {
-                for (int i = 0; i < dataDao.getProductType().get(index).getData().size(); i++) {
+            index = intent.getIntExtra("index", -1);
+            productTypeDaos = intent.getParcelableArrayListExtra("dataDao_item_product");
+            if (productTypeDaos.get(index).getData() != null) {
+                for (int i = 0; i < productTypeDaos.get(index).getData().size(); i++) {
                     ProductDao productDao = new ProductDao();
-                    productDao.setProdName(dataDao.getProductType().get(index).getData().get(i).getNameItem());
-                    productDao.setProdCode(dataDao.getProductType().get(index).getData().get(i).getNameCode());
+                    productDao.setProdName(productTypeDaos.get(index).getData().get(i).getNameItem());
+                    productDao.setProdCode(productTypeDaos.get(index).getData().get(i).getNameCode());
                     productDaoList.add(productDao);
 
                     //Log.d("raiwa", "init: "+dataDao.getProductType().get(index).getData().get(i).getNameItem());
@@ -81,14 +80,13 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
             }
 
             //productTypeDao = intent.getParcelableExtra("product_type_object_index");
-            setTextView(dataDao.getProductType().get(index).getName(),
-                    dataDao.getProductType().get(index).getTypeCode(),
-                    dataDao.getProductType().get(index).getTypeDes());
+            setTextView(productTypeDaos.get(index).getName(),
+                    productTypeDaos.get(index).getTypeCode(),
+                    productTypeDaos.get(index).getTypeDes());
         }
 
         rcvAssociateProduct.setLayoutManager(new LinearLayoutManager(DetailOfListProductTypeActivity.this));
-        rcvAssociateProduct.setAdapter(new ProductTypeAssociateAdapter(DetailOfListProductTypeActivity.this,productDaoList));
-
+        rcvAssociateProduct.setAdapter(new ProductTypeAssociateAdapter(DetailOfListProductTypeActivity.this, productDaoList));
 
 
     }
@@ -106,8 +104,8 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             Intent intent = new Intent();
-            intent.putExtra("index",index);
-            setResult(MyDataInventoryActivity.PRODUCT_TYPE,intent);
+            intent.putExtra("index", index);
+            setResult(MyDataInventoryActivity.PRODUCT_TYPE, intent);
             finish();
         }
     };
@@ -134,12 +132,9 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
                 // save data
                 DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-                mRootRef.child("/productType/" + index+"/name").setValue(name);
-                mRootRef.child("/productType/" + index+"/typeCode").setValue(code);
-                mRootRef.child("/productType/" + index+"/typeDes").setValue(des);
-
-
-
+                mRootRef.child("/productType/" + index + "/name").setValue(name);
+                mRootRef.child("/productType/" + index + "/typeCode").setValue(code);
+                mRootRef.child("/productType/" + index + "/typeDes").setValue(des);
 
 
             } else {
@@ -154,13 +149,13 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
                 edProdctTypeCode.setVisibility(View.VISIBLE);
                 edProductTypeDes.setVisibility(View.VISIBLE);
 
-                if(swap){
+                if (swap) {
                     swap = false;
-                    setTextEdit(dataDao.getProductType().get(index).getName(),
-                            dataDao.getProductType().get(index).getTypeCode(),
-                            dataDao.getProductType().get(index).getTypeDes());
-                }else{
-                    setTextEdit(name,code,des);
+                    setTextEdit(productTypeDaos.get(index).getName(),
+                            productTypeDaos.get(index).getTypeCode(),
+                            productTypeDaos.get(index).getTypeDes());
+                } else {
+                    setTextEdit(name, code, des);
                 }
 
             }
@@ -190,8 +185,8 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        intent.putExtra("index",index);
-        setResult(MyDataInventoryActivity.PRODUCT_TYPE,intent);
+        intent.putExtra("index", index);
+        setResult(MyDataInventoryActivity.PRODUCT_TYPE, intent);
         finish();
     }
 }

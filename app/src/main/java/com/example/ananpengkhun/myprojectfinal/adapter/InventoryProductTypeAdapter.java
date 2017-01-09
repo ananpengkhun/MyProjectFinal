@@ -3,6 +3,7 @@ package com.example.ananpengkhun.myprojectfinal.adapter;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,14 +39,15 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
     private DatabaseReference mType;
 
     private List<ProductTypeDao> productTypeList;
-    private DataDao dataDao;
+    //private DataDao dataDao;
+    private List<DataDao.ProductTypeBean> productTypeDaos;
     private Button btnConfirm;
     private Button btnCancel;
 
-    public InventoryProductTypeAdapter(MyDataInventoryActivity myDataInventoryActivity, List<ProductTypeDao> productTypeList, DataDao dataDao) {
+    public InventoryProductTypeAdapter(MyDataInventoryActivity myDataInventoryActivity, List<ProductTypeDao> productTypeList, List<DataDao.ProductTypeBean> dataDao) {
         this.mContext = myDataInventoryActivity;
         this.productTypeList = productTypeList;
-        this.dataDao = dataDao;
+        this.productTypeDaos = dataDao;
     }
 
     @Override
@@ -119,7 +122,7 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
                 public void onClick(View view) {
                     Log.d(TAG, "onClick: " + position);
                     Intent intent = new Intent(mContext, DetailOfListProductTypeActivity.class);
-                    intent.putExtra("dataDao_item_product", dataDao);
+                    intent.putParcelableArrayListExtra("dataDao_item_product",(ArrayList<DataDao.ProductTypeBean>) productTypeDaos);
                     //intent.putExtra("product_type_object_index",productTypeList.get(position).g);
                     intent.putExtra("index", position);
                     Log.d(TAG, "onClick: " + position);

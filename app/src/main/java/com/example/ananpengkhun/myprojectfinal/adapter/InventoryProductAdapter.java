@@ -17,8 +17,17 @@ import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProductViewHolder;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
+import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ananpengkhun on 12/21/16.
@@ -28,14 +37,18 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static final String TAG = InventoryProductAdapter.class.getSimpleName();
     private Context mContext;
     private List<ProductDao> productList;
-
+    private List<ProductTypeDao> productTypeList;
     private Button btnConfirm;
     private Button btnCancel;
 
-
-    public InventoryProductAdapter(MyDataInventoryActivity myDataInventoryActivity, List<ProductDao> productList) {
-        this.mContext = myDataInventoryActivity;
+    public void setProductList(List<ProductDao> productList, List<ProductTypeDao> productTypeList) {
         this.productList = productList;
+        this.productTypeList = productTypeList;
+    }
+
+    public InventoryProductAdapter(MyDataInventoryActivity myDataInventoryActivity) {
+        this.mContext = myDataInventoryActivity;
+
     }
 
     @Override
@@ -74,7 +87,32 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
                         @Override
                         public void onClick(View view) {
                             Log.d(TAG, "onClick: row deleted.");
+
+                            //Log.d(TAG, "onClick: "+productTypeList.get(position).ge);
                             //some row deleted
+//                            DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com");
+//                            Query reference = mRootRef.child("productType").orderByChild("provId").equalTo(providerList.get(position).getProvId());
+//
+//                            Log.d(TAG, "onClick: "+providerList.get(position).getProvId());
+//                            providerList.remove(position);
+//                            //reference.removeValue();
+//
+//                            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(DataSnapshot dataSnapshot) {
+//                                    for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+//                                        appleSnapshot.getRef().removeValue();
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(DatabaseError databaseError) {
+//
+//                                }
+//                            });
+
+
+                            //notifyDataSetChanged();
                             dialog.dismiss();
                         }
                     });

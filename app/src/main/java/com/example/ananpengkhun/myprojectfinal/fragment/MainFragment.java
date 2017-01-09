@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -20,6 +21,9 @@ import com.example.ananpengkhun.myprojectfinal.activity.MainActivity;
 import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -34,7 +38,8 @@ public class MainFragment extends Fragment {
     @BindView(R.id.btn_click) Button btnClick;
 
     private MoveFragmentPage moveFragmentPage;
-    private DataDao dataDao;
+    //private DataDao dataDao;
+    private List<DataDao.ProductTypeBean> productTypeDaos;
 
     public interface MoveFragmentPage{
         void pageSelected(int index);
@@ -55,7 +60,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         //if(bundle != null){
-            dataDao = bundle.getParcelable("data");
+        productTypeDaos = bundle.getParcelableArrayList("data");
         //}
 
     }
@@ -112,8 +117,8 @@ public class MainFragment extends Fragment {
                             break;
                         case R.id.prodct :
                             Intent intent = new Intent(getActivity(),MyDataInventoryActivity.class);
-                            if(dataDao != null){
-                                intent.putExtra("data",dataDao);
+                            if(productTypeDaos != null){
+                                intent.putParcelableArrayListExtra("data",(ArrayList<DataDao.ProductTypeBean>) productTypeDaos);
                             }
                             startActivity(intent);
                             //setDrawerState(true);
@@ -124,10 +129,11 @@ public class MainFragment extends Fragment {
         }
     };
 
-    public static Fragment newInstant(DataDao dataDao) {
+    public static Fragment newInstant(List<DataDao.ProductTypeBean> dataDao) {
         MainFragment mainFragment = new MainFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable("data",dataDao);
+        bundle.putParcelableArrayList("data", (ArrayList<DataDao.ProductTypeBean>) dataDao);
+        //Log.d(TAG, "newInstant: "+dataDao.size());
 
         //DataDao dataDao1 = bundle.getParcelable("data");
         //Log.d(TAG, "newInstant: "+dataDao1.getProductType().get(0).getName());

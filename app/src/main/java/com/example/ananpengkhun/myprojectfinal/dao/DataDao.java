@@ -9,7 +9,7 @@ import java.util.List;
  * Created by ananpengkhun on 12/28/16.
  */
 
-public class DataDao implements Parcelable{
+public class DataDao implements Parcelable {
 
 
     public DataDao() {
@@ -164,7 +164,7 @@ public class DataDao implements Parcelable{
             parcel.writeTypedList(data);
         }
 
-        public static class DataBean implements Parcelable{
+        public static class DataBean implements Parcelable {
 
             public DataBean() {
             }
@@ -178,6 +178,10 @@ public class DataDao implements Parcelable{
              */
 
             private int productId;
+            private int productQuantity;
+            private int productPrice;
+            private String productUnit;
+            private int productAlert;
             private String nameCode;
             private int provider;
             private String nameItem;
@@ -185,6 +189,10 @@ public class DataDao implements Parcelable{
 
             protected DataBean(Parcel in) {
                 productId = in.readInt();
+                productQuantity = in.readInt();
+                productPrice = in.readInt();
+                productUnit = in.readString();
+                productAlert = in.readInt();
                 nameCode = in.readString();
                 provider = in.readInt();
                 nameItem = in.readString();
@@ -209,6 +217,38 @@ public class DataDao implements Parcelable{
 
             public void setProductId(int productId) {
                 this.productId = productId;
+            }
+
+            public int getProductQuantity() {
+                return productQuantity;
+            }
+
+            public void setProductQuantity(int productQuantity) {
+                this.productQuantity = productQuantity;
+            }
+
+            public int getProductPrice() {
+                return productPrice;
+            }
+
+            public void setProductPrice(int productPrice) {
+                this.productPrice = productPrice;
+            }
+
+            public String getProductUnit() {
+                return productUnit;
+            }
+
+            public void setProductUnit(String productUnit) {
+                this.productUnit = productUnit;
+            }
+
+            public int getProductAlert() {
+                return productAlert;
+            }
+
+            public void setProductAlert(int productAlert) {
+                this.productAlert = productAlert;
             }
 
             public String getNameCode() {
@@ -251,13 +291,17 @@ public class DataDao implements Parcelable{
             @Override
             public void writeToParcel(Parcel parcel, int i) {
                 parcel.writeInt(productId);
+                parcel.writeInt(productQuantity);
+                parcel.writeInt(productPrice);
+                parcel.writeString(productUnit);
+                parcel.writeInt(productAlert);
                 parcel.writeString(nameCode);
                 parcel.writeInt(provider);
                 parcel.writeString(nameItem);
                 parcel.writeTypedList(dataItem);
             }
 
-            public static class DataItemBean implements Parcelable{
+            public static class DataItemBean implements Parcelable {
 
                 public DataItemBean() {
                 }
@@ -421,7 +465,7 @@ public class DataDao implements Parcelable{
                     parcel.writeParcelable(priceUBaht, i);
                 }
 
-                public static class PriceUBahtBean implements Parcelable{
+                public static class PriceUBahtBean implements Parcelable {
 
                     public PriceUBahtBean() {
                     }

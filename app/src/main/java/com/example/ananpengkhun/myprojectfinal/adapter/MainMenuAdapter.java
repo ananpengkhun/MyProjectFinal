@@ -10,23 +10,26 @@ import com.example.ananpengkhun.myprojectfinal.fragment.AddProductTypeFragment;
 import com.example.ananpengkhun.myprojectfinal.fragment.AddProviderFragment;
 import com.example.ananpengkhun.myprojectfinal.fragment.MainFragment;
 
+import java.util.List;
+
 /**
  * Created by ananpengkhun on 12/19/16.
  */
 
 public class MainMenuAdapter extends FragmentStatePagerAdapter {
-    private DataDao dataDao;
-    public MainMenuAdapter(FragmentManager fm, DataDao dataDao) {
+    //private DataDao dataDao;
+    private List<DataDao.ProductTypeBean> productTypeDaos;
+    public MainMenuAdapter(FragmentManager fm, List<DataDao.ProductTypeBean> dataDao) {
         super(fm);
 
-        this.dataDao = dataDao;
+        this.productTypeDaos = dataDao;
     }
 
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
         if(0 == position){
-            fragment = MainFragment.newInstant(dataDao);
+            fragment = MainFragment.newInstant(productTypeDaos);
         }else if(1 == position){
             fragment = AddProductFragment.newInstant();
         }else if(2 == position){
