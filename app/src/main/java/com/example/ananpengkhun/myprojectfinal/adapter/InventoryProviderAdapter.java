@@ -90,6 +90,7 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
                             providerList.remove(position);
                             //reference.removeValue();
 
+
                             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -104,22 +105,6 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
                                 }
                             });
 
-//                            // position: 2 size : 3
-//                            Log.d(TAG, "onClick position: "+position);
-//                            Log.d(TAG, "onClick size: "+productTypeList.size());
-//                            for (int i = position; i < productTypeList.size(); i++) {
-//
-//                                HashMap<String, Object> postValues = new HashMap<>();
-//                                postValues.put("name", productTypeList.get(position).getProdTypeName());
-//                                postValues.put("status", "success");
-//                                postValues.put("typeCode", productTypeList.get(position).getProdTypeCode());
-//                                postValues.put("typeDes", productTypeList.get(position).getProdTypeDes());
-//                                postValues.put("typeId", position + 1);
-//
-//                                Map<String, Object> childUpdates = new HashMap<>();
-//                                childUpdates.put("/productType/" + position, postValues);
-//                                mRootRef.updateChildren(childUpdates);
-//                            }
                             notifyDataSetChanged();
                             dialog.dismiss();
                         }
@@ -135,7 +120,7 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
                     Log.d(TAG, "onClick: "+position);
                     Intent intent = new Intent(mContext, DetailOfListProviderActivity.class);
                     intent.putExtra("provider_object_index",providerList.get(position));
-                    //intent.putExtra("position",position);
+//                    intent.putExtra("position",position);
                     mContext.startActivity(intent);
 
                 }

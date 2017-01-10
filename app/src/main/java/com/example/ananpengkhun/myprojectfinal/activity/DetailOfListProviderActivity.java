@@ -14,6 +14,12 @@ import android.widget.TextView;
 
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +58,7 @@ public class DetailOfListProviderActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent.getExtras() != null){
             providerDao = intent.getParcelableExtra("provider_object_index");
+
             setTextView(providerDao.getProvName(),providerDao.getProvAddress(),providerDao.getProvPhone(),providerDao.getProvEmail());
         }
 
@@ -97,7 +104,28 @@ public class DetailOfListProviderActivity extends AppCompatActivity {
                 provEmail = edProviderEmail.getText().toString();
 
                 setTextView(provName,provAddess,provPhone,provEmail);
+                // save data
+                DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/provider");
+                Log.d("providers", "onDataChange: "+providerDao.getProvId());
+                Query query = mRootRef.orderByChild("provId").equalTo(providerDao.getProvId());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
+                        for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                            Log.d("providers", "onDataChange: "+snapshot.toString());
+                            snapshot.getRef().child("provAddress").setValue(provAddess);
+                            snapshot.getRef().child("provEmail").setValue(provEmail);
+                            snapshot.getRef().child("provName").setValue(provName);
+                            snapshot.getRef().child("provPhone").setValue(provPhone);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
 
 
             } else {

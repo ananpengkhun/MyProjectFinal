@@ -44,10 +44,17 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
     private Button btnConfirm;
     private Button btnCancel;
 
-    public InventoryProductTypeAdapter(MyDataInventoryActivity myDataInventoryActivity, List<ProductTypeDao> productTypeList, List<DataDao.ProductTypeBean> dataDao) {
-        this.mContext = myDataInventoryActivity;
+    public void setProductTypeList(List<ProductTypeDao> productTypeList) {
         this.productTypeList = productTypeList;
-        this.productTypeDaos = dataDao;
+    }
+
+    public void setProductTypeDaos(List<DataDao.ProductTypeBean> productTypeDaos) {
+        this.productTypeDaos = productTypeDaos;
+    }
+
+    public InventoryProductTypeAdapter(MyDataInventoryActivity myDataInventoryActivity) {
+        this.mContext = myDataInventoryActivity;
+
     }
 
     @Override

@@ -93,6 +93,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private static final String MyPreference = "ProdType_index";
     private List<ProviderDao> providerDaoList;
     private InventoryProductAdapter productAdapter;
+    private InventoryProductTypeAdapter inventoryProductTypeAdapter;
 
 
     @Override
@@ -112,6 +113,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
     private void init() {
         productAdapter = new InventoryProductAdapter(MyDataInventoryActivity.this);
+        inventoryProductTypeAdapter = new InventoryProductTypeAdapter(MyDataInventoryActivity.this);
         productList = new ArrayList<>();
         productTypeList = new ArrayList<>();
         providerDaoList = new ArrayList<>();
@@ -123,8 +125,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             productTypeDaos = getIntent().getParcelableArrayListExtra("data");
             //Log.d(TAG, "init: "+dataDao.getProductType().get(0).getName());
         }
-
-
 
 
         // product type list dummy
@@ -238,14 +238,16 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
-                    recyclerView.setAdapter(new InventoryProductTypeAdapter(MyDataInventoryActivity.this, productTypeList, productTypeDaos));
+                    inventoryProductTypeAdapter.setProductTypeDaos(productTypeDaos);
+                    inventoryProductTypeAdapter.setProductTypeList(productTypeList);
+                    recyclerView.setAdapter(inventoryProductTypeAdapter);
                     container.addView(mView);
                 } else if (1 == position) {
                     mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_product_recycler, container, false);
                     recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
-                    productAdapter.setProductList(productList,productTypeList);
+                    productAdapter.setProductList(productList, productTypeList);
                     recyclerView.setAdapter(productAdapter);
                     container.addView(mView);
                 } else if (2 == position) {
@@ -449,6 +451,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                             editor.apply();
                         }
 
+
                         int index = sp.getInt("index", 0);
                         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
@@ -481,8 +484,8 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         } else if (1 == target) {
             Intent intent = new Intent(MyDataInventoryActivity.this, AddProductOnFabActivity.class);
             intent.putParcelableArrayListExtra("data", (ArrayList<DataDao.ProductTypeBean>) productTypeDaos);
-            intent.putParcelableArrayListExtra("dataType",(ArrayList<ProductTypeDao>) productTypeList);
-            startActivityForResult(intent,PRODUCT);
+            intent.putParcelableArrayListExtra("dataType", (ArrayList<ProductTypeDao>) productTypeList);
+            startActivityForResult(intent, PRODUCT);
         } else if (2 == target) {
             final Dialog dialog = new Dialog(MyDataInventoryActivity.this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -578,15 +581,32 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                 Log.d(TAG, "onActivityResult: " + data.getExtras().getInt("index"));
             }
         }
-        if(requestCode == PRODUCT){
-            if(data != null) {
+        if (requestCode == PRODUCT) {
+            if (data != null) {
                 Log.d(TAG, "onActivityResult: " + data.getStringExtra("nameItem"));
                 ProductDao productDao = new ProductDao();
                 productDao.setProdName(data.getStringExtra("nameItem"));
                 productDao.setProdCode(data.getStringExtra("nameCode"));
                 productDao.setProviderId(data.getIntExtra("provider", -1));
+
                 productList.add(productDao);
+
+
+                List<DataDao.ProductTypeBean.DataBean> dataBeenlist = new ArrayList<>();
+                DataDao.ProductTypeBean.DataBean dataBean = new DataDao.ProductTypeBean.DataBean();
+                dataBean.setProvider(data.getIntExtra("provider",-1));
+                dataBean.setProductUnit(data.getStringExtra("productUnit"));
+                dataBean.setNameCode(data.getStringExtra("nameCode"));
+                dataBean.setNameItem(data.getStringExtra("nameItem"));
+                dataBean.setProductAlert(data.getIntExtra("productAlert",-1));
+                dataBean.setProductId(data.getIntExtra("productId",-1));
+                dataBean.setProductPrice(data.getIntExtra("productPrice",-1));
+                dataBean.setProductQuantity(data.getIntExtra("productQuantity",-1));
+                dataBeenlist.add(dataBean);
+
+                productTypeDaos.get(data.getIntExtra("productType",-1)).setData(dataBeenlist);
                 productAdapter.notifyDataSetChanged();
+                inventoryProductTypeAdapter.notifyDataSetChanged();
             }
         }
     }

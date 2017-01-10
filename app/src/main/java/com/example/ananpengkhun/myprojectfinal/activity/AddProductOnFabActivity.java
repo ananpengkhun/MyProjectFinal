@@ -282,7 +282,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                     ) {
 
                 sp = getSharedPreferences(MyPreference, MODE_PRIVATE);
-                int indexData;
+                //int indexData;
                 Log.d("addproduct", "onClick: " + sp.getInt("indexProduct", 0));
                 if (0 == sp.getInt("indexProduct", 0)) {
                     editor = sp.edit();
@@ -296,13 +296,16 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                     editor.apply();
                 }
 
-                int index = sp.getInt("index_provider", 0);
-//                int indexData;
-//                if(productTypeDaos.get(spinnerProductType.getSelectedItemPosition()).getData() == null){
-//                    indexData = 0;
-//                }else{
-//                    indexData = productTypeDaos.get(spinnerProductType.getSelectedItemPosition()).getData().size();
-//                }
+                int index = sp.getInt("indexProduct", 0);
+
+                int indexData;
+                if(productTypeDaos.get(spinnerProductType.getSelectedItemPosition()).getData() == null){
+                    indexData = 0;
+                }else{
+                    indexData = productTypeDaos.get(spinnerProductType.getSelectedItemPosition()).getData().size();
+                }
+
+                Log.d("start", "onClick: "+indexData);
                 DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
                 HashMap<String, Object> postValues = new HashMap<>();
@@ -317,14 +320,15 @@ public class AddProductOnFabActivity extends AppCompatActivity {
 
                 Map<String, Object> childUpdates = new HashMap<>();
 
-                childUpdates.put("/productType/" + spinnerProductType.getSelectedItemPosition() + "/data/"+(index-1), postValues);
+                childUpdates.put("/productType/" + spinnerProductType.getSelectedItemPosition() + "/data/"+indexData, postValues);
                 mRootRef.updateChildren(childUpdates);
 
                 Intent intent = new Intent();
+                intent.putExtra("productType",spinnerProductType.getSelectedItemPosition());
                 intent.putExtra("nameCode", edProdCode.getText().toString());
                 intent.putExtra("nameItem", edProdName.getText().toString());
                 intent.putExtra("productAlert", Integer.parseInt(edProdAlert.getText().toString()));
-                //intent.putExtra("productId", indexData+1);
+                intent.putExtra("productId", index);
                 intent.putExtra("productPrice", Integer.parseInt(edProdPrice.getText().toString()));
                 intent.putExtra("productQuantity", Integer.parseInt(edProdAmount.getText().toString()));
                 intent.putExtra("productUnit", edProdUnit.getText().toString());
