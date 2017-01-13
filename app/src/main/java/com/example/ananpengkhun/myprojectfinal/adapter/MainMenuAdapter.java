@@ -17,19 +17,19 @@ import java.util.List;
  */
 
 public class MainMenuAdapter extends FragmentStatePagerAdapter {
-    //private DataDao dataDao;
-    private List<DataDao.ProductTypeBean> productTypeDaos;
-    public MainMenuAdapter(FragmentManager fm, List<DataDao.ProductTypeBean> dataDao) {
+    private DataDao dataDao;
+    //private List<DataDao.ProductTypeBean> productTypeDaos;
+    public MainMenuAdapter(FragmentManager fm, DataDao dataDao) {
         super(fm);
 
-        this.productTypeDaos = dataDao;
+        this.dataDao = dataDao;
     }
 
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
         if(0 == position){
-            fragment = MainFragment.newInstant(productTypeDaos);
+            fragment = MainFragment.newInstant(dataDao);
         }else if(1 == position){
             fragment = AddProductFragment.newInstant();
         }else if(2 == position){

@@ -2,24 +2,23 @@ package com.example.ananpengkhun.myprojectfinal.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.EachItemSizeAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,6 +29,15 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.activity_detail_of_list) RelativeLayout activityDetailOfList;
     @BindView(R.id.rc_size_item) RecyclerView rcSizeItem;
+    @BindView(R.id.ed_code_prod) AppCompatEditText edCodeProd;
+    @BindView(R.id.tv_code_prod) TextView tvCodeProd;
+    @BindView(R.id.ed_name_prod) AppCompatEditText edNameProd;
+    @BindView(R.id.tv_namePro) TextView tvNamePro;
+    @BindView(R.id.tv_chooseSpinner) TextView tvChooseSpinner;
+    @BindView(R.id.spinner_provider) SearchableSpinner spinnerProvider;
+    @BindView(R.id.tv_provider_prod) TextView tvProviderProd;
+    @BindView(R.id.imv_box_for_edit) ImageView imvBoxForEdit;
+    @BindView(R.id.img_product) ImageView imgProduct;
 
     private ProductDao productDao;
     private boolean swap = true;
@@ -62,21 +70,28 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         toolbar.setNavigationOnClickListener(toolbarClicklistener);
-      //  imvBoxForEdit.setOnClickListener(imvClicklistener);
+        //  imvBoxForEdit.setOnClickListener(imvClicklistener);
     }
 
     private void init() {
         if (getIntent().getExtras() != null) {
             Intent intent = getIntent();
             productDao = intent.getParcelableExtra("product_object_index");
+
+            tvNamePro.setText(productDao.getProdName());
+            tvCodeProd.setText(productDao.getProdCode());
+            if(productDao.getProductImg() != null){
+                Glide.with(DetailOfListProductActivity.this).load(productDao.getProductImg()).placeholder(ContextCompat.getDrawable(DetailOfListProductActivity.this,R.drawable.folder)).into(imgProduct);
+            }
+
             rcSizeItem.setHasFixedSize(true);
             rcSizeItem.setLayoutManager(new LinearLayoutManager(DetailOfListProductActivity.this));
-            eachItemSizeAdapter = new EachItemSizeAdapter(DetailOfListProductActivity.this,productDao.getProductEachSizes());
+            eachItemSizeAdapter = new EachItemSizeAdapter(DetailOfListProductActivity.this, productDao.getProductEachSizes());
             rcSizeItem.setAdapter(eachItemSizeAdapter);
         }
+
+
         spinnerOfTypeProduct();
-
-
 
 
     }

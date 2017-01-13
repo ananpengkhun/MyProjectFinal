@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     private MainMenuAdapter mainMenuAdapter;
     private String TAG = MainActivity.class.getSimpleName();
 
-    //private DataDao dataDao;
-    private List<DataDao.ProductTypeBean> productTypeDaos;
+    private DataDao dataDao;
+    //private List<DataDao.ProductTypeBean> productTypeDaos;
 
 
 
@@ -76,11 +76,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
 
     private void init() {
 
-        if(getIntent().getParcelableArrayListExtra("data") != null){
-            productTypeDaos = getIntent().getParcelableArrayListExtra("data");
+        if(getIntent().getParcelableExtra("data") != null){
+            dataDao = getIntent().getParcelableExtra("data");
         }
 
-        mainMenuAdapter = new MainMenuAdapter(getSupportFragmentManager(),productTypeDaos);
+        mainMenuAdapter = new MainMenuAdapter(getSupportFragmentManager(),dataDao);
         vpPagerFragment.setAdapter(mainMenuAdapter);
 
         tvNavAddData.setOnClickListener(AddDataClicklistener);

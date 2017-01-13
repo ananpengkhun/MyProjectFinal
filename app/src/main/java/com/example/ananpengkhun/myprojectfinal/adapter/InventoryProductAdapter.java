@@ -3,6 +3,7 @@ package com.example.ananpengkhun.myprojectfinal.adapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +12,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 
+import com.bumptech.glide.Glide;
 import com.example.ananpengkhun.myprojectfinal.R;
+import com.example.ananpengkhun.myprojectfinal.activity.AddProductOnFabActivity;
 import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProductActivity;
 import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProductViewHolder;
@@ -63,6 +66,9 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
             InventoryProductViewHolder inventoryProductViewHolder = (InventoryProductViewHolder) holder;
             inventoryProductViewHolder.tvNamePro.setText(productList.get(position).getProdName());
             inventoryProductViewHolder.tvPricePro.setText(productList.get(position).getProdCode());
+            if(productList.get(position).getProductImg() != null){
+                Glide.with(mContext).load(productList.get(position).getProductImg()).placeholder(ContextCompat.getDrawable(mContext,R.drawable.folder)).into(inventoryProductViewHolder.imvProduct);
+            }
             
             
             inventoryProductViewHolder.cvGroupView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -127,7 +133,8 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
                     Log.d(TAG, "onClick: "+position);
                     Intent intent = new Intent(mContext, DetailOfListProductActivity.class);
                     intent.putExtra("product_object_index",productList.get(position));
-                    //Log.d(TAG, "onClick: "+productList.get(position).getProductEachSizes());
+
+                    //Log.d(TAG, "onClick: "+productList.get(position).getProductEachSizes().get(0).getPriceUBaht().getClassOne());
                     mContext.startActivity(intent);
 
                 }

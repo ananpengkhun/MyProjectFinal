@@ -88,8 +88,8 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
 
-    //private DataDao dataDao;
-    private List<DataDao.ProductTypeBean> productTypeDaos;
+    private DataDao dataDao;
+    //private List<DataDao.ProductTypeBean> productTypeDaos;
     private static final String MyPreference = "ProdType_index";
     private List<ProviderDao> providerDaoList;
     private InventoryProductAdapter productAdapter;
@@ -121,32 +121,35 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         providerList = new ArrayList<>();
 
 
-        if (getIntent().getParcelableArrayListExtra("data") != null) {
-            productTypeDaos = getIntent().getParcelableArrayListExtra("data");
+        if (getIntent().getParcelableExtra("data") != null) {
+            dataDao = getIntent().getParcelableExtra("data");
             //Log.d(TAG, "init: "+dataDao.getProductType().get(0).getName());
         }
 
 
         // product type list dummy
-        for (int i = 0; i < productTypeDaos.size(); i++) {
+        for (int i = 0; i < dataDao.getProductType().size(); i++) {
 
             ProductTypeDao productTypeDao = new ProductTypeDao();
-            productTypeDao.setProdTypeName(productTypeDaos.get(i).getName());
-            productTypeDao.setProdTypeCode(productTypeDaos.get(i).getTypeCode());
-            productTypeDao.setProdTypeDes(productTypeDaos.get(i).getTypeDes());
+            productTypeDao.setProdTypeName(dataDao.getProductType().get(i).getName());
+            productTypeDao.setProdTypeCode(dataDao.getProductType().get(i).getTypeCode());
+            productTypeDao.setProdTypeDes(dataDao.getProductType().get(i).getTypeDes());
             productTypeList.add(productTypeDao);
 
-            if (productTypeDaos.get(i).getData() != null) {
+            if (dataDao.getProductType().get(i).getData() != null) {
                 // product list dummy
-                for (int j = 0; j < productTypeDaos.get(i).getData().size(); j++) {
+                for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
+                    Log.d(TAG, "init: "+i+" :"+dataDao.getProductType().get(i).getData().size());
 
                     productEachSizes = new ArrayList<>();
                     ProductDao productDao = new ProductDao();
-                    productDao.setProdCode(productTypeDaos.get(i).getData().get(j).getNameCode());
-                    productDao.setProdName(productTypeDaos.get(i).getData().get(j).getNameItem());
-                    productDao.setProviderId(productTypeDaos.get(i).getData().get(j).getProvider());
+                    productDao.setProdCode(dataDao.getProductType().get(i).getData().get(j).getNameCode());
+                    productDao.setProdName(dataDao.getProductType().get(i).getData().get(j).getNameItem());
+                    productDao.setProviderId(dataDao.getProductType().get(i).getData().get(j).getProvider());
+                    productDao.setProductImg(dataDao.getProductType().get(i).getData().get(j).getProductImg());
 
-                    DataDao.ProductTypeBean.DataBean list = productTypeDaos.get(i).getData().get(j);
+
+                    DataDao.ProductTypeBean.DataBean list = dataDao.getProductType().get(i).getData().get(j);
 
                     if (list.getDataItem() != null) {
                         for (int z = 0; z < list.getDataItem().size(); z++) {
@@ -169,9 +172,11 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                             priceUBahtBean.setClassEightFive(list.getDataItem().get(z).getPriceUBaht().getClassEightFive());
                             priceUBahtBean.setClassFive(list.getDataItem().get(z).getPriceUBaht().getClassFive());
                             priceUBahtBean.setClassOne(list.getDataItem().get(z).getPriceUBaht().getClassOne());
+
                             priceUBahtBean.setClassOneThreeFive(list.getDataItem().get(z).getPriceUBaht().getClassOneThreeFive());
                             priceUBahtBean.setClassThree(list.getDataItem().get(z).getPriceUBaht().getClassThree());
                             priceUBahtBean.setClassTwo(list.getDataItem().get(z).getPriceUBaht().getClassTwo());
+                            //Log.d(TAG, "init: "+list.getDataItem().get(z).getPriceUBaht().getClassTwo());
                             priceUBahtBean.setPerKilo(list.getDataItem().get(z).getPriceUBaht().getPerKilo());
                             priceUBahtBean.setPerMeter(list.getDataItem().get(z).getPriceUBaht().getPerMeter());
                             priceUBahtBean.setPerPiece(list.getDataItem().get(z).getPriceUBaht().getPerPiece());
@@ -181,8 +186,8 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                             productEachSizes.add(productEachSize);
 
                         }
-
                         productDao.setProductEachSizes(productEachSizes);
+
                     }
                     productList.add(productDao);
 
@@ -238,7 +243,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
-                    inventoryProductTypeAdapter.setProductTypeDaos(productTypeDaos);
+                    inventoryProductTypeAdapter.setProductTypeDaos(dataDao);
                     inventoryProductTypeAdapter.setProductTypeList(productTypeList);
                     recyclerView.setAdapter(inventoryProductTypeAdapter);
                     container.addView(mView);
@@ -248,6 +253,8 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
                     productAdapter.setProductList(productList, productTypeList);
+                    //Log.d("prices", "instantiateItem: "+productList.get(0).getProductEachSizes().get(0).getPriceUBaht().getClassOne());
+
                     recyclerView.setAdapter(productAdapter);
                     container.addView(mView);
                 } else if (2 == position) {
@@ -259,8 +266,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                         recyclerView.setAdapter(new InventoryProviderAdapter(MyDataInventoryActivity.this, providerDaoList));
                         container.addView(mView);
                     }
-
-
                 }
                 return mView;
 
@@ -434,7 +439,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             btnAddProdTypeConfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG, "onClick: " + productTypeDaos.size());
+                    Log.d(TAG, "onClick: " + dataDao.getProductType().size());
                     if ((!"".equals(edProdTypeCode.getText().toString())) &&
                             (!"".equals(edProdTypeName.getText().toString())) &&
                             (!"".equals(edProdTypeDes.getText().toString()))
@@ -442,7 +447,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                         sp = getSharedPreferences(MyPreference, MODE_PRIVATE);
                         if (0 == sp.getInt("index", 0)) {
                             editor = sp.edit();
-                            editor.putInt("index", productTypeDaos.size());
+                            editor.putInt("index", dataDao.getProductType().size());
                             editor.apply();
                         } else {
                             editor = sp.edit();
@@ -483,7 +488,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             dialog.show();
         } else if (1 == target) {
             Intent intent = new Intent(MyDataInventoryActivity.this, AddProductOnFabActivity.class);
-            intent.putParcelableArrayListExtra("data", (ArrayList<DataDao.ProductTypeBean>) productTypeDaos);
+            intent.putExtra("data", dataDao);
             intent.putParcelableArrayListExtra("dataType", (ArrayList<ProductTypeDao>) productTypeList);
             startActivityForResult(intent, PRODUCT);
         } else if (2 == target) {
@@ -588,23 +593,25 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                 productDao.setProdName(data.getStringExtra("nameItem"));
                 productDao.setProdCode(data.getStringExtra("nameCode"));
                 productDao.setProviderId(data.getIntExtra("provider", -1));
+                productDao.setProductImg(data.getStringExtra("productImg"));
 
                 productList.add(productDao);
 
 
                 List<DataDao.ProductTypeBean.DataBean> dataBeenlist = new ArrayList<>();
                 DataDao.ProductTypeBean.DataBean dataBean = new DataDao.ProductTypeBean.DataBean();
-                dataBean.setProvider(data.getIntExtra("provider",-1));
+                dataBean.setProvider(data.getIntExtra("provider", -1));
                 dataBean.setProductUnit(data.getStringExtra("productUnit"));
                 dataBean.setNameCode(data.getStringExtra("nameCode"));
                 dataBean.setNameItem(data.getStringExtra("nameItem"));
-                dataBean.setProductAlert(data.getIntExtra("productAlert",-1));
-                dataBean.setProductId(data.getIntExtra("productId",-1));
-                dataBean.setProductPrice(data.getIntExtra("productPrice",-1));
-                dataBean.setProductQuantity(data.getIntExtra("productQuantity",-1));
+                dataBean.setProductAlert(data.getIntExtra("productAlert", -1));
+                dataBean.setProductId(data.getIntExtra("productId", -1));
+                dataBean.setProductPrice(data.getIntExtra("productPrice", -1));
+                dataBean.setProductQuantity(data.getIntExtra("productQuantity", -1));
+                dataBean.setProductImg(data.getStringExtra("productImg"));
                 dataBeenlist.add(dataBean);
 
-                productTypeDaos.get(data.getIntExtra("productType",-1)).setData(dataBeenlist);
+                dataDao.getProductType().get(data.getIntExtra("productType", -1)).setData(dataBeenlist);
                 productAdapter.notifyDataSetChanged();
                 inventoryProductTypeAdapter.notifyDataSetChanged();
             }

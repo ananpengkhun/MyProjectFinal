@@ -14,6 +14,7 @@ public class ProductDao implements Parcelable{
     private String prodCode;
     private String prodName;
     private int providerId;
+    private String productImg;
     private List<ProductEachSize> productEachSizes;
 
     public ProductDao() {
@@ -22,6 +23,7 @@ public class ProductDao implements Parcelable{
     protected ProductDao(Parcel in) {
         prodCode = in.readString();
         prodName = in.readString();
+        productImg = in.readString();
         providerId = in.readInt();
         productEachSizes = in.createTypedArrayList(ProductEachSize.CREATOR);
     }
@@ -37,6 +39,14 @@ public class ProductDao implements Parcelable{
             return new ProductDao[size];
         }
     };
+
+    public String getProductImg() {
+        return productImg;
+    }
+
+    public void setProductImg(String productImg) {
+        this.productImg = productImg;
+    }
 
     public String getProdName() {
         return prodName;
@@ -80,6 +90,7 @@ public class ProductDao implements Parcelable{
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(prodCode);
         parcel.writeString(prodName);
+        parcel.writeString(productImg);
         parcel.writeInt(providerId);
         parcel.writeTypedList(productEachSizes);
     }

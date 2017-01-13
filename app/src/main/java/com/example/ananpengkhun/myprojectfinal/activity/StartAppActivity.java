@@ -59,113 +59,114 @@ public class StartAppActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         //testProductTypes = new ArrayList<>();
-        productTypeDaos = new ArrayList<>();
+       // productTypeDaos = new ArrayList<>();
 //
-//        mRootRef = FirebaseDatabase.getInstance().getReference();
+        mRootRef = FirebaseDatabase.getInstance().getReference();
+
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("start", "onDataChange: "+dataSnapshot.toString());
+                dataDao = dataSnapshot.getValue(DataDao.class);
+
+            }
 //
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("start", "onCancelled: "+databaseError.getMessage());
+            }
+        };
+        mRootRef.addValueEventListener(valueEventListener);
+//        mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType");
 //        valueEventListener = new ValueEventListener() {
 //            @Override
 //            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+////                    TestProductType providerDao = new TestProductType();
+////                    providerDao.setName(snapshot.getValue(TestProductType.class).getName());
+////                    providerDao.setStatus(snapshot.getValue(TestProductType.class).getStatus());
+////                    providerDao.setTypeCode(snapshot.getValue(TestProductType.class).getTypeCode());
+////                    providerDao.setTypeDes(snapshot.getValue(TestProductType.class).getTypeDes());
+////                    providerDao.setTypeId(snapshot.getValue(TestProductType.class).getTypeId());
 //
-//                dataDao = dataSnapshot.getValue(DataDao.class);
-//                //Log.d("start", "onDataChange: " + dataDao.getProductType().get(0).getData().get(0).getDataItem().get(0).getContrainUPiecePerBox());
-//                Intent intent = new Intent(StartAppActivity.this, MainActivity.class);
-//                intent.putExtra("data", dataDao);
-//                startActivity(intent);
-//                finish();
 //
+//                    //Log.d("start", "onDataChange: "+providerDao.getName());
+//                    dataBeen = new ArrayList<>();
+//                    DataDao.ProductTypeBean providerDao = new DataDao.ProductTypeBean();
+//                    providerDao.setName(snapshot.getValue(DataDao.ProductTypeBean.class).getName());
+//                    providerDao.setStatus(snapshot.getValue(DataDao.ProductTypeBean.class).getStatus());
+//                    providerDao.setTypeCode(snapshot.getValue(DataDao.ProductTypeBean.class).getTypeCode());
+//                    providerDao.setTypeDes(snapshot.getValue(DataDao.ProductTypeBean.class).getTypeDes());
+//                    providerDao.setTypeId(snapshot.getValue(DataDao.ProductTypeBean.class).getTypeId());
+//
+//                    //Log.d("start", "onDataChange: "+snapshot.child("data").toString());
+//                    for(DataSnapshot snapshot1 : snapshot.child("data").getChildren()){
+//                        //Log.d("start", "onDataChange: "+snapshot1.child("data").toString());
+//                        DataDao.ProductTypeBean.DataBean dataBean = new DataDao.ProductTypeBean.DataBean();
+//                        dataBean.setNameCode(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getNameCode());
+//                        dataBean.setNameItem(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getNameItem());
+//                        dataBean.setProductAlert(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductAlert());
+//                        dataBean.setProductId(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductId());
+//                        dataBean.setProductPrice(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductPrice());
+//                        dataBean.setProductQuantity(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductQuantity());
+//                        dataBean.setProductUnit(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductUnit());
+//                        dataBean.setProvider(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProvider());
+//
+//                        if(snapshot1.child("dataItem").getValue() != null) {
+//                            dataItemBeen = new ArrayList<>();
+//                            for (DataSnapshot snapshot2 : snapshot1.child("dataItem").getChildren()) {
+//                                DataDao.ProductTypeBean.DataBean.DataItemBean dataItemBean = new DataDao.ProductTypeBean.DataBean.DataItemBean();
+//                                dataItemBean.setAmongPerWrap(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getAmongPerWrap());
+//                                dataItemBean.setContrainUPiecePerBox(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getContrainUPiecePerBox());
+//                                dataItemBean.setDiameterOutsize(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getDiameterOutsize());
+//                                dataItemBean.setEffordUBaht(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getEffordUBaht());
+//                                dataItemBean.setLongPerWrap(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getLongPerWrap());
+//                                dataItemBean.setNameItemId(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getNameItemId());
+//                                dataItemBean.setNameItemSize(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getNameItemSize());
+//                                dataItemBean.setTotalItemBigUnit(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getTotalItemBigUnit());
+//                                dataItemBean.setUnit(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getUnit());
+//                                dataItemBean.setWeightPerWrap(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getWeightPerWrap());
+//
+//                                 for(DataSnapshot snapshot3 : snapshot2.child("priceUBaht").getChildren()) {
+//
+//
+//
+//                                     DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean priceUBahtBean = new DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean();
+//                                     priceUBahtBean.setClassEightFive(snapshot3.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassEightFive());
+//                                     priceUBahtBean.setClassFive(snapshot3.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassFive());
+//                                     priceUBahtBean.setClassOne(snapshot3.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassOne());
+//
+//                                     Log.d("start", "onDataChange: " + snapshot3.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassOne());
+//                                     priceUBahtBean.setClassOneThreeFive(snapshot3.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassOneThreeFive());
+//                                     priceUBahtBean.setClassThree(snapshot3.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassThree());
+//                                     priceUBahtBean.setClassTwo(snapshot3.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassTwo());
+//                                     priceUBahtBean.setPerKilo(snapshot3.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getPerKilo());
+//                                     priceUBahtBean.setPerMeter(snapshot3.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getPerMeter());
+//                                     priceUBahtBean.setPerPiece(snapshot3.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getPerPiece());
+//                                     priceUBahtBean.setPerWrap(snapshot3.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getPerWrap());
+//                                     dataItemBean.setPriceUBaht(priceUBahtBean);
+//                                 }
+//
+//                                dataItemBeen.add(dataItemBean);
+//                            }
+//                            dataBean.setDataItem(dataItemBeen);
+//                        }
+//                        dataBeen.add(dataBean);
+//                    }
+//                    providerDao.setData(dataBeen);
+//
+//                    //testProductTypes.add(providerDao);
+//                    productTypeDaos.add(providerDao);
+//                }
 //            }
 //
 //            @Override
 //            public void onCancelled(DatabaseError databaseError) {
-//                Log.d("start", "onCancelled: "+databaseError.getMessage());
+//
 //            }
 //        };
-//        mRootRef.addValueEventListener(valueEventListener);
-        mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType");
-        valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    TestProductType providerDao = new TestProductType();
-//                    providerDao.setName(snapshot.getValue(TestProductType.class).getName());
-//                    providerDao.setStatus(snapshot.getValue(TestProductType.class).getStatus());
-//                    providerDao.setTypeCode(snapshot.getValue(TestProductType.class).getTypeCode());
-//                    providerDao.setTypeDes(snapshot.getValue(TestProductType.class).getTypeDes());
-//                    providerDao.setTypeId(snapshot.getValue(TestProductType.class).getTypeId());
-
-
-                    //Log.d("start", "onDataChange: "+providerDao.getName());
-                    dataBeen = new ArrayList<>();
-                    DataDao.ProductTypeBean providerDao = new DataDao.ProductTypeBean();
-                    providerDao.setName(snapshot.getValue(DataDao.ProductTypeBean.class).getName());
-                    providerDao.setStatus(snapshot.getValue(DataDao.ProductTypeBean.class).getStatus());
-                    providerDao.setTypeCode(snapshot.getValue(DataDao.ProductTypeBean.class).getTypeCode());
-                    providerDao.setTypeDes(snapshot.getValue(DataDao.ProductTypeBean.class).getTypeDes());
-                    providerDao.setTypeId(snapshot.getValue(DataDao.ProductTypeBean.class).getTypeId());
-
-                    Log.d("start", "onDataChange: "+snapshot.child("data").toString());
-                    for(DataSnapshot snapshot1 : snapshot.child("data").getChildren()){
-                        //Log.d("start", "onDataChange: "+snapshot1.child("data").toString());
-                        DataDao.ProductTypeBean.DataBean dataBean = new DataDao.ProductTypeBean.DataBean();
-                        dataBean.setNameCode(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getNameCode());
-                        dataBean.setNameItem(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getNameItem());
-                        dataBean.setProductAlert(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductAlert());
-                        dataBean.setProductId(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductId());
-                        dataBean.setProductPrice(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductPrice());
-                        dataBean.setProductQuantity(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductQuantity());
-                        dataBean.setProductUnit(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductUnit());
-                        dataBean.setProvider(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProvider());
-
-                        if(snapshot1.child("dataItem").getValue() != null) {
-                            dataItemBeen = new ArrayList<>();
-                            for (DataSnapshot snapshot2 : snapshot1.child("dataItem").getChildren()) {
-                                DataDao.ProductTypeBean.DataBean.DataItemBean dataItemBean = new DataDao.ProductTypeBean.DataBean.DataItemBean();
-                                dataItemBean.setAmongPerWrap(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getAmongPerWrap());
-                                dataItemBean.setContrainUPiecePerBox(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getContrainUPiecePerBox());
-                                dataItemBean.setDiameterOutsize(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getDiameterOutsize());
-                                dataItemBean.setEffordUBaht(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getEffordUBaht());
-                                dataItemBean.setLongPerWrap(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getLongPerWrap());
-                                dataItemBean.setNameItemId(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getNameItemId());
-                                dataItemBean.setNameItemSize(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getNameItemSize());
-                                dataItemBean.setTotalItemBigUnit(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getTotalItemBigUnit());
-                                dataItemBean.setUnit(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getUnit());
-                                dataItemBean.setWeightPerWrap(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.class).getWeightPerWrap());
-
-                                DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean priceUBahtBean = new DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean();
-                                priceUBahtBean.setClassEightFive(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassEightFive());
-                                priceUBahtBean.setClassFive(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassFive());
-                                priceUBahtBean.setClassOne(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassOne());
-                                priceUBahtBean.setClassOneThreeFive(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassOneThreeFive());
-                                priceUBahtBean.setClassThree(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassThree());
-                                priceUBahtBean.setClassTwo(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getClassTwo());
-                                priceUBahtBean.setPerKilo(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getPerKilo());
-                                priceUBahtBean.setPerMeter(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getPerMeter());
-                                priceUBahtBean.setPerPiece(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getPerPiece());
-                                priceUBahtBean.setPerWrap(snapshot2.getValue(DataDao.ProductTypeBean.DataBean.DataItemBean.PriceUBahtBean.class).getPerWrap());
-
-                                dataItemBean.setPriceUBaht(priceUBahtBean);
-
-                                dataItemBeen.add(dataItemBean);
-                            }
-                            dataBean.setDataItem(dataItemBeen);
-                        }
-                        dataBeen.add(dataBean);
-                    }
-                    providerDao.setData(dataBeen);
-
-                    //testProductTypes.add(providerDao);
-                    productTypeDaos.add(providerDao);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-
-        mRootRef.addListenerForSingleValueEvent(valueEventListener);
+//
+//        mRootRef.addListenerForSingleValueEvent(valueEventListener);
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -173,8 +174,13 @@ public class StartAppActivity extends AppCompatActivity {
                // Log.d("start", "onCreate: "+testProductTypes.size());
 //                Log.d("start", "onCreate: "+productTypeDaos.size());
 //                Log.d("start", "onCreate: "+productTypeDaos.get(0).getData().get(0).getDataItem().get(0).getAmongPerWrap());
+//                Intent intent = new Intent(StartAppActivity.this, MainActivity.class);
+//                intent.putParcelableArrayListExtra("data", (ArrayList<DataDao.ProductTypeBean>) productTypeDaos);
+//                startActivity(intent);
+//                finish();
+                Log.d("start", "onDataChange: " + dataDao.getProductType().get(0).getData().get(0).getDataItem().get(0).getPriceUBaht().getClassEightFive());
                 Intent intent = new Intent(StartAppActivity.this, MainActivity.class);
-                intent.putParcelableArrayListExtra("data", (ArrayList<DataDao.ProductTypeBean>) productTypeDaos);
+                intent.putExtra("data", dataDao);
                 startActivity(intent);
                 finish();
             }

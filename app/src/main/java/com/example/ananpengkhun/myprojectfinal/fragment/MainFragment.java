@@ -38,8 +38,9 @@ public class MainFragment extends Fragment {
     @BindView(R.id.btn_click) Button btnClick;
 
     private MoveFragmentPage moveFragmentPage;
-    //private DataDao dataDao;
-    private List<DataDao.ProductTypeBean> productTypeDaos;
+
+    private DataDao dataDao;
+    //private List<DataDao.ProductTypeBean> productTypeDaos;
 
     public interface MoveFragmentPage{
         void pageSelected(int index);
@@ -60,7 +61,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         //if(bundle != null){
-        productTypeDaos = bundle.getParcelableArrayList("data");
+        dataDao = bundle.getParcelable("data");
         //}
 
     }
@@ -117,8 +118,8 @@ public class MainFragment extends Fragment {
                             break;
                         case R.id.prodct :
                             Intent intent = new Intent(getActivity(),MyDataInventoryActivity.class);
-                            if(productTypeDaos != null){
-                                intent.putParcelableArrayListExtra("data",(ArrayList<DataDao.ProductTypeBean>) productTypeDaos);
+                            if(dataDao != null){
+                                intent.putExtra("data",dataDao);
                             }
                             startActivity(intent);
                             //setDrawerState(true);
@@ -129,10 +130,10 @@ public class MainFragment extends Fragment {
         }
     };
 
-    public static Fragment newInstant(List<DataDao.ProductTypeBean> dataDao) {
+    public static Fragment newInstant(DataDao dataDao) {
         MainFragment mainFragment = new MainFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("data", (ArrayList<DataDao.ProductTypeBean>) dataDao);
+        bundle.putParcelable("data", dataDao);
         //Log.d(TAG, "newInstant: "+dataDao.size());
 
         //DataDao dataDao1 = bundle.getParcelable("data");

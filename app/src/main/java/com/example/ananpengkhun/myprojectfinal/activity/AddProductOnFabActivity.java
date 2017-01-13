@@ -69,8 +69,8 @@ public class AddProductOnFabActivity extends AppCompatActivity {
     private Button takeByCamera;
     private Button takeByGallery;
     private Uri pathFile;
-    //private DataDao dataDao;
-    private List<DataDao.ProductTypeBean> productTypeDaos;
+    private DataDao dataDao;
+    //private List<DataDao.ProductTypeBean> productTypeDaos;
     private List<String> listProdType;
     private List<ProviderDao> providerDaoList;
     private List<String> getListProdType;
@@ -115,8 +115,8 @@ public class AddProductOnFabActivity extends AppCompatActivity {
     }
 
     private void init() {
-        if (getIntent().getParcelableArrayListExtra("data") != null) {
-            productTypeDaos = getIntent().getParcelableArrayListExtra("data");
+        if (getIntent().getParcelableExtra("data") != null) {
+            dataDao = getIntent().getParcelableExtra("data");
         }
         if(getIntent().getParcelableArrayListExtra("dataType") != null){
             productTypeList = getIntent().getParcelableArrayListExtra("dataType");
@@ -152,8 +152,8 @@ public class AddProductOnFabActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == PICK_IMAGE_REQUEST) {
-                Uri uri = data.getData();
-                Glide.with(AddProductOnFabActivity.this).load(uri).into(imvAddPicture);
+                pathFile = data.getData();
+                Glide.with(AddProductOnFabActivity.this).load(pathFile).into(imvAddPicture);
             } else if (requestCode == TAKE_PHOTO_REQUEST) {
                 Glide.with(AddProductOnFabActivity.this).load(pathFile).into(imvAddPicture);
             }
@@ -227,7 +227,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
     }
 
     private void spinnerOfTypeProduct() {
-        if (productTypeDaos != null) {
+        if (dataDao != null) {
             listProdType = new ArrayList<>();
             for (int i = 0; i < productTypeList.size(); i++) {
                 listProdType.add(productTypeList.get(i).getProdTypeName());
@@ -286,7 +286,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 Log.d("addproduct", "onClick: " + sp.getInt("indexProduct", 0));
                 if (0 == sp.getInt("indexProduct", 0)) {
                     editor = sp.edit();
-                    editor.putInt("indexProduct", productTypeDaos.size() + 1);
+                    editor.putInt("indexProduct", dataDao.getProductType().size() + 1);
                     editor.apply();
 
                 } else {
@@ -299,16 +299,17 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 int index = sp.getInt("indexProduct", 0);
 
                 int indexData;
-                if(productTypeDaos.get(spinnerProductType.getSelectedItemPosition()).getData() == null){
+                if(dataDao.getProductType().get(spinnerProductType.getSelectedItemPosition()).getData() == null){
                     indexData = 0;
                 }else{
-                    indexData = productTypeDaos.get(spinnerProductType.getSelectedItemPosition()).getData().size();
+                    indexData = dataDao.getProductType().get(spinnerProductType.getSelectedItemPosition()).getData().size();
                 }
 
                 Log.d("start", "onClick: "+indexData);
                 DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
                 HashMap<String, Object> postValues = new HashMap<>();
+                postValues.put("productImg", pathFile.toString());
                 postValues.put("nameCode", edProdCode.getText().toString());
                 postValues.put("nameItem", edProdName.getText().toString());
                 postValues.put("productAlert", Integer.parseInt(edProdAlert.getText().toString()));
@@ -324,6 +325,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 mRootRef.updateChildren(childUpdates);
 
                 Intent intent = new Intent();
+                intent.putExtra("productImg",pathFile.toString());
                 intent.putExtra("productType",spinnerProductType.getSelectedItemPosition());
                 intent.putExtra("nameCode", edProdCode.getText().toString());
                 intent.putExtra("nameItem", edProdName.getText().toString());

@@ -39,8 +39,9 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
     private DatabaseReference mType;
 
     private List<ProductTypeDao> productTypeList;
-    //private DataDao dataDao;
-    private List<DataDao.ProductTypeBean> productTypeDaos;
+
+    private DataDao dataDao;
+    //private List<DataDao.ProductTypeBean> productTypeDaos;
     private Button btnConfirm;
     private Button btnCancel;
 
@@ -48,8 +49,8 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
         this.productTypeList = productTypeList;
     }
 
-    public void setProductTypeDaos(List<DataDao.ProductTypeBean> productTypeDaos) {
-        this.productTypeDaos = productTypeDaos;
+    public void setProductTypeDaos(DataDao productTypeDaos) {
+        this.dataDao = productTypeDaos;
     }
 
     public InventoryProductTypeAdapter(MyDataInventoryActivity myDataInventoryActivity) {
@@ -129,7 +130,7 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
                 public void onClick(View view) {
                     Log.d(TAG, "onClick: " + position);
                     Intent intent = new Intent(mContext, DetailOfListProductTypeActivity.class);
-                    intent.putParcelableArrayListExtra("dataDao_item_product",(ArrayList<DataDao.ProductTypeBean>) productTypeDaos);
+                    intent.putExtra("dataDao_item_product",dataDao);
                     //intent.putExtra("product_type_object_index",productTypeList.get(position).g);
                     intent.putExtra("index", position);
                     Log.d(TAG, "onClick: " + position);

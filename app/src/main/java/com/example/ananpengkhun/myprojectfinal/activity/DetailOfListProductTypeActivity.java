@@ -42,8 +42,8 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
     @BindView(R.id.imv_box_for_edit) ImageView imvBoxForEdit;
 
     private ProductTypeAssociateAdapter productTypeAssociateAdapter;
-    //    private DataDao dataDao;
-    private List<DataDao.ProductTypeBean> productTypeDaos;
+    private DataDao dataDao;
+    //private List<DataDao.ProductTypeBean> productTypeDaos;
     private String name;
     private String code;
     private String des;
@@ -64,15 +64,15 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
     private void init() {
         productDaoList = new ArrayList<>();
-        if (getIntent().getParcelableArrayListExtra("dataDao_item_product") != null) {
+        if (getIntent().getParcelableExtra("dataDao_item_product") != null) {
             Intent intent = getIntent();
             index = intent.getIntExtra("index", -1);
-            productTypeDaos = intent.getParcelableArrayListExtra("dataDao_item_product");
-            if (productTypeDaos.get(index).getData() != null) {
-                for (int i = 0; i < productTypeDaos.get(index).getData().size(); i++) {
+            dataDao = intent.getParcelableExtra("dataDao_item_product");
+            if (dataDao.getProductType().get(index).getData() != null) {
+                for (int i = 0; i < dataDao.getProductType().get(index).getData().size(); i++) {
                     ProductDao productDao = new ProductDao();
-                    productDao.setProdName(productTypeDaos.get(index).getData().get(i).getNameItem());
-                    productDao.setProdCode(productTypeDaos.get(index).getData().get(i).getNameCode());
+                    productDao.setProdName(dataDao.getProductType().get(index).getData().get(i).getNameItem());
+                    productDao.setProdCode(dataDao.getProductType().get(index).getData().get(i).getNameCode());
                     productDaoList.add(productDao);
 
                     //Log.d("raiwa", "init: "+dataDao.getProductType().get(index).getData().get(i).getNameItem());
@@ -80,9 +80,9 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
             }
 
             //productTypeDao = intent.getParcelableExtra("product_type_object_index");
-            setTextView(productTypeDaos.get(index).getName(),
-                    productTypeDaos.get(index).getTypeCode(),
-                    productTypeDaos.get(index).getTypeDes());
+            setTextView(dataDao.getProductType().get(index).getName(),
+                    dataDao.getProductType().get(index).getTypeCode(),
+                    dataDao.getProductType().get(index).getTypeDes());
         }
 
         rcvAssociateProduct.setLayoutManager(new LinearLayoutManager(DetailOfListProductTypeActivity.this));
@@ -151,9 +151,9 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
                 if (swap) {
                     swap = false;
-                    setTextEdit(productTypeDaos.get(index).getName(),
-                            productTypeDaos.get(index).getTypeCode(),
-                            productTypeDaos.get(index).getTypeDes());
+                    setTextEdit(dataDao.getProductType().get(index).getName(),
+                            dataDao.getProductType().get(index).getTypeCode(),
+                            dataDao.getProductType().get(index).getTypeDes());
                 } else {
                     setTextEdit(name, code, des);
                 }

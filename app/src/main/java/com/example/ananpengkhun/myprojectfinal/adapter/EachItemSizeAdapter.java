@@ -2,6 +2,7 @@ package com.example.ananpengkhun.myprojectfinal.adapter;
 
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,27 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 //                    productDao.getProdUnit(),
 //                    productDao.getProdAlert());
             final EachItemSizeViewHolder eachItemSizeViewHolder = (EachItemSizeViewHolder) holder;
+
+            eachItemSizeViewHolder.tvNameProdSize.setText(productDao.get(position).getNameItemSize());
+            eachItemSizeViewHolder.tvUnitProd.setText(productDao.get(position).getUnit());
+            eachItemSizeViewHolder.tvPriceClassOne.setText(productDao.get(position).getPriceUBaht().getClassOne());
+            eachItemSizeViewHolder.tvPriceClassTwo.setText(productDao.get(position).getPriceUBaht().getClassTwo());
+            Log.d("eachitem", "onBindViewHolder: "+productDao.get(position).getPriceUBaht().getClassTwo());
+            eachItemSizeViewHolder.tvPriceClassThree.setText(productDao.get(position).getPriceUBaht().getClassThree());
+            eachItemSizeViewHolder.tvPriceClassFive.setText(productDao.get(position).getPriceUBaht().getClassFive());
+            eachItemSizeViewHolder.tvPriceClassEightFive.setText(productDao.get(position).getPriceUBaht().getClassEightFive());
+            eachItemSizeViewHolder.tvPriceClassOneThreeFive.setText(productDao.get(position).getPriceUBaht().getClassOneThreeFive());
+            eachItemSizeViewHolder.tvPricePerKilo.setText(productDao.get(position).getPriceUBaht().getPerKilo());
+            eachItemSizeViewHolder.tvPricePerMeter.setText(productDao.get(position).getPriceUBaht().getPerMeter());
+            eachItemSizeViewHolder.tvPricePerPiece.setText(productDao.get(position).getPriceUBaht().getPerPiece());
+            eachItemSizeViewHolder.tvPricePerWrap.setText(productDao.get(position).getPriceUBaht().getPerWrap());
+            eachItemSizeViewHolder.tvEfford.setText(productDao.get(position).getEffordUBaht());
+            eachItemSizeViewHolder.tvAmountPerWrap.setText(productDao.get(position).getAmongPerWrap());
+            eachItemSizeViewHolder.tvAlertProd.setText(productDao.get(position).getTotalItemBigUnit());
+
+
+
+
             eachItemSizeViewHolder.imvBoxForEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
