@@ -8,6 +8,7 @@ import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,6 +18,12 @@ import com.bumptech.glide.Glide;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.EachItemSizeAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.util.List;
@@ -36,6 +43,8 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     @BindView(R.id.tv_chooseSpinner) TextView tvChooseSpinner;
     @BindView(R.id.spinner_provider) SearchableSpinner spinnerProvider;
     @BindView(R.id.tv_provider_prod) TextView tvProviderProd;
+    @BindView(R.id.tv_prod_amount) TextView tvProdAmount;
+    @BindView(R.id.ed_prod_amount) TextView edProdAmount;
     @BindView(R.id.imv_box_for_edit) ImageView imvBoxForEdit;
     @BindView(R.id.img_product) ImageView imgProduct;
 
@@ -80,6 +89,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
 
             tvNamePro.setText(productDao.getProdName());
             tvCodeProd.setText(productDao.getProdCode());
+            tvProdAmount.setText(productDao.getProductQuantity()+"");
             if(productDao.getProductImg() != null){
                 Glide.with(DetailOfListProductActivity.this).load(productDao.getProductImg()).placeholder(ContextCompat.getDrawable(DetailOfListProductActivity.this,R.drawable.folder)).into(imgProduct);
             }
@@ -91,10 +101,69 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         }
 
 
+        imvBoxForEdit.setOnClickListener(imvClicklistener);
         spinnerOfTypeProduct();
 
 
     }
+
+    private View.OnClickListener imvClicklistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (imvBoxForEdit.isSelected()) {
+                imvBoxForEdit.setSelected(false);
+                //textView Visible
+                tvProdAmount.setVisibility(View.VISIBLE);
+
+                //EditText Gone
+                edProdAmount.setVisibility(View.GONE);
+
+                prodAmount = Integer.parseInt(edProdAmount.getText().toString());
+//                code = edProdctTypeCode.getText().toString();
+//                des = edProductTypeDes.getText().toString();
+
+                setTextView(prodAmount);
+
+                // save data
+                DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType/"+productDao.getProdInType());
+                //Log.d("providers", "onDataChange: "+providerDao.getProvId());
+                Query query = mRootRef.child("data").orderByChild("productId").equalTo(productDao.getProdId());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                            //Log.d("providers", "onDataChange: "+snapshot.toString());
+                            snapshot.getRef().child("productQuantity").setValue(prodAmount);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+            } else {
+                // edit data
+                imvBoxForEdit.setSelected(true);
+                //textView Gone
+                tvProdAmount.setVisibility(View.GONE);
+
+                //EditText Visible
+                edProdAmount.setVisibility(View.VISIBLE);
+
+                if (swap) {
+                    swap = false;
+                    setTextEdit(productDao.getProductQuantity());
+                } else {
+                    setTextEdit(prodAmount);
+                }
+
+            }
+        }
+    };
 
     private void spinnerOfTypeProduct() {
 //        if (productDao.getProdType() != null) {
@@ -131,30 +200,26 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         }
     };
 
-    private View.OnClickListener imvClicklistener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
 
-        }
-    };
-
-//    private void setTextView(String prodCode, String prodName, String prodPrice, int prodAmount, String prodUnit, int prodAlert) {
+    private void setTextView(int Amount ) {
+        tvProdAmount.setText(Amount+"");
 //        tvCodeProd.setText(prodCode);
 //        tvNamePro.setText(prodName);
 //        tvPricePro.setText(prodPrice);
 //        tvAmountProd.setText(String.valueOf(prodAmount));
 //        tvUnitProd.setText(prodUnit);
 //        tvAlertProd.setText(String.valueOf(prodAlert));
-//    }
+    }
 
-//    private void setTextEdit(String prodCode, String prodName, String prodPrice, int prodAmount, String prodUnit, int prodAlert) {
+    private void setTextEdit(int Amount) {
+        edProdAmount.setText(Amount+"");
 //        edCodeProd.setText(prodCode);
 //        edNameProd.setText(prodName);
 //        edPriceProd.setText(prodPrice);
 //        edAmountProd.setText(String.valueOf(prodAmount));
 //        edUnitProd.setText(prodUnit);
 //        edAlertProd.setText(String.valueOf(prodAlert));
-//    }
+    }
 
     @Override
     public void onBackPressed() {

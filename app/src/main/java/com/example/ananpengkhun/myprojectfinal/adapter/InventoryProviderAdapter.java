@@ -43,9 +43,8 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
     private Button btnConfirm;
     private Button btnCancel;
 
-    public InventoryProviderAdapter(MyDataInventoryActivity myDataInventoryActivity, List<ProviderDao> providerList) {
+    public InventoryProviderAdapter(MyDataInventoryActivity myDataInventoryActivity) {
         this.mContext = myDataInventoryActivity;
-        this.providerList = providerList;
     }
 
     @Override
@@ -119,6 +118,7 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
                 public void onClick(View view) {
                     Log.d(TAG, "onClick: "+position);
                     Intent intent = new Intent(mContext, DetailOfListProviderActivity.class);
+                    intent.putExtra("provider_index",position);
                     intent.putExtra("provider_object_index",providerList.get(position));
 //                    intent.putExtra("position",position);
                     mContext.startActivity(intent);
@@ -136,5 +136,9 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public int getItemCount() {
         return providerList.size();
+    }
+
+    public void setData(List<ProviderDao> data) {
+        this.providerList = data;
     }
 }

@@ -11,6 +11,9 @@ import java.util.List;
  */
 
 public class ProductDao implements Parcelable{
+    private int prodInType;
+    private int prodId;
+    private int productQuantity;
     private String prodCode;
     private String prodName;
     private int providerId;
@@ -21,10 +24,13 @@ public class ProductDao implements Parcelable{
     }
 
     protected ProductDao(Parcel in) {
+        prodInType = in.readInt();
+        prodId = in.readInt();
+        productQuantity = in.readInt();
         prodCode = in.readString();
         prodName = in.readString();
-        productImg = in.readString();
         providerId = in.readInt();
+        productImg = in.readString();
         productEachSizes = in.createTypedArrayList(ProductEachSize.CREATOR);
     }
 
@@ -39,6 +45,30 @@ public class ProductDao implements Parcelable{
             return new ProductDao[size];
         }
     };
+
+    public int getProductQuantity() {
+        return productQuantity;
+    }
+
+    public void setProductQuantity(int productQuantity) {
+        this.productQuantity = productQuantity;
+    }
+
+    public int getProdId() {
+        return prodId;
+    }
+
+    public void setProdId(int prodId) {
+        this.prodId = prodId;
+    }
+
+    public int getProdInType() {
+        return prodInType;
+    }
+
+    public void setProdInType(int prodInType) {
+        this.prodInType = prodInType;
+    }
 
     public String getProductImg() {
         return productImg;
@@ -81,6 +111,7 @@ public class ProductDao implements Parcelable{
         this.productEachSizes = productEachSizes;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -88,10 +119,13 @@ public class ProductDao implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(prodInType);
+        parcel.writeInt(prodId);
+        parcel.writeInt(productQuantity);
         parcel.writeString(prodCode);
         parcel.writeString(prodName);
-        parcel.writeString(productImg);
         parcel.writeInt(providerId);
+        parcel.writeString(productImg);
         parcel.writeTypedList(productEachSizes);
     }
 }

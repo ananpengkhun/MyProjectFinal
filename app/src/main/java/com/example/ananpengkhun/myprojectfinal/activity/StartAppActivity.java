@@ -76,7 +76,7 @@ public class StartAppActivity extends AppCompatActivity {
                 Log.d("start", "onCancelled: "+databaseError.getMessage());
             }
         };
-        mRootRef.addValueEventListener(valueEventListener);
+        mRootRef.addListenerForSingleValueEvent(valueEventListener);
 //        mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType");
 //        valueEventListener = new ValueEventListener() {
 //            @Override
@@ -167,7 +167,6 @@ public class StartAppActivity extends AppCompatActivity {
 //        };
 //
 //        mRootRef.addListenerForSingleValueEvent(valueEventListener);
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -178,7 +177,7 @@ public class StartAppActivity extends AppCompatActivity {
 //                intent.putParcelableArrayListExtra("data", (ArrayList<DataDao.ProductTypeBean>) productTypeDaos);
 //                startActivity(intent);
 //                finish();
-                Log.d("start", "onDataChange: " + dataDao.getProductType().get(0).getData().get(0).getDataItem().get(0).getPriceUBaht().getClassEightFive());
+//                Log.d("start", "onDataChange: " + dataDao.getProductType().get(0).getData().get(0).getDataItem().get(0).getPriceUBaht().getClassEightFive());
                 Intent intent = new Intent(StartAppActivity.this, MainActivity.class);
                 intent.putExtra("data", dataDao);
                 startActivity(intent);
@@ -195,9 +194,9 @@ public class StartAppActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        if (valueEventListener != null) {
-            mRootRef.removeEventListener(valueEventListener);
-        }
+//        if (valueEventListener != null) {
+//            mRootRef.removeEventListener(valueEventListener);
+//        }
     }
 
 

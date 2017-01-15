@@ -318,6 +318,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 postValues.put("productQuantity", Integer.parseInt(edProdAmount.getText().toString()));
                 postValues.put("productUnit", edProdUnit.getText().toString());
                 postValues.put("provider", providerDaoList.get(spinnerProvider.getSelectedItemPosition()).getProvId());
+                postValues.put("productInType",spinnerProductType.getSelectedItemPosition());
 
                 Map<String, Object> childUpdates = new HashMap<>();
 

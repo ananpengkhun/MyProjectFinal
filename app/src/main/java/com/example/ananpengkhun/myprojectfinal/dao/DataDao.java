@@ -23,9 +23,6 @@ public class DataDao implements Parcelable {
 
     private List<ProductTypeBean> productType;
 
-    public DataDao(List<ProductTypeBean> productType) {
-        this.productType = productType;
-    }
 
     protected DataDao(Parcel in) {
         productType = in.createTypedArrayList(ProductTypeBean.CREATOR);
@@ -42,7 +39,6 @@ public class DataDao implements Parcelable {
             return new DataDao[size];
         }
     };
-
 
     public List<ProductTypeBean> getProductType() {
         return productType;
@@ -61,6 +57,7 @@ public class DataDao implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeTypedList(productType);
     }
+
 
     public static class ProductTypeBean implements Parcelable {
 
@@ -83,14 +80,6 @@ public class DataDao implements Parcelable {
         private String name;
         private List<DataBean> data;
 
-        public ProductTypeBean(int typeId, String status, String typeCode, String typeDes, String name, List<DataBean> data) {
-            this.typeId = typeId;
-            this.status = status;
-            this.typeCode = typeCode;
-            this.typeDes = typeDes;
-            this.name = name;
-            this.data = data;
-        }
 
         protected ProductTypeBean(Parcel in) {
             typeId = in.readInt();
@@ -176,6 +165,7 @@ public class DataDao implements Parcelable {
             parcel.writeTypedList(data);
         }
 
+
         public static class DataBean implements Parcelable {
 
             public DataBean() {
@@ -192,6 +182,7 @@ public class DataDao implements Parcelable {
             private int productId;
             private int productQuantity;
             private int productPrice;
+            private int productInType;
             private String productUnit;
             private int productAlert;
             public String productImg;
@@ -201,24 +192,11 @@ public class DataDao implements Parcelable {
             private List<DataItemBean> dataItem;
 
 
-            public DataBean(int productId, int productQuantity, String productImg,int productPrice, String productUnit, int productAlert, String nameCode, int provider, String nameItem, List<DataItemBean> dataItem) {
-                this.productId = productId;
-                this.productQuantity = productQuantity;
-                this.productPrice = productPrice;
-                this.productUnit = productUnit;
-                this.productAlert = productAlert;
-                this.nameCode = nameCode;
-                this.provider = provider;
-                this.nameItem = nameItem;
-                this.dataItem = dataItem;
-                this.productImg = productImg;
-            }
-
-
             protected DataBean(Parcel in) {
                 productId = in.readInt();
                 productQuantity = in.readInt();
                 productPrice = in.readInt();
+                productInType = in.readInt();
                 productUnit = in.readString();
                 productAlert = in.readInt();
                 productImg = in.readString();
@@ -239,6 +217,14 @@ public class DataDao implements Parcelable {
                     return new DataBean[size];
                 }
             };
+
+            public int getProductInType() {
+                return productInType;
+            }
+
+            public void setProductInType(int productInType) {
+                this.productInType = productInType;
+            }
 
             public String getProductImg() {
                 return productImg;
@@ -330,6 +316,7 @@ public class DataDao implements Parcelable {
                 parcel.writeInt(productId);
                 parcel.writeInt(productQuantity);
                 parcel.writeInt(productPrice);
+                parcel.writeInt(productInType);
                 parcel.writeString(productUnit);
                 parcel.writeInt(productAlert);
                 parcel.writeString(productImg);
@@ -370,19 +357,6 @@ public class DataDao implements Parcelable {
                 private String unit;
                 private PriceUBahtBean priceUBaht;
 
-                public DataItemBean(int nameItemId, String nameItemSize, String diameterOutsize, String weightPerWrap, String longPerWrap, String amongPerWrap, String effordUBaht, String contrainUPiecePerBox, String totalItemBigUnit, String unit, PriceUBahtBean priceUBaht) {
-                    this.nameItemId = nameItemId;
-                    this.nameItemSize = nameItemSize;
-                    this.diameterOutsize = diameterOutsize;
-                    this.weightPerWrap = weightPerWrap;
-                    this.longPerWrap = longPerWrap;
-                    this.amongPerWrap = amongPerWrap;
-                    this.effordUBaht = effordUBaht;
-                    this.contrainUPiecePerBox = contrainUPiecePerBox;
-                    this.totalItemBigUnit = totalItemBigUnit;
-                    this.unit = unit;
-                    this.priceUBaht = priceUBaht;
-                }
 
                 protected DataItemBean(Parcel in) {
                     nameItemId = in.readInt();
@@ -518,6 +492,7 @@ public class DataDao implements Parcelable {
                     parcel.writeParcelable(priceUBaht, i);
                 }
 
+
                 public static class PriceUBahtBean implements Parcelable {
 
                     public PriceUBahtBean() {
@@ -547,20 +522,6 @@ public class DataDao implements Parcelable {
                     private String classEightFive;
                     private String classOneThreeFive;
 
-
-
-                    public PriceUBahtBean(String perMeter, String perWrap, String perKilo, String perPiece, String classOne, String classTwo, String classThree, String classFive, String classEightFive, String classOneThreeFive) {
-                        this.perMeter = perMeter;
-                        this.perWrap = perWrap;
-                        this.perKilo = perKilo;
-                        this.perPiece = perPiece;
-                        this.classOne = classOne;
-                        this.classTwo = classTwo;
-                        this.classThree = classThree;
-                        this.classFive = classFive;
-                        this.classEightFive = classEightFive;
-                        this.classOneThreeFive = classOneThreeFive;
-                    }
 
                     protected PriceUBahtBean(Parcel in) {
                         perMeter = in.readString();

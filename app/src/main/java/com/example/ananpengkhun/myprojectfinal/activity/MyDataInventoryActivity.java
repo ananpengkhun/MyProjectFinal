@@ -94,6 +94,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private List<ProviderDao> providerDaoList;
     private InventoryProductAdapter productAdapter;
     private InventoryProductTypeAdapter inventoryProductTypeAdapter;
+    private InventoryProviderAdapter inventoryProviderAdapter;
 
 
     @Override
@@ -114,6 +115,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private void init() {
         productAdapter = new InventoryProductAdapter(MyDataInventoryActivity.this);
         inventoryProductTypeAdapter = new InventoryProductTypeAdapter(MyDataInventoryActivity.this);
+        inventoryProviderAdapter = new InventoryProviderAdapter(MyDataInventoryActivity.this);
         productList = new ArrayList<>();
         productTypeList = new ArrayList<>();
         providerDaoList = new ArrayList<>();
@@ -147,6 +149,9 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     productDao.setProdName(dataDao.getProductType().get(i).getData().get(j).getNameItem());
                     productDao.setProviderId(dataDao.getProductType().get(i).getData().get(j).getProvider());
                     productDao.setProductImg(dataDao.getProductType().get(i).getData().get(j).getProductImg());
+                    productDao.setProdInType(dataDao.getProductType().get(i).getData().get(j).getProductInType());
+                    productDao.setProdId(dataDao.getProductType().get(i).getData().get(j).getProductId());
+                    productDao.setProductQuantity(dataDao.getProductType().get(i).getData().get(j).getProductQuantity());
 
 
                     DataDao.ProductTypeBean.DataBean list = dataDao.getProductType().get(i).getData().get(j);
@@ -200,6 +205,8 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange111111: "+dataSnapshot.toString());
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ProviderDao providerDao = new ProviderDao();
                     providerDao.setProvId(snapshot.getValue(ProviderDao.class).getProvId());
@@ -258,12 +265,55 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     recyclerView.setAdapter(productAdapter);
                     container.addView(mView);
                 } else if (2 == position) {
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/provider");
+                    databaseReference.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                            Log.d(TAG, "onDataChange1111112222: "+dataSnapshot.toString());
+                            ProviderDao providerDao = new ProviderDao();
+                            providerDao.setProvId(dataSnapshot.getValue(ProviderDao.class).getProvId());
+                            providerDao.setProvName(dataSnapshot.getValue(ProviderDao.class).getProvName());
+                            providerDao.setProvPhone(dataSnapshot.getValue(ProviderDao.class).getProvPhone());
+                            providerDao.setProvEmail(dataSnapshot.getValue(ProviderDao.class).getProvEmail());
+                            providerDao.setProvAddress(dataSnapshot.getValue(ProviderDao.class).getProvAddress());
+
+                            Log.d(TAG, "onDataChange1111112222: "+providerDao.getProvName());
+                            for(int i=0;i<providerDaoList.size();i++){
+                                if(providerDaoList.get(i).getProvId() == providerDao.getProvId()){
+                                    providerDaoList.set(i,providerDao);
+                                    inventoryProviderAdapter.notifyDataSetChanged();
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                     if (providerDaoList.size() > 0) {
                         mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_provider_recycler, container, false);
                         recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
-                        recyclerView.setAdapter(new InventoryProviderAdapter(MyDataInventoryActivity.this, providerDaoList));
+                        inventoryProviderAdapter.setData(providerDaoList);
+                        recyclerView.setAdapter(inventoryProviderAdapter);
                         container.addView(mView);
                     }
                 }
@@ -615,6 +665,17 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                 productAdapter.notifyDataSetChanged();
                 inventoryProductTypeAdapter.notifyDataSetChanged();
             }
+        }else if(requestCode == PROVIDER){
+//            ProviderDao providerDao = new ProviderDao();
+//            providerDao.setProvPhone(data.getStringExtra("provPhone"));
+//            providerDao.setProvEmail(data.getStringExtra("provEmail"));
+//            providerDao.setProvAddress(data.getStringExtra("provAddress"));
+//            providerDao.setProvName(data.getStringExtra("provName"));
+//            Log.d("provider_index", "onActivityResult: "+data.getIntExtra("provider_index",-1));
+//            providerDaoList.set(data.getIntExtra("provider_index",-1),providerDao);
+//            inventoryProviderAdapter.notifyDataSetChanged();
+
+
         }
     }
 
@@ -625,5 +686,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         //Log.d("start", "onDataChange: "+providerDaos.get(0).getProvName());
 
     }
+
 
 }

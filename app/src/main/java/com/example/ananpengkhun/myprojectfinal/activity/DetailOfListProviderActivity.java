@@ -39,11 +39,16 @@ public class DetailOfListProviderActivity extends AppCompatActivity {
     @BindView(R.id.imv_box_for_edit) ImageView imvBoxForEdit;
 
     private ProviderDao providerDao;
+    private int index;
     private boolean swap = true;
     private String provName;
     private String provAddess;
     private String provPhone;
     private String provEmail;
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +57,15 @@ public class DetailOfListProviderActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setupView();
         init();
+
+
     }
 
     private void init() {
         Intent intent = getIntent();
         if(intent.getExtras() != null){
             providerDao = intent.getParcelableExtra("provider_object_index");
-
+            index = intent.getIntExtra("provider_index",-1);
             setTextView(providerDao.getProvName(),providerDao.getProvAddress(),providerDao.getProvPhone(),providerDao.getProvEmail());
         }
 
@@ -76,6 +83,15 @@ public class DetailOfListProviderActivity extends AppCompatActivity {
     private View.OnClickListener toolbarClicklistener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
+
+//            Intent intent = new Intent();
+//            intent.putExtra("provider_index",index);
+//            intent.putExtra("provAddress",provAddess);
+//            intent.putExtra("provEmail",provEmail);
+//            intent.putExtra("provName",provName);
+//            intent.putExtra("provPhone",provPhone);
+//            setResult(MyDataInventoryActivity.PROVIDER,intent);
             finish();
         }
     };
