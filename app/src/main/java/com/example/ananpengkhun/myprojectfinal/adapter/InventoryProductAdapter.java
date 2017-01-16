@@ -3,6 +3,7 @@ package com.example.ananpengkhun.myprojectfinal.adapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProdu
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
+import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +44,14 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
     private Context mContext;
     private List<ProductDao> productList;
     private List<ProductTypeDao> productTypeList;
+    private List<ProviderDao> providerDaoList;
     private Button btnConfirm;
     private Button btnCancel;
 
-    public void setProductList(List<ProductDao> productList, List<ProductTypeDao> productTypeList) {
+    public void setProductList(List<ProductDao> productList, List<ProductTypeDao> productTypeList, List<ProviderDao> providerDaoList) {
         this.productList = productList;
         this.productTypeList = productTypeList;
+        this.providerDaoList = providerDaoList;
     }
 
     public InventoryProductAdapter(MyDataInventoryActivity myDataInventoryActivity) {
@@ -134,6 +139,7 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
                     Log.d(TAG, "onClick: intype:"+productList.get(position).getProdInType());
                     Log.d(TAG, "onClick: prod id:"+productList.get(position).getProdId());
                     Intent intent = new Intent(mContext, DetailOfListProductActivity.class);
+                    intent.putParcelableArrayListExtra("provider_arraylist",(ArrayList<ProviderDao>) providerDaoList);
                     intent.putExtra("product_object_index",productList.get(position));
 
                     //Log.d(TAG, "onClick: "+productList.get(position).getProductEachSizes().get(0).getPriceUBaht().getClassOne());

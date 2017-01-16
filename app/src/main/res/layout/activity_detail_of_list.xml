@@ -125,6 +125,7 @@
 
 
                         <LinearLayout
+                            android:id="@+id/ll_prod_price"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
@@ -132,12 +133,23 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="ชนิดสินค้า :"/>
+                                android:text="ราคา :"/>
 
-                            <TextView
-                                android:id="@+id/tv_chooseSpinner"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <android.support.v7.widget.AppCompatEditText
+                                    android:id="@+id/ed_price_pro"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"/>
+
+                                <TextView
+                                    android:id="@+id/tv_price_pro"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+                            </RelativeLayout>
 
                         </LinearLayout>
 
@@ -155,21 +167,23 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                                    android:id="@+id/spinner_provider"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:visibility="gone"
-                                    app:hintText="   "/>
-
                                 <TextView
                                     android:id="@+id/tv_provider_prod"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"/>
+
+                                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                                    android:visibility="gone"
+                                    android:id="@+id/spinner_provider"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:hintText="choose"/>
+
                             </RelativeLayout>
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/ll_amount"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
@@ -191,6 +205,34 @@
 
                                 <TextView
                                     android:id="@+id/tv_prod_amount"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_alert"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="แจ้งเตือน :"/>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <EditText
+                                    android:id="@+id/ed_prod_alert"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"/>
+
+                                <TextView
+                                    android:id="@+id/tv_prod_alert"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"/>
                             </RelativeLayout>

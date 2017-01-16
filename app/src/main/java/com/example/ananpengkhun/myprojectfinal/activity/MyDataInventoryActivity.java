@@ -152,6 +152,8 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     productDao.setProdInType(dataDao.getProductType().get(i).getData().get(j).getProductInType());
                     productDao.setProdId(dataDao.getProductType().get(i).getData().get(j).getProductId());
                     productDao.setProductQuantity(dataDao.getProductType().get(i).getData().get(j).getProductQuantity());
+                    productDao.setProductPrice(dataDao.getProductType().get(i).getData().get(j).getProductPrice());
+                    productDao.setProductAlert(dataDao.getProductType().get(i).getData().get(j).getProductAlert());
 
 
                     DataDao.ProductTypeBean.DataBean list = dataDao.getProductType().get(i).getData().get(j);
@@ -259,7 +261,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
-                    productAdapter.setProductList(productList, productTypeList);
+                    productAdapter.setProductList(productList, productTypeList,providerDaoList);
                     //Log.d("prices", "instantiateItem: "+productList.get(0).getProductEachSizes().get(0).getPriceUBaht().getClassOne());
 
                     recyclerView.setAdapter(productAdapter);
@@ -644,6 +646,12 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                 productDao.setProdCode(data.getStringExtra("nameCode"));
                 productDao.setProviderId(data.getIntExtra("provider", -1));
                 productDao.setProductImg(data.getStringExtra("productImg"));
+                productDao.setProdInType(data.getIntExtra("productType", -1));
+                productDao.setProdId(data.getIntExtra("productId", -1));
+                productDao.setProductPrice(data.getIntExtra("productPrice", -1));
+                productDao.setProductQuantity(data.getIntExtra("productQuantity", -1));
+                productDao.setProductAlert(data.getIntExtra("productAlert", -1));
+
 
                 productList.add(productDao);
 

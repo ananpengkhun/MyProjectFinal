@@ -2,6 +2,7 @@ package com.example.ananpengkhun.myprojectfinal.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
@@ -10,7 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,14 +21,17 @@ import com.bumptech.glide.Glide;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.EachItemSizeAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
+import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.toptoche.searchablespinnerlibrary.SearchableListDialog;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,27 +46,38 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     @BindView(R.id.tv_code_prod) TextView tvCodeProd;
     @BindView(R.id.ed_name_prod) AppCompatEditText edNameProd;
     @BindView(R.id.tv_namePro) TextView tvNamePro;
-    @BindView(R.id.tv_chooseSpinner) TextView tvChooseSpinner;
-    @BindView(R.id.spinner_provider) SearchableSpinner spinnerProvider;
     @BindView(R.id.tv_provider_prod) TextView tvProviderProd;
     @BindView(R.id.tv_prod_amount) TextView tvProdAmount;
     @BindView(R.id.ed_prod_amount) TextView edProdAmount;
+    @BindView(R.id.tv_prod_alert) TextView tvProdAlert;
+    @BindView(R.id.ed_prod_alert) TextView edProdAlert;
     @BindView(R.id.imv_box_for_edit) ImageView imvBoxForEdit;
     @BindView(R.id.img_product) ImageView imgProduct;
+    @BindView(R.id.ll_prod_price) LinearLayout llProdPrice;
+    @BindView(R.id.ll_amount) LinearLayout llAmount;
+    @BindView(R.id.ll_alert) LinearLayout llAlert;
+    @BindView(R.id.spinner_provider) SearchableSpinner spinnerProvider;
+    @BindView(R.id.ed_price_pro) AppCompatEditText edPricePro;
+    @BindView(R.id.tv_price_pro) TextView tvPricePro;
 
     private ProductDao productDao;
     private boolean swap = true;
 
     private String prodCode;
     private String prodName;
-    private String prodPrice;
+    private int prodPrice;
     private int prodAmount;
+    private int spinProvider;
     private String prodUnit;
     private int prodAlert;
     private List<String> listProdType;
     private List<String> listProvider;
+    private List<ProviderDao> providerDaoList;
+    private List<ProviderDao> providerDaoload;
+    private List<String> getListProdType;
 
     private EachItemSizeAdapter eachItemSizeAdapter;
+    private int index;
 
 
     @Override
@@ -69,6 +86,8 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_of_list);
         ButterKnife.bind(this);
         setupView();
+        providerDaoload = new ArrayList<>();
+        getListProdType = new ArrayList<>();
         init();
     }
 
@@ -83,15 +102,71 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     }
 
     private void init() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/provider");
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    ProviderDao providerDao = new ProviderDao();
+                    providerDao.setProvId(snapshot.getValue(ProviderDao.class).getProvId());
+                    providerDao.setProvName(snapshot.getValue(ProviderDao.class).getProvName());
+                    providerDao.setProvPhone(snapshot.getValue(ProviderDao.class).getProvPhone());
+                    providerDao.setProvEmail(snapshot.getValue(ProviderDao.class).getProvEmail());
+                    providerDao.setProvAddress(snapshot.getValue(ProviderDao.class).getProvAddress());
+                    Log.d("loaddata", "onDataChange: " + providerDao.getProvName());
+                    providerDaoload.add(providerDao);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        databaseReference.addListenerForSingleValueEvent(valueEventListener);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                spinnerOfTypeProduct();
+            }
+        },100);
+
         if (getIntent().getExtras() != null) {
             Intent intent = getIntent();
             productDao = intent.getParcelableExtra("product_object_index");
-
+            providerDaoList = intent.getParcelableArrayListExtra("provider_arraylist");
             tvNamePro.setText(productDao.getProdName());
             tvCodeProd.setText(productDao.getProdCode());
-            tvProdAmount.setText(productDao.getProductQuantity()+"");
-            if(productDao.getProductImg() != null){
-                Glide.with(DetailOfListProductActivity.this).load(productDao.getProductImg()).placeholder(ContextCompat.getDrawable(DetailOfListProductActivity.this,R.drawable.folder)).into(imgProduct);
+
+            if (productDao.getProductQuantity() == 0) {
+                llAmount.setVisibility(View.GONE);
+            } else {
+                llAmount.setVisibility(View.VISIBLE);
+                tvProdAmount.setText(productDao.getProductQuantity() + "");
+            }
+
+            if (productDao.getProductPrice() == 0) {
+                llProdPrice.setVisibility(View.GONE);
+            } else {
+                llProdPrice.setVisibility(View.VISIBLE);
+                tvPricePro.setText(productDao.getProductPrice() + "");
+            }
+            for (int i = 0; i < providerDaoList.size(); i++) {
+                if (providerDaoList.get(i).getProvId() == productDao.getProviderId()) {
+                    tvProviderProd.setText(providerDaoList.get(i).getProvName());
+                    index = i;
+                }
+            }
+
+            if (productDao.getProductAlert() == 0) {
+                llAlert.setVisibility(View.GONE);
+            } else {
+                llAlert.setVisibility(View.VISIBLE);
+                tvProdAlert.setText(productDao.getProductAlert() + "");
+            }
+
+            if (productDao.getProductImg() != null) {
+                Glide.with(DetailOfListProductActivity.this).load(productDao.getProductImg()).placeholder(ContextCompat.getDrawable(DetailOfListProductActivity.this, R.drawable.folder)).into(imgProduct);
             }
 
             rcSizeItem.setHasFixedSize(true);
@@ -102,7 +177,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
 
 
         imvBoxForEdit.setOnClickListener(imvClicklistener);
-        spinnerOfTypeProduct();
+
 
 
     }
@@ -113,28 +188,60 @@ public class DetailOfListProductActivity extends AppCompatActivity {
             if (imvBoxForEdit.isSelected()) {
                 imvBoxForEdit.setSelected(false);
                 //textView Visible
-                tvProdAmount.setVisibility(View.VISIBLE);
+                tvNamePro.setVisibility(View.VISIBLE);
+                tvCodeProd.setVisibility(View.VISIBLE);
+                if (productDao.getProductPrice() != 0) {
+                    tvPricePro.setVisibility(View.VISIBLE);
+                }
+                if (productDao.getProductQuantity() != 0) {
+                    tvProdAmount.setVisibility(View.VISIBLE);
+                }
+                tvProviderProd.setVisibility(View.VISIBLE);
+                if (productDao.getProductAlert() != 0) {
+                    tvProdAlert.setVisibility(View.VISIBLE);
+                }
+
 
                 //EditText Gone
                 edProdAmount.setVisibility(View.GONE);
+                edNameProd.setVisibility(View.GONE);
+                edCodeProd.setVisibility(View.GONE);
+                edPricePro.setVisibility(View.GONE);
+                spinnerProvider.setVisibility(View.GONE);
+                edProdAlert.setVisibility(View.GONE);
+
 
                 prodAmount = Integer.parseInt(edProdAmount.getText().toString());
-//                code = edProdctTypeCode.getText().toString();
-//                des = edProductTypeDes.getText().toString();
+                prodName = edNameProd.getText().toString();
+                prodCode = edCodeProd.getText().toString();
+                prodPrice = Integer.parseInt(edPricePro.getText().toString());
+                spinProvider = spinnerProvider.getSelectedItemPosition();
+                prodAlert = Integer.parseInt(edProdAlert.getText().toString());
 
-                setTextView(prodAmount);
+                setTextView(prodAmount, prodName, prodCode, prodPrice, (spinProvider == -1) ? -2 :spinProvider, prodAlert);
 
                 // save data
-                DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType/"+productDao.getProdInType());
+                DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType/" + productDao.getProdInType());
                 //Log.d("providers", "onDataChange: "+providerDao.getProvId());
                 Query query = mRootRef.child("data").orderByChild("productId").equalTo(productDao.getProdId());
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             //Log.d("providers", "onDataChange: "+snapshot.toString());
                             snapshot.getRef().child("productQuantity").setValue(prodAmount);
+                            snapshot.getRef().child("nameItem").setValue(prodName);
+                            snapshot.getRef().child("nameCode").setValue(prodCode);
+                            snapshot.getRef().child("productPrice").setValue(prodPrice);
+                            Log.d("detailpro", "onDataChange: "+spinProvider);
+                            if(spinProvider != -1 ){
+                                snapshot.getRef().child("provider").setValue(providerDaoload.get(spinProvider).getProvId());
+                            }
+                            snapshot.getRef().child("productAlert").setValue(prodAlert);
+
+
+
                         }
                     }
 
@@ -150,48 +257,43 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                 imvBoxForEdit.setSelected(true);
                 //textView Gone
                 tvProdAmount.setVisibility(View.GONE);
+                tvNamePro.setVisibility(View.GONE);
+                tvCodeProd.setVisibility(View.GONE);
+                tvPricePro.setVisibility(View.GONE);
+                tvProviderProd.setVisibility(View.GONE);
+                tvProdAlert.setVisibility(View.GONE);
+
 
                 //EditText Visible
                 edProdAmount.setVisibility(View.VISIBLE);
+                edNameProd.setVisibility(View.VISIBLE);
+                edCodeProd.setVisibility(View.VISIBLE);
+                edPricePro.setVisibility(View.VISIBLE);
+                spinnerProvider.setVisibility(View.VISIBLE);
+                edProdAlert.setVisibility(View.VISIBLE);
 
                 if (swap) {
                     swap = false;
-                    setTextEdit(productDao.getProductQuantity());
+                    setTextEdit(productDao.getProductQuantity(),
+                            productDao.getProdName(),
+                            productDao.getProdCode(),
+                            productDao.getProductPrice(),
+                            providerDaoList.get(index).getProvName(),
+                            productDao.getProductAlert());
                 } else {
-                    setTextEdit(prodAmount);
+                    Log.d("detailpro", "onClick: "+spinProvider);
+                    setTextEdit(prodAmount,
+                            prodName,
+                            prodCode,
+                            prodPrice,
+                            (spinProvider == -1) ? "" : providerDaoList.get(spinProvider).getProvName(),
+                            prodAlert);
                 }
 
             }
         }
     };
 
-    private void spinnerOfTypeProduct() {
-//        if (productDao.getProdType() != null) {
-//            listProdType = new ArrayList<>();
-//            for (int i = 0; i < productDao.getProdType().size(); i++) {
-//                listProdType.add(productDao.getProdType().get(i).getProdTypeName());
-//            }
-//        } else {
-//
-//        }
-//        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listProdType);
-//        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-//        spinner.setAdapter(spinnerArrayAdapter);
-//
-//
-//        if (productDao.getProdProvider() != null) {
-//            listProvider = new ArrayList<>();
-//            for (int i = 0; i < productDao.getProdProvider().size(); i++) {
-//                listProvider.add(productDao.getProdProvider().get(i).getProvName());
-//            }
-//        } else {
-//
-//        }
-//        ArrayAdapter<String> spinnerArrayAdapterProvider = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listProvider);
-//        spinnerArrayAdapterProvider.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-//        spinnerProvider.setAdapter(spinnerArrayAdapterProvider);
-
-    }
 
     private View.OnClickListener toolbarClicklistener = new View.OnClickListener() {
         @Override
@@ -201,28 +303,53 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     };
 
 
-    private void setTextView(int Amount ) {
-        tvProdAmount.setText(Amount+"");
-//        tvCodeProd.setText(prodCode);
-//        tvNamePro.setText(prodName);
-//        tvPricePro.setText(prodPrice);
-//        tvAmountProd.setText(String.valueOf(prodAmount));
-//        tvUnitProd.setText(prodUnit);
-//        tvAlertProd.setText(String.valueOf(prodAlert));
+    private void setTextView(int prodAmount, String prodName, String prodCode, int prodPrice, int spinProvider, int Alert) {
+        tvProdAmount.setText(prodAmount + "");
+        tvNamePro.setText(prodName);
+        tvCodeProd.setText(prodCode);
+        tvPricePro.setText(prodPrice+"");
+        if(spinProvider == -2){
+            tvProviderProd.setText("");
+        }else{
+            tvProviderProd.setText(getListProdType.get(spinProvider));
+        }
+        tvProdAlert.setText(Alert+"");
     }
 
-    private void setTextEdit(int Amount) {
-        edProdAmount.setText(Amount+"");
-//        edCodeProd.setText(prodCode);
-//        edNameProd.setText(prodName);
-//        edPriceProd.setText(prodPrice);
-//        edAmountProd.setText(String.valueOf(prodAmount));
-//        edUnitProd.setText(prodUnit);
-//        edAlertProd.setText(String.valueOf(prodAlert));
+    private void setTextEdit(int productQuantity, String prodName, String prodCode, int productPrice, String provName, int alert) {
+        Log.d("detailpro", "setTextEdit: "+provName);
+        edProdAmount.setText(productQuantity + "");
+        edNameProd.setText(prodName);
+        edCodeProd.setText(prodCode);
+        edPricePro.setText(productPrice+"");
+        spinnerProvider.setOnSearchTextChangedListener(new SearchableListDialog.OnSearchTextChanged() {
+            @Override
+            public void onSearchTextChanged(String strText) {
+
+            }
+        });
+        edProdAlert.setText(alert+"");
     }
 
     @Override
     public void onBackPressed() {
         finish();
+    }
+
+    private void spinnerOfTypeProduct() {
+
+        Log.d("loaddata", "spinnerOfTypeProduct: " + providerDaoList.size());
+        if (providerDaoload != null) {
+            for (int i = 0; i < providerDaoload.size(); i++) {
+                getListProdType.add(providerDaoload.get(i).getProvName());
+            }
+            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, getListProdType);
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+            spinnerProvider.setAdapter(spinnerArrayAdapter);
+        } else {
+
+        }
+
+
     }
 }

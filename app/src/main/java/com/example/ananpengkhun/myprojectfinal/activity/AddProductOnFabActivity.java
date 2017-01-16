@@ -94,8 +94,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 spinnerOfTypeProduct();
                 processData();
             }
-        },300);
-
+        }, 300);
 
 
     }
@@ -118,9 +117,9 @@ public class AddProductOnFabActivity extends AppCompatActivity {
         if (getIntent().getParcelableExtra("data") != null) {
             dataDao = getIntent().getParcelableExtra("data");
         }
-        if(getIntent().getParcelableArrayListExtra("dataType") != null){
+        if (getIntent().getParcelableArrayListExtra("dataType") != null) {
             productTypeList = getIntent().getParcelableArrayListExtra("dataType");
-            Log.d("addProduct", "init: "+productTypeList.size());
+            Log.d("addProduct", "init: " + productTypeList.size());
         }
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/provider");
         ValueEventListener valueEventListener = new ValueEventListener() {
@@ -268,9 +267,9 @@ public class AddProductOnFabActivity extends AppCompatActivity {
 //
 //
 
-            Log.d("spinner", "onClick spinnerProductType: "+spinnerProductType.getSelectedItemPosition());
-            Log.d("spinner", "onClick spinnerProvider: "+spinnerProvider.getSelectedItemPosition());
-            if(spinnerProductType.getSelectedItemPosition() != -1 &&
+            Log.d("spinner", "onClick spinnerProductType: " + spinnerProductType.getSelectedItemPosition());
+            Log.d("spinner", "onClick spinnerProvider: " + spinnerProvider.getSelectedItemPosition());
+            if (spinnerProductType.getSelectedItemPosition() != -1 &&
                     spinnerProvider.getSelectedItemPosition() != -1 &&
                     !("".equals(edProdCode.getText().toString())) &&
                     !("".equals(edProdName.getText().toString())) &&
@@ -299,13 +298,13 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 int index = sp.getInt("indexProduct", 0);
 
                 int indexData;
-                if(dataDao.getProductType().get(spinnerProductType.getSelectedItemPosition()).getData() == null){
+                if (dataDao.getProductType().get(spinnerProductType.getSelectedItemPosition()).getData() == null) {
                     indexData = 0;
-                }else{
+                } else {
                     indexData = dataDao.getProductType().get(spinnerProductType.getSelectedItemPosition()).getData().size();
                 }
 
-                Log.d("start", "onClick: "+indexData);
+                Log.d("start", "onClick: " + indexData);
                 DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
                 HashMap<String, Object> postValues = new HashMap<>();
@@ -318,16 +317,16 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 postValues.put("productQuantity", Integer.parseInt(edProdAmount.getText().toString()));
                 postValues.put("productUnit", edProdUnit.getText().toString());
                 postValues.put("provider", providerDaoList.get(spinnerProvider.getSelectedItemPosition()).getProvId());
-                postValues.put("productInType",spinnerProductType.getSelectedItemPosition());
+                postValues.put("productInType", spinnerProductType.getSelectedItemPosition());
 
                 Map<String, Object> childUpdates = new HashMap<>();
 
-                childUpdates.put("/productType/" + spinnerProductType.getSelectedItemPosition() + "/data/"+indexData, postValues);
+                childUpdates.put("/productType/" + spinnerProductType.getSelectedItemPosition() + "/data/" + indexData, postValues);
                 mRootRef.updateChildren(childUpdates);
 
                 Intent intent = new Intent();
-                intent.putExtra("productImg",pathFile.toString());
-                intent.putExtra("productType",spinnerProductType.getSelectedItemPosition());
+                intent.putExtra("productImg", pathFile.toString());
+                intent.putExtra("productType", spinnerProductType.getSelectedItemPosition());
                 intent.putExtra("nameCode", edProdCode.getText().toString());
                 intent.putExtra("nameItem", edProdName.getText().toString());
                 intent.putExtra("productAlert", Integer.parseInt(edProdAlert.getText().toString()));
@@ -336,11 +335,11 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 intent.putExtra("productQuantity", Integer.parseInt(edProdAmount.getText().toString()));
                 intent.putExtra("productUnit", edProdUnit.getText().toString());
                 intent.putExtra("provider", providerDaoList.get(spinnerProvider.getSelectedItemPosition()).getProvId());
-                setResult(MyDataInventoryActivity.PRODUCT_TYPE,intent);
+                setResult(MyDataInventoryActivity.PRODUCT_TYPE, intent);
                 finish();
 
-            }else{
-                Toast.makeText(AddProductOnFabActivity.this,"Insert Fail.",Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(AddProductOnFabActivity.this, "Insert Fail.", Toast.LENGTH_LONG).show();
                 finish();
             }
         }
