@@ -38,7 +38,6 @@ public class EachItemSizeViewHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.tv_amount_per_wrap) public  TextView tvAmountPerWrap;
     @BindView(R.id.ed_alert_prod) public AppCompatEditText edAlertProd;
     @BindView(R.id.tv_alert_prod) public TextView tvAlertProd;
-    @BindView(R.id.imv_box_for_edit) public ImageView imvBoxForEdit;
 
 
     public EachItemSizeViewHolder(View itemView) {

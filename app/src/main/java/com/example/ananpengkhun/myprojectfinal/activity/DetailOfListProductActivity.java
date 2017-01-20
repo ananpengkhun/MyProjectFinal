@@ -1,8 +1,12 @@
 package com.example.ananpengkhun.myprojectfinal.activity;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
@@ -11,7 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -31,6 +37,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.toptoche.searchablespinnerlibrary.SearchableListDialog;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +68,12 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     @BindView(R.id.ed_price_pro) AppCompatEditText edPricePro;
     @BindView(R.id.tv_price_pro) TextView tvPricePro;
 
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int TAKE_PHOTO_REQUEST = 2;
+    private Button takeByCamera;
+    private Button takeByGallery;
+    private Uri pathFile;
+
     private ProductDao productDao;
     private boolean swap = true;
 
@@ -88,6 +102,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         setupView();
         providerDaoload = new ArrayList<>();
         getListProdType = new ArrayList<>();
+        imgProduct.setEnabled(false);
         init();
     }
 
@@ -165,7 +180,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                 tvProdAlert.setText(productDao.getProductAlert() + "");
             }
 
-            if (productDao.getProductImg() != null) {
+            if (!"".equals(productDao.getProductImg())) {
                 Glide.with(DetailOfListProductActivity.this).load(productDao.getProductImg()).placeholder(ContextCompat.getDrawable(DetailOfListProductActivity.this, R.drawable.folder)).into(imgProduct);
             }
 
@@ -187,6 +202,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         public void onClick(View view) {
             if (imvBoxForEdit.isSelected()) {
                 imvBoxForEdit.setSelected(false);
+                imgProduct.setEnabled(false);
                 //textView Visible
                 tvNamePro.setVisibility(View.VISIBLE);
                 tvCodeProd.setVisibility(View.VISIBLE);
@@ -233,6 +249,9 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                             snapshot.getRef().child("productQuantity").setValue(prodAmount);
                             snapshot.getRef().child("nameItem").setValue(prodName);
                             snapshot.getRef().child("nameCode").setValue(prodCode);
+                            if(pathFile != null) {
+                                snapshot.getRef().child("productImg").setValue(pathFile.toString());
+                            }
                             snapshot.getRef().child("productPrice").setValue(prodPrice);
                             Log.d("detailpro", "onDataChange: "+spinProvider);
                             if(spinProvider != -1 ){
@@ -255,6 +274,8 @@ public class DetailOfListProductActivity extends AppCompatActivity {
             } else {
                 // edit data
                 imvBoxForEdit.setSelected(true);
+                imgProduct.setEnabled(true);
+                imgProduct.setOnClickListener(importPictureClicklistener);
                 //textView Gone
                 tvProdAmount.setVisibility(View.GONE);
                 tvNamePro.setVisibility(View.GONE);
@@ -349,7 +370,71 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         } else {
 
         }
+    }
+
+    private View.OnClickListener importPictureClicklistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            final Dialog dialog = new Dialog(DetailOfListProductActivity.this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.dialog_import_picture);
+            dialog.setCancelable(true);
+            bindId(dialog);
+
+            takeByCamera.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
+
+                    File newdir = new File(dir);
+                    if (!newdir.exists()) {
+                        newdir.mkdirs();
+                    }
+                    String file = dir + System.currentTimeMillis() + ".jpg";
+                    File newfile = new File(file);
+                    try {
+                        newfile.createNewFile();
+                    } catch (IOException e) {
+                    }
+
+                    pathFile = Uri.fromFile(newfile);
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, pathFile);
+                    startActivityForResult(cameraIntent, TAKE_PHOTO_REQUEST);
 
 
+                }
+            });
+
+            takeByGallery.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+                }
+            });
+
+            dialog.show();
+        }
+    };
+
+    private void bindId(Dialog dialog) {
+        takeByCamera = (Button) dialog.findViewById(R.id.btn_add_by_take);
+        takeByGallery = (Button) dialog.findViewById(R.id.btn_add_by_gallery);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == PICK_IMAGE_REQUEST) {
+                pathFile = data.getData();
+                Glide.with(DetailOfListProductActivity.this).load(pathFile).into(imgProduct);
+            } else if (requestCode == TAKE_PHOTO_REQUEST) {
+                Glide.with(DetailOfListProductActivity.this).load(pathFile).into(imgProduct);
+            }
+        }
     }
 }

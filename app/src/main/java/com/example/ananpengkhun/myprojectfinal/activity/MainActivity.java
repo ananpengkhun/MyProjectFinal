@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     @BindView(R.id.ll_sliding_bar) LinearLayout llSlidingBar;
     @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
     @BindView(R.id.vp_pager_fragment) ViewPager vpPagerFragment;
-    @BindView(R.id.tv_navData) TextView tvNavData;
-    @BindView(R.id.tv_navAddData) TextView tvNavAddData;
+//    @BindView(R.id.tv_navData) TextView tvNavData;
+//    @BindView(R.id.tv_navAddData) TextView tvNavAddData;
     @BindView(R.id.img_backHome) ImageView imgBackHome;
     @BindView(R.id.tvAutoCompl) KMPAutoComplTextView tvAutoCompl;
     @BindView(R.id.imv_clear_text) ImageView imvClearText;
@@ -62,9 +62,16 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        setData();
         setupPageDrawer();
         init();
 
+    }
+
+    private void setData() {
+        if(getIntent().getParcelableExtra("data") != null){
+            dataDao = getIntent().getParcelableExtra("data");
+        }
     }
 
     @Override
@@ -77,15 +84,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
 
     private void init() {
 
-        if(getIntent().getParcelableExtra("data") != null){
-            dataDao = getIntent().getParcelableExtra("data");
-        }
-
         mainMenuAdapter = new MainMenuAdapter(getSupportFragmentManager(),dataDao);
         vpPagerFragment.setAdapter(mainMenuAdapter);
 
-        tvNavAddData.setOnClickListener(AddDataClicklistener);
-        tvNavData.setOnClickListener(DataClicklistener);
+//        tvNavAddData.setOnClickListener(AddDataClicklistener);
+//        tvNavData.setOnClickListener(DataClicklistener);
         imgBackHome.setOnClickListener(imgBackHomeClicklistener);
         imvClearText.setOnClickListener(CleatTextClicklistener);
 
@@ -120,10 +123,20 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // dummy data for search on navigationBar
+
+        List<DataDao.ProductTypeBean> object = dataDao.getProductType();
         List<String> data = new ArrayList<String>();
-        data.add("Red roses for wedding");
-        data.add("Bouquet with red roses");
-        data.add("Single red rose flower");
+        for(int i=0;i<object.size();i++){
+            if(object.get(i).getData() != null) {
+                for (int j = 0; j < object.get(i).getData().size(); j++) {
+                    data.add(object.get(i).getData().get(j).getNameItem());
+                }
+            }
+
+        }
+//        data.add("Red roses for wedding");
+//        data.add("Bouquet with red roses");
+//        data.add("Single red rose flower");
 
         tvAutoCompl.setDatas(data);
         tvAutoCompl.setOnPopupItemClickListener(new KMPAutoComplTextView.OnPopupItemClickListener() {
@@ -131,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
             public void onPopupItemClick(CharSequence charSequence) {
                 //Toast.makeText(MainActivity.this, charSequence.toString(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.putExtra("data",dataDao);
+                intent.putExtra("selected",charSequence);
                 startActivity(intent);
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 tvAutoCompl.setText("");

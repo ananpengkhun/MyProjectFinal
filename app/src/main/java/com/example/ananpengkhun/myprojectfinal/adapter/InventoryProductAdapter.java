@@ -71,7 +71,7 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
             InventoryProductViewHolder inventoryProductViewHolder = (InventoryProductViewHolder) holder;
             inventoryProductViewHolder.tvNamePro.setText(productList.get(position).getProdName());
             inventoryProductViewHolder.tvPricePro.setText(productList.get(position).getProdCode());
-            if(productList.get(position).getProductImg() != null){
+            if(!"".equals(productList.get(position).getProductImg())){
                 Glide.with(mContext).load(productList.get(position).getProductImg()).placeholder(ContextCompat.getDrawable(mContext,R.drawable.folder)).into(inventoryProductViewHolder.imvProduct);
             }
             

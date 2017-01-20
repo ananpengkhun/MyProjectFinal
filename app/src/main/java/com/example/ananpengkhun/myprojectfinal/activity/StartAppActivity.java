@@ -1,5 +1,6 @@
 package com.example.ananpengkhun.myprojectfinal.activity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,8 +42,6 @@ import retrofit2.Response;
 
 public class StartAppActivity extends AppCompatActivity {
 
-    @BindView(R.id.tv_countdown) TextView tvCountdown;
-    @BindView(R.id.activity_start_app) RelativeLayout activityStartApp;
 
     private DataDao dataDao;
     private DatabaseReference mRootRef;
@@ -49,7 +49,8 @@ public class StartAppActivity extends AppCompatActivity {
     private List<DataDao.ProductTypeBean> productTypeDaos;
     private List<DataDao.ProductTypeBean.DataBean> dataBeen;
     private List<DataDao.ProductTypeBean.DataBean.DataItemBean> dataItemBeen;
-//    private List<TestProductType> testProductTypes;
+    //    private List<TestProductType> testProductTypes;
+    private Dialog dialog;
 
 
     @Override
@@ -58,22 +59,24 @@ public class StartAppActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start_app);
         ButterKnife.bind(this);
 
+
         //testProductTypes = new ArrayList<>();
-       // productTypeDaos = new ArrayList<>();
+        // productTypeDaos = new ArrayList<>();
 //
         mRootRef = FirebaseDatabase.getInstance().getReference();
 
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("start", "onDataChange: "+dataSnapshot.toString());
+                Log.d("start", "onDataChange: " + dataSnapshot.toString());
                 dataDao = dataSnapshot.getValue(DataDao.class);
 
             }
-//
+
+            //
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d("start", "onCancelled: "+databaseError.getMessage());
+                Log.d("start", "onCancelled: " + databaseError.getMessage());
             }
         };
         mRootRef.addListenerForSingleValueEvent(valueEventListener);
@@ -170,7 +173,7 @@ public class StartAppActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-               // Log.d("start", "onCreate: "+testProductTypes.size());
+                // Log.d("start", "onCreate: "+testProductTypes.size());
 //                Log.d("start", "onCreate: "+productTypeDaos.size());
 //                Log.d("start", "onCreate: "+productTypeDaos.get(0).getData().get(0).getDataItem().get(0).getAmongPerWrap());
 //                Intent intent = new Intent(StartAppActivity.this, MainActivity.class);
@@ -183,9 +186,7 @@ public class StartAppActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        },500);
-
-
+        }, 2000);
 
 
     }
@@ -193,13 +194,10 @@ public class StartAppActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
 //        if (valueEventListener != null) {
 //            mRootRef.removeEventListener(valueEventListener);
 //        }
     }
-
-
 
 
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
     <menu xmlns:android="http://schemas.android.com/apk/res/android">
-        <item android:id="@+id/addProduct" android:title="@string/addProduct" android:icon="@drawable/folder"/>
+        <!--<item android:id="@+id/addProduct" android:title="@string/addProduct" android:icon="@drawable/folder"/>-->
         <item android:id="@+id/prodct" android:title="@string/product" android:icon="@drawable/clipboard"/>
 
-        <group android:id="@+id/helpgroup">
-            <item android:id="@+id/help" android:title="@string/help" android:icon="@drawable/perm_group_system_tools"/>
-        </group>
+        <!--<group android:id="@+id/helpgroup">-->
+            <!--<item android:id="@+id/help" android:title="@string/help" android:icon="@drawable/perm_group_system_tools"/>-->
+        <!--</group>-->
     </menu>

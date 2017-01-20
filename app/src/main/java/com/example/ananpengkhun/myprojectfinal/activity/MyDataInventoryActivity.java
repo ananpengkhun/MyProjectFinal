@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -57,6 +58,8 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import devlight.io.library.ntb.NavigationTabBar;
+import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
+import jp.wasabeef.recyclerview.animators.FadeInAnimator;
 
 public class MyDataInventoryActivity extends AppCompatActivity {
     private static final String TAG = MyDataInventoryActivity.class.getSimpleName();
@@ -259,12 +262,17 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                 } else if (1 == position) {
                     mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_product_recycler, container, false);
                     recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
-                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setItemAnimator(new FadeInAnimator());
+                    //recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
                     productAdapter.setProductList(productList, productTypeList,providerDaoList);
+                    AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(productAdapter);
+                    alphaAdapter.setFirstOnly(true);
+                    alphaAdapter.setDuration(2000);
+                    alphaAdapter.setInterpolator(new OvershootInterpolator(.5f));
                     //Log.d("prices", "instantiateItem: "+productList.get(0).getProductEachSizes().get(0).getPriceUBaht().getClassOne());
 
-                    recyclerView.setAdapter(productAdapter);
+                    recyclerView.setAdapter(alphaAdapter);
                     container.addView(mView);
                 } else if (2 == position) {
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/provider");

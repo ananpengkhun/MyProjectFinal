@@ -1,5 +1,6 @@
 package com.example.ananpengkhun.myprojectfinal.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,12 +27,12 @@ import butterknife.ButterKnife;
  */
 
 public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private DetailOfListProductActivity detailOfListProductActivity;
+    private Context mContext;
     private List<ProductEachSize> productDao;
 
 
-    public EachItemSizeAdapter(DetailOfListProductActivity detailOfListProductActivity, List<ProductEachSize> productDao) {
-        this.detailOfListProductActivity = detailOfListProductActivity;
+    public EachItemSizeAdapter(Context mContext, List<ProductEachSize> productDao) {
+        this.mContext = mContext;
         this.productDao = productDao;
     }
 
@@ -72,12 +73,12 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
 
-            eachItemSizeViewHolder.imvBoxForEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (eachItemSizeViewHolder.imvBoxForEdit.isSelected()) {
-
-                        eachItemSizeViewHolder.imvBoxForEdit.setSelected(false);
+//            eachItemSizeViewHolder.imvBoxForEdit.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if (eachItemSizeViewHolder.imvBoxForEdit.isSelected()) {
+//
+//                        eachItemSizeViewHolder.imvBoxForEdit.setSelected(false);
 
                         //textView Visible
 //                        eachItemSizeViewHolder.tvChooseSpinner.setVisibility(View.VISIBLE);
@@ -123,9 +124,9 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         //save data
 
 
-                    } else {
-                        //edit data
-                        eachItemSizeViewHolder.imvBoxForEdit.setSelected(true);
+//                    } else {
+//                        //edit data
+//                        eachItemSizeViewHolder.imvBoxForEdit.setSelected(true);
                         //textView Gone
 //                        eachItemSizeViewHolder.tvAlertProd.setVisibility(View.GONE);
 //                        eachItemSizeViewHolder.tvProviderProd.setVisibility(View.GONE);
@@ -160,10 +161,8 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 //                        }
                     }
                 }
-            });
-        }
+            //});
 
-    }
 
     @Override
     public int getItemCount() {
@@ -172,6 +171,5 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         return productDao.size();
     }
-
 
 }

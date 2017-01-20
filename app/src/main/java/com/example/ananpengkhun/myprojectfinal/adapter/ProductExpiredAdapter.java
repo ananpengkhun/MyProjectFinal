@@ -46,7 +46,7 @@ public class ProductExpiredAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             ProductExpiredViewHolder productExpiredViewHolder = (ProductExpiredViewHolder) holder;
             productExpiredViewHolder.tvNamePro.setText(data.get(position).getProdName());
             productExpiredViewHolder.tvPricePro.setText(data.get(position).getProdCode());
-            if(data.get(position).getProductImg() != null){
+            if(!"".equals(data.get(position).getProductImg())){
                 Glide.with(context).load(data.get(position).getProductImg()).placeholder(ContextCompat.getDrawable(context,R.drawable.folder)).into(productExpiredViewHolder.imvProduct);
             }
 

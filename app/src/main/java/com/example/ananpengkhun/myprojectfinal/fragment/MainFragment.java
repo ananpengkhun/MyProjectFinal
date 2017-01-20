@@ -136,30 +136,30 @@ public class MainFragment extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
-                        case R.id.help:
-                            Log.d(TAG, "onClick: ");
-                            break;
-                        case R.id.addProduct :
-                            new BottomSheet.Builder(getActivity(),R.style.BottomSheet_CustomizedDialog).title("Slide Down").sheet(R.menu.list_by_add).listener(new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    switch (which) {
-                                        case R.id.prodctByType:
-                                            Log.d(TAG, "prodctByType: ");
-                                            moveFragmentPage.pageSelected(2);
-                                            break;
-                                        case R.id.productByAdd :
-                                            Log.d(TAG, "onClick: productByAdd");
-                                            moveFragmentPage.pageSelected(1);
-                                            break;
-                                        case R.id.providerByAdd :
-                                            Log.d(TAG, "onClick: providerByAdd");
-                                            moveFragmentPage.pageSelected(3);
-                                            break;
-                                    }
-                                }
-                            }).show();
-                            break;
+//                        case R.id.help:
+//                            Log.d(TAG, "onClick: ");
+//                            break;
+//                        case R.id.addProduct :
+//                            new BottomSheet.Builder(getActivity(),R.style.BottomSheet_CustomizedDialog).title("Slide Down").sheet(R.menu.list_by_add).listener(new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    switch (which) {
+//                                        case R.id.prodctByType:
+//                                            Log.d(TAG, "prodctByType: ");
+//                                            moveFragmentPage.pageSelected(2);
+//                                            break;
+//                                        case R.id.productByAdd :
+//                                            Log.d(TAG, "onClick: productByAdd");
+//                                            moveFragmentPage.pageSelected(1);
+//                                            break;
+//                                        case R.id.providerByAdd :
+//                                            Log.d(TAG, "onClick: providerByAdd");
+//                                            moveFragmentPage.pageSelected(3);
+//                                            break;
+//                                    }
+//                                }
+//                            }).show();
+//                            break;
                         case R.id.prodct :
                             Intent intent = new Intent(getActivity(),MyDataInventoryActivity.class);
                             if(dataDao != null){
