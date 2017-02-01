@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyProjectFinal</string>
+    <string name="app_name">CMStock</string>
     <string name="open_drawer">Open Menu</string>
     <string name="close_drawer">Close Menu</string>
     <string name="addProduct">เพิ่มข้อมูล</string>

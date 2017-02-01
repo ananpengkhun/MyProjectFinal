@@ -41,7 +41,7 @@ import java.util.Map;
 
 public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = InventoryProductAdapter.class.getSimpleName();
-    private Context mContext;
+    private MyDataInventoryActivity mContext;
     private List<ProductDao> productList;
     private List<ProductTypeDao> productTypeList;
     private List<ProviderDao> providerDaoList;
@@ -143,7 +143,7 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
                     intent.putExtra("product_object_index",productList.get(position));
 
                     //Log.d(TAG, "onClick: "+productList.get(position).getProductEachSizes().get(0).getPriceUBaht().getClassOne());
-                    mContext.startActivity(intent);
+                    mContext.startActivityForResult(intent,MyDataInventoryActivity.EDIT_PRODUCT);
 
                 }
             });

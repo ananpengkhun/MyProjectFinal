@@ -88,6 +88,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     public static final int PRODUCT_TYPE = 1;
     public static final int PRODUCT = 2;
     public static final int PROVIDER = 3;
+    public static final int EDIT_PRODUCT = 4;
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
 
@@ -98,7 +99,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private InventoryProductAdapter productAdapter;
     private InventoryProductTypeAdapter inventoryProductTypeAdapter;
     private InventoryProviderAdapter inventoryProviderAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +144,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             if (dataDao.getProductType().get(i).getData() != null) {
                 // product list dummy
                 for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
-                    Log.d(TAG, "init: "+i+" :"+dataDao.getProductType().get(i).getData().size());
+                    Log.d(TAG, "init: " + i + " :" + dataDao.getProductType().get(i).getData().size());
 
                     productEachSizes = new ArrayList<>();
                     ProductDao productDao = new ProductDao();
@@ -210,7 +210,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onDataChange111111: "+dataSnapshot.toString());
+                Log.d(TAG, "onDataChange111111: " + dataSnapshot.toString());
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ProviderDao providerDao = new ProviderDao();
@@ -260,15 +260,89 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     recyclerView.setAdapter(inventoryProductTypeAdapter);
                     container.addView(mView);
                 } else if (1 == position) {
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType");
+                    databaseReference.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                            Log.d("changeData", "onChildChanged: " + dataSnapshot.toString() + "/" + s);
+                            List<DataDao.ProductTypeBean.DataBean> dataBeen = new ArrayList<>();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                if ("data".equals(snapshot.getKey())) {
+                                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                        Log.d("changeData", "onChildChanged: " + snapshot1.toString());
+
+                                        Log.d("changeData", "onChildChangedssss: " + snapshot1.getKey());
+                                        DataDao.ProductTypeBean.DataBean dataBean = new DataDao.ProductTypeBean.DataBean();
+
+
+                                        dataBean.setNameItem(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getNameItem());
+                                        dataBean.setProductQuantity(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductQuantity());
+                                        dataBean.setProductPrice(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductPrice());
+                                        dataBean.setProductImg(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductImg());
+                                        dataBean.setProductId(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductId());
+                                        dataBean.setProductAlert(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductAlert());
+                                        dataBean.setNameCode(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getNameCode());
+                                        dataBean.setProductInType(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductInType());
+                                        dataBean.setProvider(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProvider());
+
+
+
+                                        dataBeen.add(dataBean);
+                                    }
+                                }
+                            }
+                            for(int i=0;i<dataBeen.size();i++){
+                                //Log.d("changeData", "onChildChanged: " + dataBeen.get(i).getProductQuantity());
+                                for(int j=0;j<productList.size();j++){
+                                    if(dataBeen.get(i).getProductId() == productList.get(j).getProdId()){
+                                        ProductDao productDao = new ProductDao();
+                                        productDao.setProdCode(dataBeen.get(i).getNameCode());
+                                        productDao.setProdName(dataBeen.get(i).getNameItem());
+                                        productDao.setProductQuantity(dataBeen.get(i).getProductQuantity());
+                                        productDao.setProductPrice(dataBeen.get(i).getProductPrice());
+                                        productDao.setProductImg(dataBeen.get(i).getProductImg());
+                                        productDao.setProdId(dataBeen.get(i).getProductId());
+                                        productDao.setProductAlert(dataBeen.get(i).getProductAlert());
+                                        productDao.setProdInType(dataBeen.get(i).getProductInType());
+                                        productDao.setProviderId(dataBeen.get(i).getProvider());
+                                        productList.set(j,productDao);
+                                    }
+                                }
+                            }
+                            productAdapter.notifyDataSetChanged();
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
                     mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_product_recycler, container, false);
                     recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
                     recyclerView.setItemAnimator(new FadeInAnimator());
                     //recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
-                    productAdapter.setProductList(productList, productTypeList,providerDaoList);
+                    productAdapter.setProductList(productList, productTypeList, providerDaoList);
                     AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(productAdapter);
                     alphaAdapter.setFirstOnly(true);
-                    alphaAdapter.setDuration(2000);
+                    alphaAdapter.setDuration(1500);
                     alphaAdapter.setInterpolator(new OvershootInterpolator(.5f));
                     //Log.d("prices", "instantiateItem: "+productList.get(0).getProductEachSizes().get(0).getPriceUBaht().getClassOne());
 
@@ -284,7 +358,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
                         @Override
                         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                            Log.d(TAG, "onDataChange1111112222: "+dataSnapshot.toString());
+                            Log.d(TAG, "onDataChange1111112222: " + dataSnapshot.toString());
                             ProviderDao providerDao = new ProviderDao();
                             providerDao.setProvId(dataSnapshot.getValue(ProviderDao.class).getProvId());
                             providerDao.setProvName(dataSnapshot.getValue(ProviderDao.class).getProvName());
@@ -292,10 +366,10 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                             providerDao.setProvEmail(dataSnapshot.getValue(ProviderDao.class).getProvEmail());
                             providerDao.setProvAddress(dataSnapshot.getValue(ProviderDao.class).getProvAddress());
 
-                            Log.d(TAG, "onDataChange1111112222: "+providerDao.getProvName());
-                            for(int i=0;i<providerDaoList.size();i++){
-                                if(providerDaoList.get(i).getProvId() == providerDao.getProvId()){
-                                    providerDaoList.set(i,providerDao);
+                            Log.d(TAG, "onDataChange1111112222: " + providerDao.getProvName());
+                            for (int i = 0; i < providerDaoList.size(); i++) {
+                                if (providerDaoList.get(i).getProvId() == providerDao.getProvId()) {
+                                    providerDaoList.set(i, providerDao);
                                     inventoryProviderAdapter.notifyDataSetChanged();
                                 }
                             }
@@ -637,7 +711,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == MyDataInventoryActivity.PRODUCT_TYPE) {
             Log.d(TAG, "onActivityResult: product type");
@@ -681,7 +755,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                 productAdapter.notifyDataSetChanged();
                 inventoryProductTypeAdapter.notifyDataSetChanged();
             }
-        }else if(requestCode == PROVIDER){
+        } else if (requestCode == PROVIDER) {
 //            ProviderDao providerDao = new ProviderDao();
 //            providerDao.setProvPhone(data.getStringExtra("provPhone"));
 //            providerDao.setProvEmail(data.getStringExtra("provEmail"));
@@ -690,6 +764,33 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 //            Log.d("provider_index", "onActivityResult: "+data.getIntExtra("provider_index",-1));
 //            providerDaoList.set(data.getIntExtra("provider_index",-1),providerDao);
 //            inventoryProviderAdapter.notifyDataSetChanged();
+
+
+        } else if (requestCode == EDIT_PRODUCT) {
+
+
+//            for(int i=0;i<productList.size();i++){
+//                if(productList.get(i).getProdId() == data.getIntExtra("productId",-1)){
+//                    ProductDao productDao = new ProductDao();
+//                    productDao.setProdName(data.getStringExtra("nameItem"));
+//                    productDao.setProdCode(data.getStringExtra("nameCode"));
+//                    productDao.setProductAlert(data.getIntExtra("productAlert",-1));
+//                    if(!"".equals(data.getStringExtra("productImg"))){
+//                        productDao.setProductImg(data.getStringExtra("productImg"));
+//                    }
+//                    productDao.setProdInType(data.getIntExtra("ProdInType",-1));
+//                    productDao.setProductPrice(data.getIntExtra("productPrice",-1));
+//                    productDao.setProductQuantity(data.getIntExtra("productQuantity",-1));
+//                    productDao.setProdId(data.getIntExtra("productId",-1));
+//                    productDao.setProviderId(data.getIntExtra("provider",-1));
+//
+//
+//                    //intent.putExtra("productUnit",productDao.ge());
+//                    productList.set(i,productDao);
+//                    productAdapter.notifyDataSetChanged();
+//
+//                }
+//            }
 
 
         }

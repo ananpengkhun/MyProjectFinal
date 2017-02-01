@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     @BindView(R.id.ll_sliding_bar) LinearLayout llSlidingBar;
     @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
     @BindView(R.id.vp_pager_fragment) ViewPager vpPagerFragment;
-//    @BindView(R.id.tv_navData) TextView tvNavData;
+    //    @BindView(R.id.tv_navData) TextView tvNavData;
 //    @BindView(R.id.tv_navAddData) TextView tvNavAddData;
     @BindView(R.id.img_backHome) ImageView imgBackHome;
     @BindView(R.id.tvAutoCompl) KMPAutoComplTextView tvAutoCompl;
@@ -55,8 +56,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     //private List<DataDao.ProductTypeBean> productTypeDaos;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     }
 
     private void setData() {
-        if(getIntent().getParcelableExtra("data") != null){
+        if (getIntent().getParcelableExtra("data") != null) {
             dataDao = getIntent().getParcelableExtra("data");
         }
     }
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
 
     private void init() {
 
-        mainMenuAdapter = new MainMenuAdapter(getSupportFragmentManager(),dataDao);
+        mainMenuAdapter = new MainMenuAdapter(getSupportFragmentManager(), dataDao);
         vpPagerFragment.setAdapter(mainMenuAdapter);
 
 //        tvNavAddData.setOnClickListener(AddDataClicklistener);
@@ -113,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
 
     private void setupPageDrawer() {
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         actionBarDrawerToggle = new ActionBarDrawerToggle(MainActivity.this
                 , drawerLayout
                 , R.string.open_drawer
@@ -123,17 +123,17 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // dummy data for search on navigationBar
-
         List<DataDao.ProductTypeBean> object = dataDao.getProductType();
         List<String> data = new ArrayList<String>();
-        for(int i=0;i<object.size();i++){
-            if(object.get(i).getData() != null) {
+        for (int i = 0; i < object.size(); i++) {
+            if (object.get(i).getData() != null) {
                 for (int j = 0; j < object.get(i).getData().size(); j++) {
                     data.add(object.get(i).getData().get(j).getNameItem());
                 }
             }
 
         }
+
 //        data.add("Red roses for wedding");
 //        data.add("Bouquet with red roses");
 //        data.add("Single red rose flower");
@@ -144,8 +144,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
             public void onPopupItemClick(CharSequence charSequence) {
                 //Toast.makeText(MainActivity.this, charSequence.toString(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                intent.putExtra("data",dataDao);
-                intent.putExtra("selected",charSequence);
+                intent.putExtra("data", dataDao);
+                intent.putExtra("selected", charSequence);
                 startActivity(intent);
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 tvAutoCompl.setText("");
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.refresh_menu,menu);
+        getMenuInflater().inflate(R.menu.refresh_menu, menu);
         return true;
     }
 
@@ -166,8 +166,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
             Log.d(TAG, "onOptionsItemSelected: ");
             return true;
         }
-        if(item.getItemId() == R.id.action_search){
-            Intent intent = new Intent(MainActivity.this,StartAppActivity.class);
+        if (item.getItemId() == R.id.action_search) {
+            Intent intent = new Intent(MainActivity.this, StartAppActivity.class);
             startActivity(intent);
             finish();
         }

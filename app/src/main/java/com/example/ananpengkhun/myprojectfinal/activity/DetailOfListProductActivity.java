@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -40,7 +41,9 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,7 +59,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     @BindView(R.id.tv_namePro) TextView tvNamePro;
     @BindView(R.id.tv_provider_prod) TextView tvProviderProd;
     @BindView(R.id.tv_prod_amount) TextView tvProdAmount;
-    @BindView(R.id.ed_prod_amount) TextView edProdAmount;
+    @BindView(R.id.ed_prod_amount) LinearLayout edProdAmount;
     @BindView(R.id.tv_prod_alert) TextView tvProdAlert;
     @BindView(R.id.ed_prod_alert) TextView edProdAlert;
     @BindView(R.id.imv_box_for_edit) ImageView imvBoxForEdit;
@@ -67,9 +70,13 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     @BindView(R.id.spinner_provider) SearchableSpinner spinnerProvider;
     @BindView(R.id.ed_price_pro) AppCompatEditText edPricePro;
     @BindView(R.id.tv_price_pro) TextView tvPricePro;
+    @BindView(R.id.imv_minus) ImageView imvMinus;
+    @BindView(R.id.imv_plus) ImageView imvPlus;
+
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int TAKE_PHOTO_REQUEST = 2;
+
     private Button takeByCamera;
     private Button takeByGallery;
     private Uri pathFile;
@@ -92,6 +99,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
 
     private EachItemSizeAdapter eachItemSizeAdapter;
     private int index;
+    // private int sum;
 
 
     @Override
@@ -144,7 +152,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
             public void run() {
                 spinnerOfTypeProduct();
             }
-        },100);
+        }, 100);
 
         if (getIntent().getExtras() != null) {
             Intent intent = getIntent();
@@ -194,8 +202,8 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         imvBoxForEdit.setOnClickListener(imvClicklistener);
 
 
-
     }
+
 
     private View.OnClickListener imvClicklistener = new View.OnClickListener() {
         @Override
@@ -226,15 +234,19 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                 spinnerProvider.setVisibility(View.GONE);
                 edProdAlert.setVisibility(View.GONE);
 
+                //Log.d("summmm", "onClick: "+Integer.parseInt(edProdAmount.getText().toString()));
 
-                prodAmount = Integer.parseInt(edProdAmount.getText().toString());
+//                int sum = productDao.getProductQuantity() - Integer.parseInt(edProdAmount.getText().toString());
+//                productDao.setProductQuantity(sum);
+//                prodAmount = sum;
+                prodAmount = productDao.getProductQuantity();
                 prodName = edNameProd.getText().toString();
                 prodCode = edCodeProd.getText().toString();
                 prodPrice = Integer.parseInt(edPricePro.getText().toString());
                 spinProvider = spinnerProvider.getSelectedItemPosition();
                 prodAlert = Integer.parseInt(edProdAlert.getText().toString());
 
-                setTextView(prodAmount, prodName, prodCode, prodPrice, (spinProvider == -1) ? -2 :spinProvider, prodAlert);
+                setTextView(prodAmount, prodName, prodCode, prodPrice, (spinProvider == -1) ? -2 : spinProvider, prodAlert);
 
                 // save data
                 DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType/" + productDao.getProdInType());
@@ -249,16 +261,15 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                             snapshot.getRef().child("productQuantity").setValue(prodAmount);
                             snapshot.getRef().child("nameItem").setValue(prodName);
                             snapshot.getRef().child("nameCode").setValue(prodCode);
-                            if(pathFile != null) {
+                            if (pathFile != null) {
                                 snapshot.getRef().child("productImg").setValue(pathFile.toString());
                             }
                             snapshot.getRef().child("productPrice").setValue(prodPrice);
-                            Log.d("detailpro", "onDataChange: "+spinProvider);
-                            if(spinProvider != -1 ){
+                            Log.d("detailpro", "onDataChange: " + spinProvider);
+                            if (spinProvider != -1) {
                                 snapshot.getRef().child("provider").setValue(providerDaoload.get(spinProvider).getProvId());
                             }
                             snapshot.getRef().child("productAlert").setValue(prodAlert);
-
 
 
                         }
@@ -293,6 +304,9 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                 spinnerProvider.setVisibility(View.VISIBLE);
                 edProdAlert.setVisibility(View.VISIBLE);
 
+                imvMinus.setOnClickListener(imvMinusClicklistener);
+                imvPlus.setOnClickListener(imvPlusClicklistener);
+
                 if (swap) {
                     swap = false;
                     setTextEdit(productDao.getProductQuantity(),
@@ -302,7 +316,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                             providerDaoList.get(index).getProvName(),
                             productDao.getProductAlert());
                 } else {
-                    Log.d("detailpro", "onClick: "+spinProvider);
+                    Log.d("detailpro", "onClick: " + spinProvider);
                     setTextEdit(prodAmount,
                             prodName,
                             prodCode,
@@ -319,6 +333,54 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     private View.OnClickListener toolbarClicklistener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+//            Intent intent = new Intent();
+//            if (!prodCode.equals(productDao.getProdCode())) {
+//                intent.putExtra("nameCode", prodCode);
+//            } else {
+//                intent.putExtra("nameCode", productDao.getProdCode());
+//            }
+//
+//            if (!prodName.equals(productDao.getProdName())) {
+//                intent.putExtra("nameItem", prodName);
+//            } else {
+//                intent.putExtra("nameItem", productDao.getProdName());
+//            }
+//
+//            if (prodAlert != productDao.getProductAlert()) {
+//                intent.putExtra("productAlert", prodAlert);
+//            } else {
+//                intent.putExtra("productAlert", productDao.getProductAlert());
+//            }
+//
+//            intent.putExtra("productId", productDao.getProdId());
+//
+//            if (pathFile != null) {
+//                intent.putExtra("productImg", pathFile.toString());
+//            }else{
+//                intent.putExtra("productImg", "");
+//            }
+//
+//            intent.putExtra("ProdInType", productDao.getProdInType());
+//
+//            if(prodPrice != productDao.getProductPrice()) {
+//                intent.putExtra("productPrice", prodPrice);
+//            }else{
+//                intent.putExtra("productPrice", productDao.getProductPrice());
+//            }
+//
+//            if(prodAmount != productDao.getProductQuantity()) {
+//                intent.putExtra("productQuantity", prodAmount);
+//            }else{
+//                intent.putExtra("productQuantity", productDao.getProductQuantity());
+//            }
+//            //intent.putExtra("productUnit",productDao.ge());
+//            Log.d("spinProvider", "onClick: " + spinProvider);
+//            if (spinProvider != -1) {
+//                intent.putExtra("provider", providerDaoload.get(spinProvider).getProvId());
+//            } else {
+//                intent.putExtra("provider", productDao.getProviderId());
+//            }
+//            setResult(99, intent);
             finish();
         }
     };
@@ -328,28 +390,29 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         tvProdAmount.setText(prodAmount + "");
         tvNamePro.setText(prodName);
         tvCodeProd.setText(prodCode);
-        tvPricePro.setText(prodPrice+"");
-        if(spinProvider == -2){
+        tvPricePro.setText(prodPrice + "");
+        if (spinProvider == -2) {
             tvProviderProd.setText("");
-        }else{
+        } else {
             tvProviderProd.setText(getListProdType.get(spinProvider));
         }
-        tvProdAlert.setText(Alert+"");
+        tvProdAlert.setText(Alert + "");
     }
 
     private void setTextEdit(int productQuantity, String prodName, String prodCode, int productPrice, String provName, int alert) {
-        Log.d("detailpro", "setTextEdit: "+provName);
-        edProdAmount.setText(productQuantity + "");
+        Log.d("detailpro", "setTextEdit: " + provName);
+//        edProdAmount.setText(productQuantity + "");
+        //edProdAmount.setText("");
         edNameProd.setText(prodName);
         edCodeProd.setText(prodCode);
-        edPricePro.setText(productPrice+"");
+        edPricePro.setText(productPrice + "");
         spinnerProvider.setOnSearchTextChangedListener(new SearchableListDialog.OnSearchTextChanged() {
             @Override
             public void onSearchTextChanged(String strText) {
 
             }
         });
-        edProdAlert.setText(alert+"");
+        edProdAlert.setText(alert + "");
     }
 
     @Override
@@ -437,4 +500,68 @@ public class DetailOfListProductActivity extends AppCompatActivity {
             }
         }
     }
+
+    private View.OnClickListener imvMinusClicklistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            final Dialog dialog = new Dialog(DetailOfListProductActivity.this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.minus_product_quatity);
+            dialog.setCancelable(true);
+
+            TextView textView = (TextView) dialog.findViewById(R.id.tv_dialog_quatity);
+            final EditText editText = (EditText) dialog.findViewById(R.id.ed_dialog_quatity);
+            Button button = (Button) dialog.findViewById(R.id.btn_dialog_confirm);
+
+            textView.setText("จำนวนที่ต้องการลด");
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!"".equals(editText.getText().toString())) {
+                        int sum = productDao.getProductQuantity() - Integer.parseInt(editText.getText().toString());
+                        productDao.setProductQuantity(sum);
+                        prodAmount = sum;
+                    } else {
+                        prodAmount = productDao.getProductQuantity();
+                        Log.d("amount", "onClick: " + prodAmount);
+                    }
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    };
+
+    private View.OnClickListener imvPlusClicklistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            final Dialog dialog = new Dialog(DetailOfListProductActivity.this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.minus_product_quatity);
+            dialog.setCancelable(true);
+
+            TextView textView = (TextView) dialog.findViewById(R.id.tv_dialog_quatity);
+            final EditText editText = (EditText) dialog.findViewById(R.id.ed_dialog_quatity);
+            Button button = (Button) dialog.findViewById(R.id.btn_dialog_confirm);
+
+            textView.setText("จำนวนที่ต้องการเพิ่ม");
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!"".equals(editText.getText().toString())) {
+                        int sum = productDao.getProductQuantity() + Integer.parseInt(editText.getText().toString());
+                        productDao.setProductQuantity(sum);
+                        prodAmount = sum;
+                    } else {
+                        prodAmount = productDao.getProductQuantity();
+                        Log.d("amount", "onClick: " + prodAmount);
+                    }
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    };
 }

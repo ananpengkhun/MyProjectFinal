@@ -173,10 +173,10 @@
                                     android:layout_height="wrap_content"/>
 
                                 <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                                    android:visibility="gone"
                                     android:id="@+id/spinner_provider"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:visibility="gone"
                                     app:hintText="choose"/>
 
                             </RelativeLayout>
@@ -197,11 +197,31 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <EditText
+                                <!--<EditText-->
+                                <!--android:id="@+id/ed_prod_amount"-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="wrap_content"-->
+                                <!--android:visibility="gone"/>-->
+                                <LinearLayout
                                     android:id="@+id/ed_prod_amount"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:visibility="gone"/>
+                                    android:orientation="horizontal"
+                                    android:visibility="gone">
+
+                                    <ImageView
+                                        android:id="@+id/imv_minus"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="20dp"
+                                        android:src="@drawable/minus"/>
+
+                                    <ImageView
+                                        android:id="@+id/imv_plus"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="20dp"
+                                        android:src="@drawable/plusss"/>
+
+                                </LinearLayout>
 
                                 <TextView
                                     android:id="@+id/tv_prod_amount"
