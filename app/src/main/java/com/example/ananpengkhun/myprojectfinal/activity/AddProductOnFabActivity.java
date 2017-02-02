@@ -282,20 +282,33 @@ public class AddProductOnFabActivity extends AppCompatActivity {
 
                 sp = getSharedPreferences(MyPreference, MODE_PRIVATE);
                 //int indexData;
+                int max = 0;
                 Log.d("addproduct", "onClick: " + sp.getInt("indexProduct", 0));
-                if (0 == sp.getInt("indexProduct", 0)) {
-                    editor = sp.edit();
-                    editor.putInt("indexProduct", dataDao.getProductType().size() + 1);
-                    editor.apply();
-
-                } else {
-                    editor = sp.edit();
-                    int i = sp.getInt("indexProduct", 0);
-                    editor.putInt("indexProduct", i + 1);
-                    editor.apply();
+                for (int i = 0; i < dataDao.getProductType().size(); i++) {
+                    if (dataDao.getProductType().get(i).getData() != null) {
+                        max = dataDao.getProductType().get(i).getData().get(0).getProductId();
+                        for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
+                            //Log.d("addwhynull", "onClick: " + dataDao.getProductType().get(i).getData().get(j).getProductId());
+                            if (dataDao.getProductType().get(i).getData().get(j).getProductId() > max) {
+                                max = dataDao.getProductType().get(i).getData().get(j).getProductId();
+                            }
+                        }
+                    }
                 }
-
-                int index = sp.getInt("indexProduct", 0);
+                //Log.d("addwhynull", "max: " + max);
+//                if (0 == sp.getInt("indexProduct", 0)) {
+//                    editor = sp.edit();
+//                    editor.putInt("indexProduct", dataDao.getProductType().size() + 1);
+//                    editor.apply();
+//
+//                } else {
+//                    editor = sp.edit();
+//                    int i = sp.getInt("indexProduct", 0);
+//                    editor.putInt("indexProduct", i + 1);
+//                    editor.apply();
+//                }
+//
+//                int index = sp.getInt("indexProduct", 0);
 
                 int indexData;
                 if (dataDao.getProductType().get(spinnerProductType.getSelectedItemPosition()).getData() == null) {
@@ -312,7 +325,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 postValues.put("nameCode", edProdCode.getText().toString());
                 postValues.put("nameItem", edProdName.getText().toString());
                 postValues.put("productAlert", Integer.parseInt(edProdAlert.getText().toString()));
-                postValues.put("productId", index);
+                postValues.put("productId", max+1);
                 postValues.put("productPrice", Integer.parseInt(edProdPrice.getText().toString()));
                 postValues.put("productQuantity", Integer.parseInt(edProdAmount.getText().toString()));
                 postValues.put("productUnit", edProdUnit.getText().toString());
@@ -330,7 +343,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 intent.putExtra("nameCode", edProdCode.getText().toString());
                 intent.putExtra("nameItem", edProdName.getText().toString());
                 intent.putExtra("productAlert", Integer.parseInt(edProdAlert.getText().toString()));
-                intent.putExtra("productId", index);
+                intent.putExtra("productId", max + 1);
                 intent.putExtra("productPrice", Integer.parseInt(edProdPrice.getText().toString()));
                 intent.putExtra("productQuantity", Integer.parseInt(edProdAmount.getText().toString()));
                 intent.putExtra("productUnit", edProdUnit.getText().toString());

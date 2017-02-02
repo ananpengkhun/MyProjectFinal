@@ -1,25 +1,31 @@
 package com.example.ananpengkhun.myprojectfinal.dao;
 
+import java.util.List;
+
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by ananpengkhun on 1/9/17.
  */
 
-public class TestProductType {
-    private String name;
+public class TestProductType extends RealmObject{
+
+    @PrimaryKey
+    private int typeId;
+
     private String status;
     private String typeCode;
     private String typeDes;
-    private int typeId;
+    private String name;
 
-    public TestProductType() {
+    public int getTypeId() {
+        return typeId;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
     }
 
     public String getStatus() {
@@ -46,11 +52,11 @@ public class TestProductType {
         this.typeDes = typeDes;
     }
 
-    public int getTypeId() {
-        return typeId;
+    public String getName() {
+        return name;
     }
 
-    public void setTypeId(int typeId) {
-        this.typeId = typeId;
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -40,6 +40,7 @@ import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -58,6 +59,10 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import devlight.io.library.ntb.NavigationTabBar;
+import io.realm.Realm;
+import io.realm.RealmAsyncTask;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.FadeInAnimator;
 
@@ -99,12 +104,24 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private InventoryProductAdapter productAdapter;
     private InventoryProductTypeAdapter inventoryProductTypeAdapter;
     private InventoryProviderAdapter inventoryProviderAdapter;
+    private Realm realm;
+    private RealmResults<TestProductType> testProductTypes;
+
+    private RealmChangeListener<Realm> listener = new RealmChangeListener<Realm>() {
+        @Override
+        public void onChange(Realm element) {
+            inventoryProductTypeAdapter.notifyDataSetChanged();
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_data_inventory);
         ButterKnife.bind(this);
+        realm = Realm.getDefaultInstance();
+        realm.addChangeListener(listener);
         setupPageDrawer();
         init();
     }
@@ -116,6 +133,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
 
     private void init() {
+
         productAdapter = new InventoryProductAdapter(MyDataInventoryActivity.this);
         inventoryProductTypeAdapter = new InventoryProductTypeAdapter(MyDataInventoryActivity.this);
         inventoryProviderAdapter = new InventoryProviderAdapter(MyDataInventoryActivity.this);
@@ -133,6 +151,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
 
         // product type list dummy
+
         for (int i = 0; i < dataDao.getProductType().size(); i++) {
 
             ProductTypeDao productTypeDao = new ProductTypeDao();
@@ -251,10 +270,13 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             public Object instantiateItem(ViewGroup container, int position) {
                 View mView = null;
                 if (0 == position) {
+
+                    testProductTypes = realm.where(TestProductType.class).findAllAsync();
                     mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_product_type_recycler, container, false);
                     recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
+                    inventoryProductTypeAdapter.setListRealm(testProductTypes);
                     inventoryProductTypeAdapter.setProductTypeDaos(dataDao);
                     inventoryProductTypeAdapter.setProductTypeList(productTypeList);
                     recyclerView.setAdapter(inventoryProductTypeAdapter);
@@ -297,9 +319,15 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                                 }
                             }
                             for(int i=0;i<dataBeen.size();i++){
+                                Log.d("producttt", "onChildChanged j: "+dataBeen.size());
                                 //Log.d("changeData", "onChildChanged: " + dataBeen.get(i).getProductQuantity());
                                 for(int j=0;j<productList.size();j++){
+                                    Log.d("producttt", "onChildChanged j: "+productList.size());
+
                                     if(dataBeen.get(i).getProductId() == productList.get(j).getProdId()){
+                                        //DataDao.ProductTypeBean.DataBean list = dataDao.getProductType().get(i).getData().get(j);
+                                        productEachSizes = new ArrayList<>();
+
                                         ProductDao productDao = new ProductDao();
                                         productDao.setProdCode(dataBeen.get(i).getNameCode());
                                         productDao.setProdName(dataBeen.get(i).getNameItem());
@@ -310,6 +338,47 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                                         productDao.setProductAlert(dataBeen.get(i).getProductAlert());
                                         productDao.setProdInType(dataBeen.get(i).getProductInType());
                                         productDao.setProviderId(dataBeen.get(i).getProvider());
+
+
+
+                                        if (productList.get(j).getProductEachSizes() != null) {
+                                            for (int z = 0; z < productList.get(j).getProductEachSizes().size(); z++) {
+
+                                                Log.d("producttt", "initssssss: " + productList.get(j).getProductEachSizes().size());
+                                                //productDao.setProductEachSizes();
+                                                ProductEachSize productEachSize = new ProductEachSize();
+                                                productEachSize.setAmongPerWrap(productList.get(j).getProductEachSizes().get(z).getAmongPerWrap());
+                                                productEachSize.setContrainUPiecePerBox(productList.get(j).getProductEachSizes().get(z).getContrainUPiecePerBox());
+                                                productEachSize.setDiameterOutsize(productList.get(j).getProductEachSizes().get(z).getDiameterOutsize());
+                                                productEachSize.setEffordUBaht(productList.get(j).getProductEachSizes().get(z).getEffordUBaht());
+                                                productEachSize.setLongPerWrap(productList.get(j).getProductEachSizes().get(z).getLongPerWrap());
+                                                productEachSize.setNameItemId(productList.get(j).getProductEachSizes().get(z).getNameItemId());
+                                                productEachSize.setNameItemSize(productList.get(j).getProductEachSizes().get(z).getNameItemSize());
+                                                productEachSize.setTotalItemBigUnit(productList.get(j).getProductEachSizes().get(z).getTotalItemBigUnit());
+                                                productEachSize.setUnit(productList.get(j).getProductEachSizes().get(z).getUnit());
+                                                productEachSize.setWeightPerWrap(productList.get(j).getProductEachSizes().get(z).getWeightPerWrap());
+
+                                                ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
+                                                priceUBahtBean.setClassEightFive(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassEightFive());
+                                                priceUBahtBean.setClassFive(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassFive());
+                                                priceUBahtBean.setClassOne(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassOne());
+
+                                                priceUBahtBean.setClassOneThreeFive(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassOneThreeFive());
+                                                priceUBahtBean.setClassThree(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassThree());
+                                                priceUBahtBean.setClassTwo(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassTwo());
+                                                //Log.d(TAG, "init: "+list.getDataItem().get(z).getPriceUBaht().getClassTwo());
+                                                priceUBahtBean.setPerKilo(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerKilo());
+                                                priceUBahtBean.setPerMeter(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerMeter());
+                                                priceUBahtBean.setPerPiece(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerPiece());
+                                                priceUBahtBean.setPerWrap(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerWrap());
+                                                productEachSize.setPriceUBaht(priceUBahtBean);
+
+                                                productEachSizes.add(productEachSize);
+
+                                            }
+                                            productDao.setProductEachSizes(productEachSizes);
+
+                                        }
                                         productList.set(j,productDao);
                                     }
                                 }
@@ -496,11 +565,16 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
         @Override
         public void onPageSelected(int position) {
-            //Log.d(TAG, "onPageSelected: "+position);
+            Log.d(TAG, "onPageSelected: "+position);
+            if(0 == position){
+                inventoryProductTypeAdapter.notifyDataSetChanged();
+            }
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {
+            Log.d(TAG, "onPageScrollStateChanged: "+testProductTypes.size());
+
         }
     };
 
@@ -795,14 +869,5 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
         }
     }
-
-    private void getUpdate(DataSnapshot dataSnapshot) {
-
-        // Log.d("start", "onDataChange: "+dataSnapshot.toString());
-
-        //Log.d("start", "onDataChange: "+providerDaos.get(0).getProvName());
-
-    }
-
 
 }

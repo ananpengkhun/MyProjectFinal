@@ -16,6 +16,7 @@ import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.ProductTypeAssociateAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -27,6 +28,8 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
@@ -51,6 +54,8 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
     private int index;
     private List<ProductDao> productDaoList;
+    private Realm realm;
+    private RealmResults<TestProductType> testProductTypes;
 
 
     @Override
@@ -58,11 +63,13 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_of_list_product_type);
         ButterKnife.bind(this);
+        realm = Realm.getDefaultInstance();
         setupView();
         init();
     }
 
     private void init() {
+        testProductTypes = realm.where(TestProductType.class).findAllAsync();
         productDaoList = new ArrayList<>();
         if (getIntent().getParcelableExtra("dataDao_item_product") != null) {
             Intent intent = getIntent();
@@ -80,9 +87,9 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
             }
 
             //productTypeDao = intent.getParcelableExtra("product_type_object_index");
-            setTextView(dataDao.getProductType().get(index).getName(),
-                    dataDao.getProductType().get(index).getTypeCode(),
-                    dataDao.getProductType().get(index).getTypeDes());
+            setTextView(testProductTypes.get(index).getName(),
+                    testProductTypes.get(index).getTypeCode(),
+                    testProductTypes.get(index).getTypeDes());
         }
 
         rcvAssociateProduct.setLayoutManager(new LinearLayoutManager(DetailOfListProductTypeActivity.this));
@@ -128,6 +135,21 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
                 code = edProdctTypeCode.getText().toString();
                 des = edProductTypeDes.getText().toString();
 
+                //realm edit
+                final TestProductType testProductType = new TestProductType();
+                testProductType.setTypeId(testProductTypes.get(index).getTypeId());
+                testProductType.setTypeCode(code);
+                testProductType.setTypeDes(des);
+                testProductType.setName(name);
+                testProductType.setStatus(testProductTypes.get(index).getStatus());
+
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        realm.copyToRealmOrUpdate(testProductType);
+                    }
+                });
+
                 setTextView(name, code, des);
 
                 // save data
@@ -151,9 +173,9 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
                 if (swap) {
                     swap = false;
-                    setTextEdit(dataDao.getProductType().get(index).getName(),
-                            dataDao.getProductType().get(index).getTypeCode(),
-                            dataDao.getProductType().get(index).getTypeDes());
+                    setTextEdit(testProductTypes.get(index).getName(),
+                            testProductTypes.get(index).getTypeCode(),
+                            testProductTypes.get(index).getTypeDes());
                 } else {
                     setTextEdit(name, code, des);
                 }
@@ -161,13 +183,6 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
             }
         }
     };
-
-    private void saveData(String name, String code, String des) {
-//        productTypeDao.setProdTypeName(name);
-//        productTypeDao.setProdTypeCode(code);
-//        productTypeDao.setProdTypeDes(des);
-
-    }
 
     private void setTextView(String name, String typeCode, String des) {
         tvProductTypeName.setText(name);
@@ -188,5 +203,11 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
         intent.putExtra("index", index);
         setResult(MyDataInventoryActivity.PRODUCT_TYPE, intent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }

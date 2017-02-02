@@ -18,6 +18,7 @@ import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProductTypeViewHolder;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.realm.RealmResults;
 
 
 /**
@@ -39,6 +42,7 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
     private DatabaseReference mType;
 
     private List<ProductTypeDao> productTypeList;
+    private RealmResults<TestProductType> listRealm;
 
     private DataDao dataDao;
     //private List<DataDao.ProductTypeBean> productTypeDaos;
@@ -68,7 +72,8 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof InventoryProductTypeViewHolder) {
             InventoryProductTypeViewHolder inventoryProductTypeViewHolder = (InventoryProductTypeViewHolder) holder;
-            inventoryProductTypeViewHolder.tvNameProType.setText(productTypeList.get(position).getProdTypeName());
+            inventoryProductTypeViewHolder.tvNameProType.setText(listRealm.get(position).getName());
+            //inventoryProductTypeViewHolder.tvNameProType.setText(productTypeList.get(position).getProdTypeName());
 
             inventoryProductTypeViewHolder.cvGroupView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -152,7 +157,11 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemCount() {
-        return productTypeList.size();
+        return listRealm.size();
+        //return productTypeList.size();
     }
 
+    public void setListRealm(RealmResults<TestProductType> listRealm) {
+        this.listRealm = listRealm;
+    }
 }

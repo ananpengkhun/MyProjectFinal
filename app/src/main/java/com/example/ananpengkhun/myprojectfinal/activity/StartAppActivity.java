@@ -2,43 +2,28 @@ package com.example.ananpengkhun.myprojectfinal.activity;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Window;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
-import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
-import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
-import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
-import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
 import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
-import com.example.ananpengkhun.myprojectfinal.httpmanager.DataHttpManager;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.realm.Realm;
+import io.realm.RealmAsyncTask;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 public class StartAppActivity extends AppCompatActivity {
 
@@ -51,6 +36,10 @@ public class StartAppActivity extends AppCompatActivity {
     private List<DataDao.ProductTypeBean.DataBean.DataItemBean> dataItemBeen;
     //    private List<TestProductType> testProductTypes;
     private Dialog dialog;
+    private Realm realm;
+    private RealmResults<TestProductType> testProductTypes;
+    private RealmAsyncTask realmAsyncTask;
+    private TestProductType testProductType;
 
 
     @Override
@@ -58,7 +47,7 @@ public class StartAppActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_app);
         ButterKnife.bind(this);
-
+        realm = Realm.getDefaultInstance();
 
         //testProductTypes = new ArrayList<>();
         // productTypeDaos = new ArrayList<>();
@@ -69,8 +58,8 @@ public class StartAppActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("start", "onDataChange: " + dataSnapshot.toString());
-                dataDao = dataSnapshot.getValue(DataDao.class);
 
+                dataDao = dataSnapshot.getValue(DataDao.class);
             }
 
             //
@@ -173,14 +162,42 @@ public class StartAppActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Log.d("start", "onCreate: "+testProductTypes.size());
-//                Log.d("start", "onCreate: "+productTypeDaos.size());
-//                Log.d("start", "onCreate: "+productTypeDaos.get(0).getData().get(0).getDataItem().get(0).getAmongPerWrap());
-//                Intent intent = new Intent(StartAppActivity.this, MainActivity.class);
-//                intent.putParcelableArrayListExtra("data", (ArrayList<DataDao.ProductTypeBean>) productTypeDaos);
-//                startActivity(intent);
-//                finish();
-//                Log.d("start", "onDataChange: " + dataDao.getProductType().get(0).getData().get(0).getDataItem().get(0).getPriceUBaht().getClassEightFive());
+                realmAsyncTask = realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        for (int i = 0; i < dataDao.getProductType().size(); i++) {
+                            TestProductType testProductType = realm.createObject(TestProductType.class, dataDao.getProductType().get(i).getTypeId());
+                            //testProductType.setTypeId();
+                            testProductType.setName(dataDao.getProductType().get(i).getName());
+                            testProductType.setTypeCode(dataDao.getProductType().get(i).getTypeCode());
+                            testProductType.setStatus(dataDao.getProductType().get(i).getStatus());
+                            testProductType.setTypeDes(dataDao.getProductType().get(i).getTypeDes());
+                        }
+                    }
+
+                }, new Realm.Transaction.OnSuccess() {
+                    @Override
+                    public void onSuccess() {
+                        RealmQuery<TestProductType> query = realm.where(TestProductType.class);
+
+                        RealmResults<TestProductType> results = query.findAllAsync();
+                        results.load();
+
+                        Log.d("realm", "readAllRealmResult: "+results.size());
+                        Toast.makeText(StartAppActivity.this,"Insert Data Success . ",Toast.LENGTH_LONG).show();
+
+                    }
+                }, new Realm.Transaction.OnError() {
+                    @Override
+                    public void onError(Throwable error) {
+                        Log.d("realm", "onError: "+error.toString());
+                        Toast.makeText(StartAppActivity.this,"Insert Data Fail !!! . ",Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                RealmResults<TestProductType> results = realm.where(TestProductType.class).findAllAsync();
+                results.load();
+                Log.d("menza01", "run: "+results.size());
                 Intent intent = new Intent(StartAppActivity.this, MainActivity.class);
                 intent.putExtra("data", dataDao);
                 startActivity(intent);
@@ -193,6 +210,9 @@ public class StartAppActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        if (realmAsyncTask != null && !realmAsyncTask.isCancelled()) {
+            realmAsyncTask.cancel();
+        }
         super.onStop();
 //        if (valueEventListener != null) {
 //            mRootRef.removeEventListener(valueEventListener);
