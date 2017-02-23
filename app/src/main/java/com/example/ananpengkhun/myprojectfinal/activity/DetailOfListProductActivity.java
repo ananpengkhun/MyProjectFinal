@@ -27,8 +27,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.EachItemSizeAdapter;
+import com.example.ananpengkhun.myprojectfinal.dao.Product;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,6 +49,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 public class DetailOfListProductActivity extends AppCompatActivity {
 
@@ -99,6 +102,8 @@ public class DetailOfListProductActivity extends AppCompatActivity {
 
     private EachItemSizeAdapter eachItemSizeAdapter;
     private int index;
+    private Realm realm;
+    private int productId;
     // private int sum;
 
 
@@ -107,6 +112,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_of_list);
         ButterKnife.bind(this);
+        realm = Realm.getDefaultInstance();
         setupView();
         providerDaoload = new ArrayList<>();
         getListProdType = new ArrayList<>();
@@ -157,6 +163,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             Intent intent = getIntent();
             productDao = intent.getParcelableExtra("product_object_index");
+            productId = intent.getIntExtra("product_id",-1);
             providerDaoList = intent.getParcelableArrayListExtra("provider_arraylist");
             tvNamePro.setText(productDao.getProdName());
             tvCodeProd.setText(productDao.getProdCode());
@@ -249,6 +256,25 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                 setTextView(prodAmount, prodName, prodCode, prodPrice, (spinProvider == -1) ? -2 : spinProvider, prodAlert);
 
                 // save data
+
+
+                //realm edit
+
+                Product product = realm.where(Product.class).equalTo("productId",productId).findFirst();
+                realm.beginTransaction();
+                product.setNameItem(prodName);
+                product.setNameCode(prodCode);
+                product.setProductQuantity(prodAmount);
+                if(pathFile != null){
+                    product.setProductImg(pathFile.toString());
+                }
+                product.setProductPrice(prodPrice);
+                if(spinProvider != -1){
+                    product.setProvider(providerDaoload.get(spinProvider).getProvId());
+                }
+                product.setProductAlert(prodAlert);
+                realm.commitTransaction();
+
                 DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType/" + productDao.getProdInType());
                 //Log.d("providers", "onDataChange: "+providerDao.getProvId());
                 Query query = mRootRef.child("data").orderByChild("productId").equalTo(productDao.getProdId());
@@ -270,6 +296,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                                 snapshot.getRef().child("provider").setValue(providerDaoload.get(spinProvider).getProvId());
                             }
                             snapshot.getRef().child("productAlert").setValue(prodAlert);
+
 
 
                         }

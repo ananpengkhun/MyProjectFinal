@@ -17,7 +17,7 @@ public class MyApplication extends Application{
     public void onCreate() {
         super.onCreate();
         Contextor.getInstance().setmContext(getApplicationContext());
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         Realm.init(getApplicationContext());
     }
 

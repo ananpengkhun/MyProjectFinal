@@ -36,6 +36,7 @@ import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProductTypeAdapt
 import com.example.ananpengkhun.myprojectfinal.adapter.InventoryProviderAdapter;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.InventoryProviderViewHolder;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
+import com.example.ananpengkhun.myprojectfinal.dao.Product;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
@@ -111,6 +112,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         @Override
         public void onChange(Realm element) {
             inventoryProductTypeAdapter.notifyDataSetChanged();
+            productAdapter.notifyDataSetChanged();
         }
     };
 
@@ -131,6 +133,10 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         super.onResume();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
     private void init() {
 
@@ -151,7 +157,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
 
         // product type list dummy
-
+        testProductTypes = realm.where(TestProductType.class).findAllAsync();
         for (int i = 0; i < dataDao.getProductType().size(); i++) {
 
             ProductTypeDao productTypeDao = new ProductTypeDao();
@@ -167,18 +173,18 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
                     productEachSizes = new ArrayList<>();
                     ProductDao productDao = new ProductDao();
-                    productDao.setProdCode(dataDao.getProductType().get(i).getData().get(j).getNameCode());
-                    productDao.setProdName(dataDao.getProductType().get(i).getData().get(j).getNameItem());
-                    productDao.setProviderId(dataDao.getProductType().get(i).getData().get(j).getProvider());
-                    productDao.setProductImg(dataDao.getProductType().get(i).getData().get(j).getProductImg());
-                    productDao.setProdInType(dataDao.getProductType().get(i).getData().get(j).getProductInType());
-                    productDao.setProdId(dataDao.getProductType().get(i).getData().get(j).getProductId());
-                    productDao.setProductQuantity(dataDao.getProductType().get(i).getData().get(j).getProductQuantity());
-                    productDao.setProductPrice(dataDao.getProductType().get(i).getData().get(j).getProductPrice());
-                    productDao.setProductAlert(dataDao.getProductType().get(i).getData().get(j).getProductAlert());
+                    productDao.setProdCode(testProductTypes.get(i).getData().get(j).getNameCode());
+                    productDao.setProdName(testProductTypes.get(i).getData().get(j).getNameItem());
+                    productDao.setProviderId(testProductTypes.get(i).getData().get(j).getProvider());
+                    productDao.setProductImg(testProductTypes.get(i).getData().get(j).getProductImg());
+                    productDao.setProdInType(testProductTypes.get(i).getData().get(j).getProductInType());
+                    productDao.setProdId(testProductTypes.get(i).getData().get(j).getProductId());
+                    productDao.setProductQuantity(testProductTypes.get(i).getData().get(j).getProductQuantity());
+                    productDao.setProductPrice(testProductTypes.get(i).getData().get(j).getProductPrice());
+                    productDao.setProductAlert(testProductTypes.get(i).getData().get(j).getProductAlert());
 
 
-                    DataDao.ProductTypeBean.DataBean list = dataDao.getProductType().get(i).getData().get(j);
+                    Product list = testProductTypes.get(i).getData().get(j);
 
                     if (list.getDataItem() != null) {
                         for (int z = 0; z < list.getDataItem().size(); z++) {
@@ -198,18 +204,18 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                             productEachSize.setWeightPerWrap(list.getDataItem().get(z).getWeightPerWrap());
 
                             ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
-                            priceUBahtBean.setClassEightFive(list.getDataItem().get(z).getPriceUBaht().getClassEightFive());
-                            priceUBahtBean.setClassFive(list.getDataItem().get(z).getPriceUBaht().getClassFive());
-                            priceUBahtBean.setClassOne(list.getDataItem().get(z).getPriceUBaht().getClassOne());
+                            priceUBahtBean.setClassEightFive(list.getDataItem().get(z).getPricePerBath().getClassEightFive());
+                            priceUBahtBean.setClassFive(list.getDataItem().get(z).getPricePerBath().getClassFive());
+                            priceUBahtBean.setClassOne(list.getDataItem().get(z).getPricePerBath().getClassOne());
 
-                            priceUBahtBean.setClassOneThreeFive(list.getDataItem().get(z).getPriceUBaht().getClassOneThreeFive());
-                            priceUBahtBean.setClassThree(list.getDataItem().get(z).getPriceUBaht().getClassThree());
-                            priceUBahtBean.setClassTwo(list.getDataItem().get(z).getPriceUBaht().getClassTwo());
+                            priceUBahtBean.setClassOneThreeFive(list.getDataItem().get(z).getPricePerBath().getClassOneThreeFive());
+                            priceUBahtBean.setClassThree(list.getDataItem().get(z).getPricePerBath().getClassThree());
+                            priceUBahtBean.setClassTwo(list.getDataItem().get(z).getPricePerBath().getClassTwo());
                             //Log.d(TAG, "init: "+list.getDataItem().get(z).getPriceUBaht().getClassTwo());
-                            priceUBahtBean.setPerKilo(list.getDataItem().get(z).getPriceUBaht().getPerKilo());
-                            priceUBahtBean.setPerMeter(list.getDataItem().get(z).getPriceUBaht().getPerMeter());
-                            priceUBahtBean.setPerPiece(list.getDataItem().get(z).getPriceUBaht().getPerPiece());
-                            priceUBahtBean.setPerWrap(list.getDataItem().get(z).getPriceUBaht().getPerWrap());
+                            priceUBahtBean.setPerKilo(list.getDataItem().get(z).getPricePerBath().getPerKilo());
+                            priceUBahtBean.setPerMeter(list.getDataItem().get(z).getPricePerBath().getPerMeter());
+                            priceUBahtBean.setPerPiece(list.getDataItem().get(z).getPricePerBath().getPerPiece());
+                            priceUBahtBean.setPerWrap(list.getDataItem().get(z).getPricePerBath().getPerWrap());
                             productEachSize.setPriceUBaht(priceUBahtBean);
 
                             productEachSizes.add(productEachSize);
@@ -270,8 +276,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             public Object instantiateItem(ViewGroup container, int position) {
                 View mView = null;
                 if (0 == position) {
-
-                    testProductTypes = realm.where(TestProductType.class).findAllAsync();
                     mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_product_type_recycler, container, false);
                     recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
                     recyclerView.setHasFixedSize(true);
@@ -282,126 +286,191 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     recyclerView.setAdapter(inventoryProductTypeAdapter);
                     container.addView(mView);
                 } else if (1 == position) {
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType");
-                    databaseReference.addChildEventListener(new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                    for (int i = 0; i < testProductTypes.size(); i++) {
+//                        if (testProductTypes.get(i).getData() != null) {
+//                            // product list dummy
+//                            for (int j = 0; j < testProductTypes.get(i).getData().size(); j++) {
+//                                //Log.d(TAG, "init: " + i + " :" + dataDao.getProductType().get(i).getData().size());
+//
+//                                productEachSizes = new ArrayList<>();
+//                                ProductDao productDao = new ProductDao();
+//                                productDao.setProdCode(testProductTypes.get(i).getData().get(j).getNameCode());
+//                                productDao.setProdName(testProductTypes.get(i).getData().get(j).getNameItem());
+//                                productDao.setProviderId(testProductTypes.get(i).getData().get(j).getProvider());
+//                                productDao.setProductImg(testProductTypes.get(i).getData().get(j).getProductImg());
+//                                productDao.setProdInType(testProductTypes.get(i).getData().get(j).getProductInType());
+//                                productDao.setProdId(testProductTypes.get(i).getData().get(j).getProductId());
+//                                productDao.setProductQuantity(testProductTypes.get(i).getData().get(j).getProductQuantity());
+//                                productDao.setProductPrice(testProductTypes.get(i).getData().get(j).getProductPrice());
+//                                productDao.setProductAlert(testProductTypes.get(i).getData().get(j).getProductAlert());
+//
+//
+//                                Product list = testProductTypes.get(i).getData().get(j);
+//
+//                                if (list.getDataItem() != null) {
+//                                    for (int z = 0; z < list.getDataItem().size(); z++) {
+//
+//                                        Log.d(TAG, "init: " + list.getDataItem().size());
+//                                        //productDao.setProductEachSizes();
+//                                        ProductEachSize productEachSize = new ProductEachSize();
+//                                        productEachSize.setAmongPerWrap(list.getDataItem().get(z).getAmongPerWrap());
+//                                        productEachSize.setContrainUPiecePerBox(list.getDataItem().get(z).getContrainUPiecePerBox());
+//                                        productEachSize.setDiameterOutsize(list.getDataItem().get(z).getDiameterOutsize());
+//                                        productEachSize.setEffordUBaht(list.getDataItem().get(z).getEffordUBaht());
+//                                        productEachSize.setLongPerWrap(list.getDataItem().get(z).getLongPerWrap());
+//                                        productEachSize.setNameItemId(list.getDataItem().get(z).getNameItemId());
+//                                        productEachSize.setNameItemSize(list.getDataItem().get(z).getNameItemSize());
+//                                        productEachSize.setTotalItemBigUnit(list.getDataItem().get(z).getTotalItemBigUnit());
+//                                        productEachSize.setUnit(list.getDataItem().get(z).getUnit());
+//                                        productEachSize.setWeightPerWrap(list.getDataItem().get(z).getWeightPerWrap());
+//
+//                                        ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
+//                                        priceUBahtBean.setClassEightFive(list.getDataItem().get(z).getPricePerBath().getClassEightFive());
+//                                        priceUBahtBean.setClassFive(list.getDataItem().get(z).getPricePerBath().getClassFive());
+//                                        priceUBahtBean.setClassOne(list.getDataItem().get(z).getPricePerBath().getClassOne());
+//
+//                                        priceUBahtBean.setClassOneThreeFive(list.getDataItem().get(z).getPricePerBath().getClassOneThreeFive());
+//                                        priceUBahtBean.setClassThree(list.getDataItem().get(z).getPricePerBath().getClassThree());
+//                                        priceUBahtBean.setClassTwo(list.getDataItem().get(z).getPricePerBath().getClassTwo());
+//                                        //Log.d(TAG, "init: "+list.getDataItem().get(z).getPriceUBaht().getClassTwo());
+//                                        priceUBahtBean.setPerKilo(list.getDataItem().get(z).getPricePerBath().getPerKilo());
+//                                        priceUBahtBean.setPerMeter(list.getDataItem().get(z).getPricePerBath().getPerMeter());
+//                                        priceUBahtBean.setPerPiece(list.getDataItem().get(z).getPricePerBath().getPerPiece());
+//                                        priceUBahtBean.setPerWrap(list.getDataItem().get(z).getPricePerBath().getPerWrap());
+//                                        productEachSize.setPriceUBaht(priceUBahtBean);
+//
+//                                        productEachSizes.add(productEachSize);
+//
+//                                    }
+//                                    productDao.setProductEachSizes(productEachSizes);
+//
+//                                }
+//                                productList.add(productDao);
+//                            }
+//                        }
+//                    }
 
-                        }
 
-                        @Override
-                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                            Log.d("changeData", "onChildChanged: " + dataSnapshot.toString() + "/" + s);
-                            List<DataDao.ProductTypeBean.DataBean> dataBeen = new ArrayList<>();
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                if ("data".equals(snapshot.getKey())) {
-                                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                                        Log.d("changeData", "onChildChanged: " + snapshot1.toString());
-
-                                        Log.d("changeData", "onChildChangedssss: " + snapshot1.getKey());
-                                        DataDao.ProductTypeBean.DataBean dataBean = new DataDao.ProductTypeBean.DataBean();
-
-
-                                        dataBean.setNameItem(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getNameItem());
-                                        dataBean.setProductQuantity(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductQuantity());
-                                        dataBean.setProductPrice(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductPrice());
-                                        dataBean.setProductImg(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductImg());
-                                        dataBean.setProductId(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductId());
-                                        dataBean.setProductAlert(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductAlert());
-                                        dataBean.setNameCode(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getNameCode());
-                                        dataBean.setProductInType(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductInType());
-                                        dataBean.setProvider(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProvider());
-
-
-
-                                        dataBeen.add(dataBean);
-                                    }
-                                }
-                            }
-                            for(int i=0;i<dataBeen.size();i++){
-                                Log.d("producttt", "onChildChanged j: "+dataBeen.size());
-                                //Log.d("changeData", "onChildChanged: " + dataBeen.get(i).getProductQuantity());
-                                for(int j=0;j<productList.size();j++){
-                                    Log.d("producttt", "onChildChanged j: "+productList.size());
-
-                                    if(dataBeen.get(i).getProductId() == productList.get(j).getProdId()){
-                                        //DataDao.ProductTypeBean.DataBean list = dataDao.getProductType().get(i).getData().get(j);
-                                        productEachSizes = new ArrayList<>();
-
-                                        ProductDao productDao = new ProductDao();
-                                        productDao.setProdCode(dataBeen.get(i).getNameCode());
-                                        productDao.setProdName(dataBeen.get(i).getNameItem());
-                                        productDao.setProductQuantity(dataBeen.get(i).getProductQuantity());
-                                        productDao.setProductPrice(dataBeen.get(i).getProductPrice());
-                                        productDao.setProductImg(dataBeen.get(i).getProductImg());
-                                        productDao.setProdId(dataBeen.get(i).getProductId());
-                                        productDao.setProductAlert(dataBeen.get(i).getProductAlert());
-                                        productDao.setProdInType(dataBeen.get(i).getProductInType());
-                                        productDao.setProviderId(dataBeen.get(i).getProvider());
-
-
-
-                                        if (productList.get(j).getProductEachSizes() != null) {
-                                            for (int z = 0; z < productList.get(j).getProductEachSizes().size(); z++) {
-
-                                                Log.d("producttt", "initssssss: " + productList.get(j).getProductEachSizes().size());
-                                                //productDao.setProductEachSizes();
-                                                ProductEachSize productEachSize = new ProductEachSize();
-                                                productEachSize.setAmongPerWrap(productList.get(j).getProductEachSizes().get(z).getAmongPerWrap());
-                                                productEachSize.setContrainUPiecePerBox(productList.get(j).getProductEachSizes().get(z).getContrainUPiecePerBox());
-                                                productEachSize.setDiameterOutsize(productList.get(j).getProductEachSizes().get(z).getDiameterOutsize());
-                                                productEachSize.setEffordUBaht(productList.get(j).getProductEachSizes().get(z).getEffordUBaht());
-                                                productEachSize.setLongPerWrap(productList.get(j).getProductEachSizes().get(z).getLongPerWrap());
-                                                productEachSize.setNameItemId(productList.get(j).getProductEachSizes().get(z).getNameItemId());
-                                                productEachSize.setNameItemSize(productList.get(j).getProductEachSizes().get(z).getNameItemSize());
-                                                productEachSize.setTotalItemBigUnit(productList.get(j).getProductEachSizes().get(z).getTotalItemBigUnit());
-                                                productEachSize.setUnit(productList.get(j).getProductEachSizes().get(z).getUnit());
-                                                productEachSize.setWeightPerWrap(productList.get(j).getProductEachSizes().get(z).getWeightPerWrap());
-
-                                                ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
-                                                priceUBahtBean.setClassEightFive(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassEightFive());
-                                                priceUBahtBean.setClassFive(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassFive());
-                                                priceUBahtBean.setClassOne(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassOne());
-
-                                                priceUBahtBean.setClassOneThreeFive(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassOneThreeFive());
-                                                priceUBahtBean.setClassThree(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassThree());
-                                                priceUBahtBean.setClassTwo(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassTwo());
-                                                //Log.d(TAG, "init: "+list.getDataItem().get(z).getPriceUBaht().getClassTwo());
-                                                priceUBahtBean.setPerKilo(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerKilo());
-                                                priceUBahtBean.setPerMeter(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerMeter());
-                                                priceUBahtBean.setPerPiece(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerPiece());
-                                                priceUBahtBean.setPerWrap(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerWrap());
-                                                productEachSize.setPriceUBaht(priceUBahtBean);
-
-                                                productEachSizes.add(productEachSize);
-
-                                            }
-                                            productDao.setProductEachSizes(productEachSizes);
-
-                                        }
-                                        productList.set(j,productDao);
-                                    }
-                                }
-                            }
-                            productAdapter.notifyDataSetChanged();
-
-                        }
-
-                        @Override
-                        public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+//                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType");
+//                    databaseReference.addChildEventListener(new ChildEventListener() {
+//                        @Override
+//                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//                            Log.d("changeData", "onChildChanged: " + dataSnapshot.toString() + "/" + s);
+//                            List<DataDao.ProductTypeBean.DataBean> dataBeen = new ArrayList<>();
+//                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                                if ("data".equals(snapshot.getKey())) {
+//                                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+//                                        Log.d("changeData", "onChildChanged: " + snapshot1.toString());
+//
+//                                        Log.d("changeData", "onChildChangedssss: " + snapshot1.getKey());
+//                                        DataDao.ProductTypeBean.DataBean dataBean = new DataDao.ProductTypeBean.DataBean();
+//
+//
+//                                        dataBean.setNameItem(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getNameItem());
+//                                        dataBean.setProductQuantity(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductQuantity());
+//                                        dataBean.setProductPrice(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductPrice());
+//                                        dataBean.setProductImg(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductImg());
+//                                        dataBean.setProductId(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductId());
+//                                        dataBean.setProductAlert(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductAlert());
+//                                        dataBean.setNameCode(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getNameCode());
+//                                        dataBean.setProductInType(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProductInType());
+//                                        dataBean.setProvider(snapshot1.getValue(DataDao.ProductTypeBean.DataBean.class).getProvider());
+//
+//
+//
+//                                        dataBeen.add(dataBean);
+//                                    }
+//                                }
+//                            }
+//                            for(int i=0;i<dataBeen.size();i++){
+//                                Log.d("producttt", "onChildChanged j: "+dataBeen.size());
+//                                //Log.d("changeData", "onChildChanged: " + dataBeen.get(i).getProductQuantity());
+//                                for(int j=0;j<productList.size();j++){
+//                                    Log.d("producttt", "onChildChanged j: "+productList.size());
+//
+//                                    if(dataBeen.get(i).getProductId() == productList.get(j).getProdId()){
+//                                        //DataDao.ProductTypeBean.DataBean list = dataDao.getProductType().get(i).getData().get(j);
+//                                        productEachSizes = new ArrayList<>();
+//
+//                                        ProductDao productDao = new ProductDao();
+//                                        productDao.setProdCode(dataBeen.get(i).getNameCode());
+//                                        productDao.setProdName(dataBeen.get(i).getNameItem());
+//                                        productDao.setProductQuantity(dataBeen.get(i).getProductQuantity());
+//                                        productDao.setProductPrice(dataBeen.get(i).getProductPrice());
+//                                        productDao.setProductImg(dataBeen.get(i).getProductImg());
+//                                        productDao.setProdId(dataBeen.get(i).getProductId());
+//                                        productDao.setProductAlert(dataBeen.get(i).getProductAlert());
+//                                        productDao.setProdInType(dataBeen.get(i).getProductInType());
+//                                        productDao.setProviderId(dataBeen.get(i).getProvider());
+//
+//
+//
+//                                        if (productList.get(j).getProductEachSizes() != null) {
+//                                            for (int z = 0; z < productList.get(j).getProductEachSizes().size(); z++) {
+//
+//                                                Log.d("producttt", "initssssss: " + productList.get(j).getProductEachSizes().size());
+//                                                //productDao.setProductEachSizes();
+//                                                ProductEachSize productEachSize = new ProductEachSize();
+//                                                productEachSize.setAmongPerWrap(productList.get(j).getProductEachSizes().get(z).getAmongPerWrap());
+//                                                productEachSize.setContrainUPiecePerBox(productList.get(j).getProductEachSizes().get(z).getContrainUPiecePerBox());
+//                                                productEachSize.setDiameterOutsize(productList.get(j).getProductEachSizes().get(z).getDiameterOutsize());
+//                                                productEachSize.setEffordUBaht(productList.get(j).getProductEachSizes().get(z).getEffordUBaht());
+//                                                productEachSize.setLongPerWrap(productList.get(j).getProductEachSizes().get(z).getLongPerWrap());
+//                                                productEachSize.setNameItemId(productList.get(j).getProductEachSizes().get(z).getNameItemId());
+//                                                productEachSize.setNameItemSize(productList.get(j).getProductEachSizes().get(z).getNameItemSize());
+//                                                productEachSize.setTotalItemBigUnit(productList.get(j).getProductEachSizes().get(z).getTotalItemBigUnit());
+//                                                productEachSize.setUnit(productList.get(j).getProductEachSizes().get(z).getUnit());
+//                                                productEachSize.setWeightPerWrap(productList.get(j).getProductEachSizes().get(z).getWeightPerWrap());
+//
+//                                                ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
+//                                                priceUBahtBean.setClassEightFive(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassEightFive());
+//                                                priceUBahtBean.setClassFive(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassFive());
+//                                                priceUBahtBean.setClassOne(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassOne());
+//
+//                                                priceUBahtBean.setClassOneThreeFive(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassOneThreeFive());
+//                                                priceUBahtBean.setClassThree(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassThree());
+//                                                priceUBahtBean.setClassTwo(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getClassTwo());
+//                                                //Log.d(TAG, "init: "+list.getDataItem().get(z).getPriceUBaht().getClassTwo());
+//                                                priceUBahtBean.setPerKilo(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerKilo());
+//                                                priceUBahtBean.setPerMeter(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerMeter());
+//                                                priceUBahtBean.setPerPiece(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerPiece());
+//                                                priceUBahtBean.setPerWrap(productList.get(j).getProductEachSizes().get(z).getPriceUBaht().getPerWrap());
+//                                                productEachSize.setPriceUBaht(priceUBahtBean);
+//
+//                                                productEachSizes.add(productEachSize);
+//
+//                                            }
+//                                            productDao.setProductEachSizes(productEachSizes);
+//
+//                                        }
+//                                        productList.set(j,productDao);
+//                                    }
+//                                }
+//                            }
+//                            productAdapter.notifyDataSetChanged();
+//
+//                        }
+//
+//                        @Override
+//                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {
+//
+//                        }
+//                    });
 
                     mView = LayoutInflater.from(container.getContext()).inflate(R.layout.activity_list_product_recycler, container, false);
                     recyclerView = (RecyclerView) mView.findViewById(R.id.rv);
@@ -409,6 +478,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     //recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(MyDataInventoryActivity.this));
                     productAdapter.setProductList(productList, productTypeList, providerDaoList);
+                    productAdapter.setListRealm(testProductTypes);
                     AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(productAdapter);
                     alphaAdapter.setFirstOnly(true);
                     alphaAdapter.setDuration(1500);
@@ -870,4 +940,14 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
 }

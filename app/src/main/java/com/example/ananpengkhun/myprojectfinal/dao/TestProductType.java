@@ -11,14 +11,13 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class TestProductType extends RealmObject{
-
-    @PrimaryKey
     private int typeId;
 
     private String status;
     private String typeCode;
     private String typeDes;
     private String name;
+    private RealmList<Product> data;
 
     public int getTypeId() {
         return typeId;
@@ -58,5 +57,13 @@ public class TestProductType extends RealmObject{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public RealmList<Product> getData() {
+        return data;
+    }
+
+    public void setData(RealmList<Product> data) {
+        this.data = data;
     }
 }

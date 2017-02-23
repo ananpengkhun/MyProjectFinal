@@ -23,6 +23,7 @@ import com.cocosw.bottomsheet.BottomSheet;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.MainMenuAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.example.ananpengkhun.myprojectfinal.fragment.MainFragment;
 
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.refactor.kmpautotextview.KMPAutoComplTextView;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 
 public class MainActivity extends AppCompatActivity implements MainFragment.MoveFragmentPage {
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     private String TAG = MainActivity.class.getSimpleName();
 
     private DataDao dataDao;
+    private Realm realm;
     //private List<DataDao.ProductTypeBean> productTypeDaos;
 
 
@@ -61,9 +65,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        realm = Realm.getDefaultInstance();
         setData();
         setupPageDrawer();
         init();
+
 
     }
 
@@ -122,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // dummy data for search on navigationBar
+
         List<DataDao.ProductTypeBean> object = dataDao.getProductType();
         List<String> data = new ArrayList<String>();
         for (int i = 0; i < object.size(); i++) {

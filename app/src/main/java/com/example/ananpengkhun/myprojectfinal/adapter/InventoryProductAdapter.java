@@ -23,6 +23,7 @@ import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.realm.RealmResults;
 
 /**
  * Created by ananpengkhun on 12/21/16.
@@ -47,6 +50,7 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
     private List<ProviderDao> providerDaoList;
     private Button btnConfirm;
     private Button btnCancel;
+    private RealmResults<TestProductType> listRealm;
 
     public void setProductList(List<ProductDao> productList, List<ProductTypeDao> productTypeList, List<ProviderDao> providerDaoList) {
         this.productList = productList;
@@ -140,6 +144,7 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
                     Log.d(TAG, "onClick: prod id:"+productList.get(position).getProdId());
                     Intent intent = new Intent(mContext, DetailOfListProductActivity.class);
                     intent.putParcelableArrayListExtra("provider_arraylist",(ArrayList<ProviderDao>) providerDaoList);
+                    intent.putExtra("product_id",productList.get(position).getProdId());
                     intent.putExtra("product_object_index",productList.get(position));
 
                     //Log.d(TAG, "onClick: "+productList.get(position).getProductEachSizes().get(0).getPriceUBaht().getClassOne());
@@ -160,4 +165,7 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
         return productList.size();
     }
 
+    public void setListRealm(RealmResults<TestProductType> listRealm) {
+        this.listRealm = listRealm;
+    }
 }

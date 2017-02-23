@@ -70,6 +70,7 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
 
     private void init() {
         testProductTypes = realm.where(TestProductType.class).findAllAsync();
+
         productDaoList = new ArrayList<>();
         if (getIntent().getParcelableExtra("dataDao_item_product") != null) {
             Intent intent = getIntent();
@@ -78,8 +79,10 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
             if (dataDao.getProductType().get(index).getData() != null) {
                 for (int i = 0; i < dataDao.getProductType().get(index).getData().size(); i++) {
                     ProductDao productDao = new ProductDao();
-                    productDao.setProdName(dataDao.getProductType().get(index).getData().get(i).getNameItem());
-                    productDao.setProdCode(dataDao.getProductType().get(index).getData().get(i).getNameCode());
+                    productDao.setProdName(testProductTypes.get(index).getData().get(i).getNameItem());
+                    productDao.setProdCode(testProductTypes.get(index).getData().get(i).getNameCode());
+//                    productDao.setProdName(dataDao.getProductType().get(index).getData().get(i).getNameItem());
+//                    productDao.setProdCode(dataDao.getProductType().get(index).getData().get(i).getNameCode());
                     productDaoList.add(productDao);
 
                     //Log.d("raiwa", "init: "+dataDao.getProductType().get(index).getData().get(i).getNameItem());
@@ -136,19 +139,23 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
                 des = edProductTypeDes.getText().toString();
 
                 //realm edit
-                final TestProductType testProductType = new TestProductType();
-                testProductType.setTypeId(testProductTypes.get(index).getTypeId());
+
+                TestProductType testProductType = realm.where(TestProductType.class).equalTo("typeId",testProductTypes.get(index).getTypeId()).findFirst();
+                realm.beginTransaction();
                 testProductType.setTypeCode(code);
                 testProductType.setTypeDes(des);
                 testProductType.setName(name);
-                testProductType.setStatus(testProductTypes.get(index).getStatus());
+                realm.commitTransaction();
+                //testProductType.setTypeId(testProductTypes.get(index).getTypeId());
 
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        realm.copyToRealmOrUpdate(testProductType);
-                    }
-                });
+                //testProductType.setStatus(testProductTypes.get(index).getStatus());
+
+//                realm.executeTransaction(new Realm.Transaction() {
+//                    @Override
+//                    public void execute(Realm realm) {
+//                        realm.copyToRealmOrUpdate(testProductType);
+//                    }
+//                });
 
                 setTextView(name, code, des);
 
