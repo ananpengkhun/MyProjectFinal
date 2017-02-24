@@ -26,6 +26,8 @@ import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.example.ananpengkhun.myprojectfinal.fragment.MainFragment;
 
+import junit.framework.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.refactor.kmpautotextview.KMPAutoComplTextView;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 
@@ -54,10 +58,28 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private MainMenuAdapter mainMenuAdapter;
     private String TAG = MainActivity.class.getSimpleName();
+    private List<String> data;
 
     private DataDao dataDao;
     private Realm realm;
-    //private List<DataDao.ProductTypeBean> productTypeDaos;
+    private RealmResults<TestProductType> testProductTypes;
+    private RealmChangeListener<Realm> realmListener = new RealmChangeListener<Realm>() {
+        @Override
+        public void onChange(Realm element) {
+            data.clear();
+            testProductTypes = realm.where(TestProductType.class).findAll();
+            for (int i = 0; i < testProductTypes.size(); i++) {
+                if (testProductTypes.get(i).getData() != null) {
+                    for (int j = 0; j < testProductTypes.get(i).getData().size(); j++) {
+                        data.add(testProductTypes.get(i).getData().get(j).getNameItem());
+                        Log.d(TAG, "setupPageDrawer: " + testProductTypes.get(i).getData().get(j).getNameItem());
+                    }
+                }
+
+            }
+            Log.d(TAG, "_________execute: "+testProductTypes.get(0).getData().get(0).getNameItem());
+        }
+    };
 
 
     @Override
@@ -65,7 +87,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
         realm = Realm.getDefaultInstance();
+        realm.addChangeListener(realmListener);
+        //Log.d(TAG, "execute___name: "+testProductTypes.size());
+
+
         setData();
         setupPageDrawer();
         init();
@@ -73,7 +100,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
 
     }
 
+
     private void setData() {
+        data = new ArrayList<>();
         if (getIntent().getParcelableExtra("data") != null) {
             dataDao = getIntent().getParcelableExtra("data");
         }
@@ -85,6 +114,25 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         if (drawerLayout.getDrawerLockMode(Gravity.LEFT) == DrawerLayout.LOCK_MODE_LOCKED_CLOSED) {
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }
+
+
+        tvAutoCompl.setDatas(data);
+        tvAutoCompl.setOnPopupItemClickListener(new KMPAutoComplTextView.OnPopupItemClickListener() {
+            @Override
+            public void onPopupItemClick(CharSequence charSequence) {
+                //Toast.makeText(MainActivity.this, charSequence.toString(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.putExtra("data", dataDao);
+                intent.putExtra("selected", charSequence);
+                Log.d(TAG, "onPopupItemClick+++++: "+charSequence);
+                startActivity(intent);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                tvAutoCompl.setText("");
+            }
+        });
+
+
+
     }
 
     private void init() {
@@ -128,35 +176,26 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-        List<DataDao.ProductTypeBean> object = dataDao.getProductType();
-        List<String> data = new ArrayList<String>();
-        for (int i = 0; i < object.size(); i++) {
-            if (object.get(i).getData() != null) {
-                for (int j = 0; j < object.get(i).getData().size(); j++) {
-                    data.add(object.get(i).getData().get(j).getNameItem());
+        testProductTypes = realm.where(TestProductType.class).findAll();
+        for (int i = 0; i < testProductTypes.size(); i++) {
+            if (testProductTypes.get(i).getData() != null) {
+                for (int j = 0; j < testProductTypes.get(i).getData().size(); j++) {
+                    data.add(testProductTypes.get(i).getData().get(j).getNameItem());
+                    Log.d(TAG, "setupPageDrawer: " + testProductTypes.get(i).getData().get(j).getNameItem());
                 }
             }
 
         }
 
+//        List<DataDao.ProductTypeBean> object = dataDao.getProductType();
+
+
+
 //        data.add("Red roses for wedding");
 //        data.add("Bouquet with red roses");
 //        data.add("Single red rose flower");
 
-        tvAutoCompl.setDatas(data);
-        tvAutoCompl.setOnPopupItemClickListener(new KMPAutoComplTextView.OnPopupItemClickListener() {
-            @Override
-            public void onPopupItemClick(CharSequence charSequence) {
-                //Toast.makeText(MainActivity.this, charSequence.toString(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                intent.putExtra("data", dataDao);
-                intent.putExtra("selected", charSequence);
-                startActivity(intent);
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                tvAutoCompl.setText("");
-            }
-        });
+
 
     }
 

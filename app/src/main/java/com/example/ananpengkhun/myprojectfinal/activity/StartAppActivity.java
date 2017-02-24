@@ -65,7 +65,117 @@ public class StartAppActivity extends AppCompatActivity {
 
         dataDao = getIntent().getParcelableExtra("data");
         Log.d("start", "onCreate: "+dataDao.getProductType().size());
+        boolean start;
+        sp = getSharedPreferences(MyPreference, MODE_PRIVATE);
+        if(!sp.getBoolean("startApp",false)){
+            editor = sp.edit();
+            start = sp.getBoolean("startApp",false);
+            editor.putBoolean("startApp",true);
+            editor.apply();
+        }else {
+            start = sp.getBoolean("startApp",false);
+        }
 
+        Log.d("empty", "run: "+start);
+
+        if(!start){
+            realmAsyncTask = realm.executeTransactionAsync(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    for (int i = 0; i < dataDao.getProductType().size(); i++) {
+
+                        TestProductType testProductType = realm.createObject(TestProductType.class);
+                        testProductType.setTypeId(dataDao.getProductType().get(i).getTypeId());
+                        testProductType.setName(dataDao.getProductType().get(i).getName());
+                        testProductType.setTypeCode(dataDao.getProductType().get(i).getTypeCode());
+                        testProductType.setStatus(dataDao.getProductType().get(i).getStatus());
+                        testProductType.setTypeDes(dataDao.getProductType().get(i).getTypeDes());
+                        if (dataDao.getProductType().get(i).getData() != null) {
+                            for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
+                                //Product product = realm.copyToRealm(dataDao.getProductType().get(i).getData().get(j));
+                                Product product = new Product();
+                                product.setNameCode(dataDao.getProductType().get(i).getData().get(j).getNameCode());
+                                product.setNameItem(dataDao.getProductType().get(i).getData().get(j).getNameItem());
+                                product.setProvider(dataDao.getProductType().get(i).getData().get(j).getProvider());
+                                product.setProductImg(dataDao.getProductType().get(i).getData().get(j).getProductImg());
+                                product.setProductInType(dataDao.getProductType().get(i).getData().get(j).getProductInType());
+                                product.setProductId(dataDao.getProductType().get(i).getData().get(j).getProductId());
+                                product.setProductQuantity(dataDao.getProductType().get(i).getData().get(j).getProductQuantity());
+                                product.setProductPrice(dataDao.getProductType().get(i).getData().get(j).getProductPrice());
+                                product.setProductAlert(dataDao.getProductType().get(i).getData().get(j).getProductAlert());
+                                //Log.d("realm", "execute: " + j + dataDao.getProductType().get(i).getData().get(j).getNameItem());
+                                testProductType.getData().add(product);
+
+                                if (dataDao.getProductType().get(i).getData().get(j).getDataItem() != null) {
+                                    for (int z = 0; z < dataDao.getProductType().get(i).getData().get(j).getDataItem().size(); z++) {
+
+                                        //productDao.setProductEachSizes();
+                                        DataDao.ProductTypeBean.DataBean list = dataDao.getProductType().get(i).getData().get(j);
+                                        Productsize productEachSize = new Productsize();
+                                        //Log.d("realm", "execute: "+dataDao.getProductType().get(i).getData().get(j).getDataItem().get(z).getNameItemId());
+                                        productEachSize.setAmongPerWrap(list.getDataItem().get(z).getAmongPerWrap());
+                                        productEachSize.setContrainUPiecePerBox(list.getDataItem().get(z).getContrainUPiecePerBox());
+                                        productEachSize.setDiameterOutsize(list.getDataItem().get(z).getDiameterOutsize());
+                                        productEachSize.setEffordUBaht(list.getDataItem().get(z).getEffordUBaht());
+                                        productEachSize.setLongPerWrap(list.getDataItem().get(z).getLongPerWrap());
+                                        productEachSize.setNameItemId(list.getDataItem().get(z).getNameItemId());
+                                        productEachSize.setNameItemSize(list.getDataItem().get(z).getNameItemSize());
+                                        productEachSize.setTotalItemBigUnit(list.getDataItem().get(z).getTotalItemBigUnit());
+                                        productEachSize.setUnit(list.getDataItem().get(z).getUnit());
+                                        productEachSize.setWeightPerWrap(list.getDataItem().get(z).getWeightPerWrap());
+
+                                        //product.getDataItem().add(productEachSize);
+
+                                        PricePerBath pricePerBath = new PricePerBath();
+                                        pricePerBath.setClassEightFive(list.getDataItem().get(z).getPriceUBaht().getClassEightFive());
+                                        pricePerBath.setClassFive(list.getDataItem().get(z).getPriceUBaht().getClassFive());
+                                        pricePerBath.setClassOne(list.getDataItem().get(z).getPriceUBaht().getClassOne());
+
+                                        pricePerBath.setClassOneThreeFive(list.getDataItem().get(z).getPriceUBaht().getClassOneThreeFive());
+                                        pricePerBath.setClassThree(list.getDataItem().get(z).getPriceUBaht().getClassThree());
+                                        pricePerBath.setClassTwo(list.getDataItem().get(z).getPriceUBaht().getClassTwo());
+                                        //Log.d(TAG, "init: "+list.getDataItem().get(z).getPriceUBaht().getClassTwo());
+                                        pricePerBath.setPerKilo(list.getDataItem().get(z).getPriceUBaht().getPerKilo());
+                                        pricePerBath.setPerMeter(list.getDataItem().get(z).getPriceUBaht().getPerMeter());
+                                        pricePerBath.setPerPiece(list.getDataItem().get(z).getPriceUBaht().getPerPiece());
+                                        pricePerBath.setPerWrap(list.getDataItem().get(z).getPriceUBaht().getPerWrap());
+                                        productEachSize.setPricePerBath(pricePerBath);
+
+
+                                        testProductType.getData().get(j).getDataItem().add(productEachSize);
+                                        //productEachSizes.add(productEachSize);
+
+                                    }
+                                    //productDao.setProductEachSizes(productEachSizes);
+                                }
+
+
+                            }
+
+                        }
+                    }
+                }
+
+            }, new Realm.Transaction.OnSuccess() {
+                @Override
+                public void onSuccess() {
+                    RealmQuery<TestProductType> query = realm.where(TestProductType.class);
+
+                    RealmResults<TestProductType> results = query.findAllAsync();
+                    results.load();
+
+                    Log.d("realm", "readAllRealmResult: " + results.size());
+                    Toast.makeText(StartAppActivity.this, "Insert Data Success . ", Toast.LENGTH_LONG).show();
+
+                }
+            }, new Realm.Transaction.OnError() {
+                @Override
+                public void onError(Throwable error) {
+                    Log.d("realm", "onError: " + error.toString());
+                    Toast.makeText(StartAppActivity.this, "Insert Data Fail !!! . ", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
         //testProductTypes = new ArrayList<>();
         // productTypeDaos = new ArrayList<>();
 //
@@ -163,117 +273,7 @@ public class StartAppActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                boolean start;
-                sp = getSharedPreferences(MyPreference, MODE_PRIVATE);
-                if(!sp.getBoolean("startApp",false)){
-                    editor = sp.edit();
-                    start = sp.getBoolean("startApp",false);
-                    editor.putBoolean("startApp",true);
-                    editor.apply();
-                }else {
-                    start = sp.getBoolean("startApp",false);
-                }
 
-                Log.d("empty", "run: "+start);
-
-                if(!start){
-                    realmAsyncTask = realm.executeTransactionAsync(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            for (int i = 0; i < dataDao.getProductType().size(); i++) {
-
-                                TestProductType testProductType = realm.createObject(TestProductType.class);
-                                testProductType.setTypeId(dataDao.getProductType().get(i).getTypeId());
-                                testProductType.setName(dataDao.getProductType().get(i).getName());
-                                testProductType.setTypeCode(dataDao.getProductType().get(i).getTypeCode());
-                                testProductType.setStatus(dataDao.getProductType().get(i).getStatus());
-                                testProductType.setTypeDes(dataDao.getProductType().get(i).getTypeDes());
-                                if (dataDao.getProductType().get(i).getData() != null) {
-                                    for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
-                                        //Product product = realm.copyToRealm(dataDao.getProductType().get(i).getData().get(j));
-                                        Product product = new Product();
-                                        product.setNameCode(dataDao.getProductType().get(i).getData().get(j).getNameCode());
-                                        product.setNameItem(dataDao.getProductType().get(i).getData().get(j).getNameItem());
-                                        product.setProvider(dataDao.getProductType().get(i).getData().get(j).getProvider());
-                                        product.setProductImg(dataDao.getProductType().get(i).getData().get(j).getProductImg());
-                                        product.setProductInType(dataDao.getProductType().get(i).getData().get(j).getProductInType());
-                                        product.setProductId(dataDao.getProductType().get(i).getData().get(j).getProductId());
-                                        product.setProductQuantity(dataDao.getProductType().get(i).getData().get(j).getProductQuantity());
-                                        product.setProductPrice(dataDao.getProductType().get(i).getData().get(j).getProductPrice());
-                                        product.setProductAlert(dataDao.getProductType().get(i).getData().get(j).getProductAlert());
-                                        //Log.d("realm", "execute: " + j + dataDao.getProductType().get(i).getData().get(j).getNameItem());
-                                        testProductType.getData().add(product);
-
-                                        if (dataDao.getProductType().get(i).getData().get(j).getDataItem() != null) {
-                                            for (int z = 0; z < dataDao.getProductType().get(i).getData().get(j).getDataItem().size(); z++) {
-
-                                                //productDao.setProductEachSizes();
-                                                DataDao.ProductTypeBean.DataBean list = dataDao.getProductType().get(i).getData().get(j);
-                                                Productsize productEachSize = new Productsize();
-                                                //Log.d("realm", "execute: "+dataDao.getProductType().get(i).getData().get(j).getDataItem().get(z).getNameItemId());
-                                                productEachSize.setAmongPerWrap(list.getDataItem().get(z).getAmongPerWrap());
-                                                productEachSize.setContrainUPiecePerBox(list.getDataItem().get(z).getContrainUPiecePerBox());
-                                                productEachSize.setDiameterOutsize(list.getDataItem().get(z).getDiameterOutsize());
-                                                productEachSize.setEffordUBaht(list.getDataItem().get(z).getEffordUBaht());
-                                                productEachSize.setLongPerWrap(list.getDataItem().get(z).getLongPerWrap());
-                                                productEachSize.setNameItemId(list.getDataItem().get(z).getNameItemId());
-                                                productEachSize.setNameItemSize(list.getDataItem().get(z).getNameItemSize());
-                                                productEachSize.setTotalItemBigUnit(list.getDataItem().get(z).getTotalItemBigUnit());
-                                                productEachSize.setUnit(list.getDataItem().get(z).getUnit());
-                                                productEachSize.setWeightPerWrap(list.getDataItem().get(z).getWeightPerWrap());
-
-                                                //product.getDataItem().add(productEachSize);
-
-                                                PricePerBath pricePerBath = new PricePerBath();
-                                                pricePerBath.setClassEightFive(list.getDataItem().get(z).getPriceUBaht().getClassEightFive());
-                                                pricePerBath.setClassFive(list.getDataItem().get(z).getPriceUBaht().getClassFive());
-                                                pricePerBath.setClassOne(list.getDataItem().get(z).getPriceUBaht().getClassOne());
-
-                                                pricePerBath.setClassOneThreeFive(list.getDataItem().get(z).getPriceUBaht().getClassOneThreeFive());
-                                                pricePerBath.setClassThree(list.getDataItem().get(z).getPriceUBaht().getClassThree());
-                                                pricePerBath.setClassTwo(list.getDataItem().get(z).getPriceUBaht().getClassTwo());
-                                                //Log.d(TAG, "init: "+list.getDataItem().get(z).getPriceUBaht().getClassTwo());
-                                                pricePerBath.setPerKilo(list.getDataItem().get(z).getPriceUBaht().getPerKilo());
-                                                pricePerBath.setPerMeter(list.getDataItem().get(z).getPriceUBaht().getPerMeter());
-                                                pricePerBath.setPerPiece(list.getDataItem().get(z).getPriceUBaht().getPerPiece());
-                                                pricePerBath.setPerWrap(list.getDataItem().get(z).getPriceUBaht().getPerWrap());
-                                                productEachSize.setPricePerBath(pricePerBath);
-
-
-                                                testProductType.getData().get(j).getDataItem().add(productEachSize);
-                                                //productEachSizes.add(productEachSize);
-
-                                            }
-                                            //productDao.setProductEachSizes(productEachSizes);
-                                        }
-
-
-                                    }
-
-                                }
-                            }
-                        }
-
-                    }, new Realm.Transaction.OnSuccess() {
-                        @Override
-                        public void onSuccess() {
-                            RealmQuery<TestProductType> query = realm.where(TestProductType.class);
-
-                            RealmResults<TestProductType> results = query.findAllAsync();
-                            results.load();
-
-                            Log.d("realm", "readAllRealmResult: " + results.size());
-                            Toast.makeText(StartAppActivity.this, "Insert Data Success . ", Toast.LENGTH_LONG).show();
-
-                        }
-                    }, new Realm.Transaction.OnError() {
-                        @Override
-                        public void onError(Throwable error) {
-                            Log.d("realm", "onError: " + error.toString());
-                            Toast.makeText(StartAppActivity.this, "Insert Data Fail !!! . ", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
 
 
                 Intent intent = new Intent(StartAppActivity.this, MainActivity.class);
@@ -292,6 +292,7 @@ public class StartAppActivity extends AppCompatActivity {
 //            realmAsyncTask.cancel();
 //        }
         super.onStop();
+        realm.close();
 //        if (valueEventListener != null) {
 //            mRootRef.removeEventListener(valueEventListener);
 //        }

@@ -71,15 +71,15 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        if(holder instanceof InventoryProductViewHolder){
+        if (holder instanceof InventoryProductViewHolder) {
             InventoryProductViewHolder inventoryProductViewHolder = (InventoryProductViewHolder) holder;
             inventoryProductViewHolder.tvNamePro.setText(productList.get(position).getProdName());
             inventoryProductViewHolder.tvPricePro.setText(productList.get(position).getProdCode());
-            if(!"".equals(productList.get(position).getProductImg())){
-                Glide.with(mContext).load(productList.get(position).getProductImg()).placeholder(ContextCompat.getDrawable(mContext,R.drawable.folder)).into(inventoryProductViewHolder.imvProduct);
+            if (!"".equals(productList.get(position).getProductImg())) {
+                Glide.with(mContext).load(productList.get(position).getProductImg()).placeholder(ContextCompat.getDrawable(mContext, R.drawable.folder)).into(inventoryProductViewHolder.imvProduct);
             }
-            
-            
+
+
             inventoryProductViewHolder.cvGroupView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
@@ -135,20 +135,20 @@ public class InventoryProductAdapter extends RecyclerView.Adapter<RecyclerView.V
                     return true;
                 }
             });
-            
+
             inventoryProductViewHolder.cvGroupView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG, "onClick: "+position);
-                    Log.d(TAG, "onClick: intype:"+productList.get(position).getProdInType());
-                    Log.d(TAG, "onClick: prod id:"+productList.get(position).getProdId());
+                    Log.d(TAG, "onClick: " + position);
+                    Log.d(TAG, "onClick: intype:" + productList.get(position).getProdInType());
+                    Log.d(TAG, "onClick: prod id:" + productList.get(position).getProdId());
                     Intent intent = new Intent(mContext, DetailOfListProductActivity.class);
-                    intent.putParcelableArrayListExtra("provider_arraylist",(ArrayList<ProviderDao>) providerDaoList);
-                    intent.putExtra("product_id",productList.get(position).getProdId());
-                    intent.putExtra("product_object_index",productList.get(position));
+                    intent.putParcelableArrayListExtra("provider_arraylist", (ArrayList<ProviderDao>) providerDaoList);
+                    intent.putExtra("product_id", productList.get(position).getProdId());
+                    intent.putExtra("product_object_index", productList.get(position));
 
                     //Log.d(TAG, "onClick: "+productList.get(position).getProductEachSizes().get(0).getPriceUBaht().getClassOne());
-                    mContext.startActivityForResult(intent,MyDataInventoryActivity.EDIT_PRODUCT);
+                    mContext.startActivityForResult(intent, MyDataInventoryActivity.EDIT_PRODUCT);
 
                 }
             });

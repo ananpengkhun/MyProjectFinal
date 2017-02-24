@@ -28,10 +28,13 @@ import com.bumptech.glide.Glide;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.EachItemSizeAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
+import com.example.ananpengkhun.myprojectfinal.dao.Product;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
+import com.example.ananpengkhun.myprojectfinal.dao.Productsize;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,6 +51,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -74,7 +79,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int TAKE_PHOTO_REQUEST = 2;
-    private DataDao dataDao;
+    //private DataDao dataDao;
     private String SelectedData;
     private List<ProviderDao> providerDaoload;
     private EachItemSizeAdapter eachItemSizeAdapter;
@@ -96,12 +101,17 @@ public class SearchActivity extends AppCompatActivity {
     private int prodAlert;
     private boolean swap = true;
     private int indexProvider;
+    private Realm realm;
+    private RealmResults<TestProductType> testProductTypes;
+    private int productId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
+        realm = Realm.getDefaultInstance();
+        testProductTypes = realm.where(TestProductType.class).findAll();
         providerDaoload = new ArrayList<>();
         productList = new ArrayList<>();
         getListProdType = new ArrayList<>();
@@ -113,13 +123,13 @@ public class SearchActivity extends AppCompatActivity {
 
     private void init() {
         Log.d("search", "init: " + SelectedData);
-
-        for (int i = 0; i < dataDao.getProductType().size(); i++) {
-            if (dataDao.getProductType().get(i).getData() != null) {
+        Log.d("search", "init: "+testProductTypes.size());
+        for (int i = 0; i < testProductTypes.size(); i++) {
+            if (testProductTypes.get(i).getData() != null) {
                 // product list dummy
-                for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
+                for (int j = 0; j < testProductTypes.get(i).getData().size(); j++) {
                     //Log.d(TAG, "init: "+i+" :"+dataDao.getProductType().get(i).getData().size());
-                    List<DataDao.ProductTypeBean.DataBean> dataBean = dataDao.getProductType().get(i).getData();
+                    List<Product> dataBean = testProductTypes.get(i).getData();
                     productEachSizes = new ArrayList<>();
                     ProductDao productDao = new ProductDao();
                     productDao.setProdCode(dataBean.get(j).getNameCode());
@@ -133,7 +143,7 @@ public class SearchActivity extends AppCompatActivity {
                     productDao.setProductAlert(dataBean.get(j).getProductAlert());
 
 
-                    List<DataDao.ProductTypeBean.DataBean.DataItemBean> list = dataBean.get(j).getDataItem();
+                    List<Productsize> list = dataBean.get(j).getDataItem();
 
                     if (list != null) {
                         for (int z = 0; z < list.size(); z++) {
@@ -153,18 +163,18 @@ public class SearchActivity extends AppCompatActivity {
                             productEachSize.setWeightPerWrap(list.get(z).getWeightPerWrap());
 
                             ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
-                            priceUBahtBean.setClassEightFive(list.get(z).getPriceUBaht().getClassEightFive());
-                            priceUBahtBean.setClassFive(list.get(z).getPriceUBaht().getClassFive());
-                            priceUBahtBean.setClassOne(list.get(z).getPriceUBaht().getClassOne());
+                            priceUBahtBean.setClassEightFive(list.get(z).getPricePerBath().getClassEightFive());
+                            priceUBahtBean.setClassFive(list.get(z).getPricePerBath().getClassFive());
+                            priceUBahtBean.setClassOne(list.get(z).getPricePerBath().getClassOne());
 
-                            priceUBahtBean.setClassOneThreeFive(list.get(z).getPriceUBaht().getClassOneThreeFive());
-                            priceUBahtBean.setClassThree(list.get(z).getPriceUBaht().getClassThree());
-                            priceUBahtBean.setClassTwo(list.get(z).getPriceUBaht().getClassTwo());
+                            priceUBahtBean.setClassOneThreeFive(list.get(z).getPricePerBath().getClassOneThreeFive());
+                            priceUBahtBean.setClassThree(list.get(z).getPricePerBath().getClassThree());
+                            priceUBahtBean.setClassTwo(list.get(z).getPricePerBath().getClassTwo());
                             //Log.d(TAG, "init: "+list.getDataItem().get(z).getPriceUBaht().getClassTwo());
-                            priceUBahtBean.setPerKilo(list.get(z).getPriceUBaht().getPerKilo());
-                            priceUBahtBean.setPerMeter(list.get(z).getPriceUBaht().getPerMeter());
-                            priceUBahtBean.setPerPiece(list.get(z).getPriceUBaht().getPerPiece());
-                            priceUBahtBean.setPerWrap(list.get(z).getPriceUBaht().getPerWrap());
+                            priceUBahtBean.setPerKilo(list.get(z).getPricePerBath().getPerKilo());
+                            priceUBahtBean.setPerMeter(list.get(z).getPricePerBath().getPerMeter());
+                            priceUBahtBean.setPerPiece(list.get(z).getPricePerBath().getPerPiece());
+                            priceUBahtBean.setPerWrap(list.get(z).getPricePerBath().getPerWrap());
                             productEachSize.setPriceUBaht(priceUBahtBean);
 
                             productEachSizes.add(productEachSize);
@@ -181,9 +191,12 @@ public class SearchActivity extends AppCompatActivity {
 
         if (productList != null) {
             for (int i = 0; i < productList.size(); i++) {
+
                 if (SelectedData.equals(productList.get(i).getProdName())) {
+                    Log.d("search", "init++++++++: "+productList.get(i).getProdName());
                     //show data after selected from search.
                     indexSearch = i;
+                    productId = productList.get(i).getProdId();
                     tvNamePro.setText(productList.get(i).getProdName());
                     tvCodeProd.setText(productList.get(i).getProdCode());
                     if (productList.get(i).getProductQuantity() == 0) {
@@ -244,6 +257,12 @@ public class SearchActivity extends AppCompatActivity {
                     Log.d("loaddata", "onDataChange: " + providerDao.getProvName());
                     providerDaoload.add(providerDao);
                 }
+                if (getIntent().getParcelableExtra("data") != null) {
+                    //dataDao = getIntent().getParcelableExtra("data");
+                    SelectedData = getIntent().getCharSequenceExtra("selected").toString();
+                }
+                spinnerOfTypeProduct();
+                init();
             }
 
             @Override
@@ -252,17 +271,6 @@ public class SearchActivity extends AppCompatActivity {
             }
         };
         databaseReference.addListenerForSingleValueEvent(valueEventListener);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (getIntent().getParcelableExtra("data") != null) {
-                    dataDao = getIntent().getParcelableExtra("data");
-                    SelectedData = getIntent().getCharSequenceExtra("selected").toString();
-                }
-                spinnerOfTypeProduct();
-                init();
-            }
-        }, 100);
 
     }
 
@@ -286,6 +294,8 @@ public class SearchActivity extends AppCompatActivity {
     public void onBackPressed() {
         finish();
     }
+
+
 
 
     private View.OnClickListener imvClicklistener = new View.OnClickListener() {
@@ -328,6 +338,22 @@ public class SearchActivity extends AppCompatActivity {
                 setTextView(prodAmount, prodName, prodCode, prodPrice, (spinProvider == -1) ? -2 :spinProvider, prodAlert);
 
                 // save data
+                //realm edit
+                Product product = realm.where(Product.class).equalTo("productId",productId).findFirst();
+                realm.beginTransaction();
+                product.setNameItem(prodName);
+                product.setNameCode(prodCode);
+                product.setProductQuantity(prodAmount);
+                if(pathFile != null){
+                    product.setProductImg(pathFile.toString());
+                }
+                product.setProductPrice(prodPrice);
+                if(spinProvider != -1){
+                    product.setProvider(providerDaoload.get(spinProvider).getProvId());
+                }
+                product.setProductAlert(prodAlert);
+                realm.commitTransaction();
+
                 DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType/" + productList.get(indexSearch).getProdInType());
                 //Log.d("providers", "onDataChange: "+providerDao.getProvId());
                 Query query = mRootRef.child("data").orderByChild("productId").equalTo(productList.get(indexSearch).getProdId());
@@ -514,5 +540,11 @@ public class SearchActivity extends AppCompatActivity {
                 Glide.with(SearchActivity.this).load(pathFile).into(imgProduct);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }

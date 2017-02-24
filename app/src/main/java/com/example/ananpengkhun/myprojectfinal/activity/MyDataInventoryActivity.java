@@ -111,8 +111,17 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private RealmChangeListener<Realm> listener = new RealmChangeListener<Realm>() {
         @Override
         public void onChange(Realm element) {
-            inventoryProductTypeAdapter.notifyDataSetChanged();
-            productAdapter.notifyDataSetChanged();
+
+            //inventoryProductTypeAdapter.notifyDataSetChanged();
+            productTypeList.clear();
+            productList.clear();
+            providerDaoList.clear();
+
+            init();
+            vpHorizontalNtb.setCurrentItem(changeViewpager);
+
+
+//            productAdapter.notifyDataSetChanged();
         }
     };
 
@@ -123,23 +132,14 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_data_inventory);
         ButterKnife.bind(this);
         realm = Realm.getDefaultInstance();
+        testProductTypes = realm.where(TestProductType.class).findAllAsync();
         realm.addChangeListener(listener);
         setupPageDrawer();
+        declarInit();
         init();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    private void init() {
-
+    private void declarInit() {
         productAdapter = new InventoryProductAdapter(MyDataInventoryActivity.this);
         inventoryProductTypeAdapter = new InventoryProductTypeAdapter(MyDataInventoryActivity.this);
         inventoryProviderAdapter = new InventoryProviderAdapter(MyDataInventoryActivity.this);
@@ -148,16 +148,26 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         providerDaoList = new ArrayList<>();
 
         providerList = new ArrayList<>();
-
-
         if (getIntent().getParcelableExtra("data") != null) {
             dataDao = getIntent().getParcelableExtra("data");
             //Log.d(TAG, "init: "+dataDao.getProductType().get(0).getName());
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    private void init() {
         // product type list dummy
-        testProductTypes = realm.where(TestProductType.class).findAllAsync();
         for (int i = 0; i < dataDao.getProductType().size(); i++) {
 
             ProductTypeDao productTypeDao = new ProductTypeDao();
@@ -171,7 +181,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                 for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
                     Log.d(TAG, "init: " + i + " :" + dataDao.getProductType().get(i).getData().size());
 
-                    productEachSizes = new ArrayList<>();
+                    List<ProductEachSize> productEachSizes = new ArrayList<>();
                     ProductDao productDao = new ProductDao();
                     productDao.setProdCode(testProductTypes.get(i).getData().get(j).getNameCode());
                     productDao.setProdName(testProductTypes.get(i).getData().get(j).getNameItem());
@@ -225,8 +235,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
                     }
                     productList.add(productDao);
-
-
                 }
             }
         }
@@ -635,15 +643,15 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
         @Override
         public void onPageSelected(int position) {
-            Log.d(TAG, "onPageSelected: "+position);
-            if(0 == position){
+            Log.d(TAG, "onPageSelected: " + position);
+            if (0 == position) {
                 inventoryProductTypeAdapter.notifyDataSetChanged();
             }
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {
-            Log.d(TAG, "onPageScrollStateChanged: "+testProductTypes.size());
+            Log.d(TAG, "onPageScrollStateChanged: " + testProductTypes.size());
 
         }
     };
