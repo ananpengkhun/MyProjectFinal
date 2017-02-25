@@ -45,7 +45,7 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
     @BindView(R.id.imv_box_for_edit) ImageView imvBoxForEdit;
 
     private ProductTypeAssociateAdapter productTypeAssociateAdapter;
-    private DataDao dataDao;
+    //private DataDao dataDao;
     //private List<DataDao.ProductTypeBean> productTypeDaos;
     private String name;
     private String code;
@@ -72,12 +72,12 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
         testProductTypes = realm.where(TestProductType.class).findAllAsync();
 
         productDaoList = new ArrayList<>();
-        if (getIntent().getParcelableExtra("dataDao_item_product") != null) {
+        if (getIntent().getIntExtra("index", -1) != -1) {
             Intent intent = getIntent();
             index = intent.getIntExtra("index", -1);
-            dataDao = intent.getParcelableExtra("dataDao_item_product");
-            if (dataDao.getProductType().get(index).getData() != null) {
-                for (int i = 0; i < dataDao.getProductType().get(index).getData().size(); i++) {
+            //dataDao = intent.getParcelableExtra("dataDao_item_product");
+            if (testProductTypes.get(index).getData() != null) {
+                for (int i = 0; i < testProductTypes.get(index).getData().size(); i++) {
                     ProductDao productDao = new ProductDao();
                     productDao.setProdName(testProductTypes.get(index).getData().get(i).getNameItem());
                     productDao.setProdCode(testProductTypes.get(index).getData().get(i).getNameCode());

@@ -27,8 +27,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
+import com.example.ananpengkhun.myprojectfinal.dao.Product;
+import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,11 +48,14 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class AddProductOnFabActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int TAKE_PHOTO_REQUEST = 2;
     private static final String MyPreference = "ProdType_index";
+    private String TAG = AddProductOnFabActivity.class.getSimpleName();
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.imv_add_picture) ImageView imvAddPicture;
@@ -69,14 +75,17 @@ public class AddProductOnFabActivity extends AppCompatActivity {
     private Button takeByCamera;
     private Button takeByGallery;
     private Uri pathFile;
-    private DataDao dataDao;
+    //private DataDao dataDao;
     //private List<DataDao.ProductTypeBean> productTypeDaos;
-    private List<String> listProdType;
     private List<ProviderDao> providerDaoList;
-    private List<String> getListProdType;
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
-    private List<ProductTypeDao> productTypeList;
+    private int max;
+    //    private List<ProductTypeDao> productTypeList;
+    private List<ProductDao> productList;
+
+    private Realm realm;
+    private RealmResults<TestProductType> testProductTypes;
 
 
     @Override
@@ -84,17 +93,19 @@ public class AddProductOnFabActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product_on_fab);
         ButterKnife.bind(this);
+        realm = Realm.getDefaultInstance();
+        testProductTypes = realm.where(TestProductType.class).findAll();
         setupPageDrawer();
         providerDaoList = new ArrayList<>();
         init();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                spinnerOfTypeProduct();
-                processData();
-            }
-        }, 300);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                spinnerOfTypeProduct();
+//                processData();
+//            }
+//        }, 300);
 
 
     }
@@ -114,13 +125,14 @@ public class AddProductOnFabActivity extends AppCompatActivity {
     }
 
     private void init() {
-        if (getIntent().getParcelableExtra("data") != null) {
-            dataDao = getIntent().getParcelableExtra("data");
+        Intent intent = getIntent();
+        if (intent.getParcelableArrayListExtra("data") != null) {
+            productList = getIntent().getParcelableArrayListExtra("data");
         }
-        if (getIntent().getParcelableArrayListExtra("dataType") != null) {
-            productTypeList = getIntent().getParcelableArrayListExtra("dataType");
-            Log.d("addProduct", "init: " + productTypeList.size());
-        }
+//        if (intent.getParcelableArrayListExtra("dataType") != null) {
+//            productTypeList = getIntent().getParcelableArrayListExtra("dataType");
+//            Log.d("addProduct", "init: " + productTypeList.size());
+//        }
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/provider");
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
@@ -135,6 +147,9 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                     Log.d("loaddata", "onDataChange: " + providerDao.getProvName());
                     providerDaoList.add(providerDao);
                 }
+                spinnerOfTypeProduct();
+                processData();
+
             }
 
             @Override
@@ -226,33 +241,35 @@ public class AddProductOnFabActivity extends AppCompatActivity {
     }
 
     private void spinnerOfTypeProduct() {
-        if (dataDao != null) {
-            listProdType = new ArrayList<>();
-            for (int i = 0; i < productTypeList.size(); i++) {
-                listProdType.add(productTypeList.get(i).getProdTypeName());
-            }
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listProdType);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-            spinnerProductType.setAdapter(spinnerArrayAdapter);
-        } else {
-
+        //if (productList != null) {
+        List<String> listProdType = new ArrayList<>();
+        for (int i = 0; i < testProductTypes.size(); i++) {
+            listProdType.add(testProductTypes.get(i).getName());
         }
+        Log.d(TAG, "spinnerOfTypeProduct: " + listProdType.size());
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listProdType);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerProductType.setAdapter(spinnerArrayAdapter);
+//        } else {
+//
+//        }
 
-        Log.d("loaddata", "spinnerOfTypeProduct: " + providerDaoList.size());
+
         if (providerDaoList != null) {
-            getListProdType = new ArrayList<>();
+            List<String> getListProdType = new ArrayList<>();
             for (int i = 0; i < providerDaoList.size(); i++) {
                 getListProdType.add(providerDaoList.get(i).getProvName());
             }
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, getListProdType);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-            spinnerProvider.setAdapter(spinnerArrayAdapter);
+            ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, getListProdType);
+            spinnerArrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+            spinnerProvider.setAdapter(spinnerArrayAdapter2);
         } else {
 
         }
 
 
     }
+
 
     private View.OnClickListener addProductClickListener = new View.OnClickListener() {
         @Override
@@ -282,19 +299,19 @@ public class AddProductOnFabActivity extends AppCompatActivity {
 
                 sp = getSharedPreferences(MyPreference, MODE_PRIVATE);
                 //int indexData;
-                int max = 0;
+                max = 0;
                 Log.d("addproduct", "onClick: " + sp.getInt("indexProduct", 0));
-                for (int i = 0; i < dataDao.getProductType().size(); i++) {
-                    if (dataDao.getProductType().get(i).getData() != null) {
-                        max = dataDao.getProductType().get(i).getData().get(0).getProductId();
-                        for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
-                            //Log.d("addwhynull", "onClick: " + dataDao.getProductType().get(i).getData().get(j).getProductId());
-                            if (dataDao.getProductType().get(i).getData().get(j).getProductId() > max) {
-                                max = dataDao.getProductType().get(i).getData().get(j).getProductId();
-                            }
-                        }
+//                for (int i = 0; i < testProductTypes.size(); i++) {
+//                    if (testProductTypes.get(i).getData() != null) {
+                max = productList.get(0).getProdId();
+                for (int j = 0; j < productList.size(); j++) {
+                    //Log.d("addwhynull", "onClick: " + dataDao.getProductType().get(i).getData().get(j).getProductId());
+                    if (productList.get(j).getProdId() > max) {
+                        max = productList.get(j).getProdId();
                     }
                 }
+                //}
+//                }
                 //Log.d("addwhynull", "max: " + max);
 //                if (0 == sp.getInt("indexProduct", 0)) {
 //                    editor = sp.edit();
@@ -311,10 +328,10 @@ public class AddProductOnFabActivity extends AppCompatActivity {
 //                int index = sp.getInt("indexProduct", 0);
 
                 int indexData;
-                if (dataDao.getProductType().get(spinnerProductType.getSelectedItemPosition()).getData() == null) {
+                if (testProductTypes.get(spinnerProductType.getSelectedItemPosition()).getData() == null) {
                     indexData = 0;
                 } else {
-                    indexData = dataDao.getProductType().get(spinnerProductType.getSelectedItemPosition()).getData().size();
+                    indexData = testProductTypes.get(spinnerProductType.getSelectedItemPosition()).getData().size();
                 }
 
                 Log.d("start", "onClick: " + indexData);
@@ -325,7 +342,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 postValues.put("nameCode", edProdCode.getText().toString());
                 postValues.put("nameItem", edProdName.getText().toString());
                 postValues.put("productAlert", Integer.parseInt(edProdAlert.getText().toString()));
-                postValues.put("productId", max+1);
+                postValues.put("productId", max + 1);
                 postValues.put("productPrice", Integer.parseInt(edProdPrice.getText().toString()));
                 postValues.put("productQuantity", Integer.parseInt(edProdAmount.getText().toString()));
                 postValues.put("productUnit", edProdUnit.getText().toString());
@@ -337,25 +354,72 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 childUpdates.put("/productType/" + spinnerProductType.getSelectedItemPosition() + "/data/" + indexData, postValues);
                 mRootRef.updateChildren(childUpdates);
 
-                Intent intent = new Intent();
-                intent.putExtra("productImg", pathFile.toString());
-                intent.putExtra("productType", spinnerProductType.getSelectedItemPosition());
-                intent.putExtra("nameCode", edProdCode.getText().toString());
-                intent.putExtra("nameItem", edProdName.getText().toString());
-                intent.putExtra("productAlert", Integer.parseInt(edProdAlert.getText().toString()));
-                intent.putExtra("productId", max + 1);
-                intent.putExtra("productPrice", Integer.parseInt(edProdPrice.getText().toString()));
-                intent.putExtra("productQuantity", Integer.parseInt(edProdAmount.getText().toString()));
-                intent.putExtra("productUnit", edProdUnit.getText().toString());
-                intent.putExtra("provider", providerDaoList.get(spinnerProvider.getSelectedItemPosition()).getProvId());
-                setResult(MyDataInventoryActivity.PRODUCT_TYPE, intent);
+//                Intent intent = new Intent();
+//                intent.putExtra("productImg", pathFile.toString());
+//                intent.putExtra("productType", spinnerProductType.getSelectedItemPosition());
+//                intent.putExtra("nameCode", edProdCode.getText().toString());
+//                intent.putExtra("nameItem", edProdName.getText().toString());
+//                intent.putExtra("productAlert", Integer.parseInt(edProdAlert.getText().toString()));
+//                intent.putExtra("productId", max + 1);
+//                intent.putExtra("productPrice", Integer.parseInt(edProdPrice.getText().toString()));
+//                intent.putExtra("productQuantity", Integer.parseInt(edProdAmount.getText().toString()));
+//                intent.putExtra("productUnit", edProdUnit.getText().toString());
+//                intent.putExtra("provider", providerDaoList.get(spinnerProvider.getSelectedItemPosition()).getProvId());
+//                setResult(MyDataInventoryActivity.PRODUCT_TYPE, intent);
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                                                  @Override
+                                                  public void execute(Realm realm) {
+                                                      //TestProductType testProduct = realm.createObject(TestProductType.class);
+                                                      RealmResults<TestProductType> testProductTypes = realm.where(TestProductType.class).findAll();
+                                                      //TestProductType testProductType = realm.createObject(TestProductType.class);
+                                                      for (int i = 0; i < testProductTypes.size(); i++) {
+                                                          if (testProductTypes.get(i).getTypeId() == spinnerProductType.getSelectedItemPosition() + 1) {
+//                                                          if (spinnerProductType.getSelectedItemPosition() == testProductTypes.getTypeId() - 1) {
+                                                              Product product = new Product();
+                                                              product.setNameCode(edProdCode.getText().toString());
+                                                              product.setNameItem(edProdName.getText().toString());
+                                                              product.setProvider(providerDaoList.get(spinnerProvider.getSelectedItemPosition()).getProvId());
+                                                              product.setProductImg(pathFile.toString());
+                                                              product.setProductInType(spinnerProductType.getSelectedItemPosition());
+                                                              product.setProductId(max + 1);
+                                                              product.setProductQuantity(Integer.parseInt(edProdAmount.getText().toString()));
+                                                              product.setProductPrice(Integer.parseInt(edProdPrice.getText().toString()));
+                                                              product.setProductAlert(Integer.parseInt(edProdAlert.getText().toString()));
+                                                              testProductTypes.get(spinnerProductType.getSelectedItemPosition()).getData().add(product);
+                                                              //testProductType.getData().add(product);
+                                                          }
+//                                                          }
+                                                      }
+                                                  }
+                                              }, new Realm.Transaction.OnSuccess() {
+                                                  @Override
+                                                  public void onSuccess() {
+                                                      Log.d(TAG, "onSuccess: completed adding");
+                                                  }
+                                              }, new Realm.Transaction.OnError() {
+                                                  @Override
+                                                  public void onError(Throwable error) {
+                                                      Log.d(TAG, "onError:" + error.getMessage());
+                                                  }
+                                              }
+
+                );
+
                 finish();
 
-            } else {
+            } else
+
+            {
                 Toast.makeText(AddProductOnFabActivity.this, "Insert Fail.", Toast.LENGTH_LONG).show();
                 finish();
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
 
 }

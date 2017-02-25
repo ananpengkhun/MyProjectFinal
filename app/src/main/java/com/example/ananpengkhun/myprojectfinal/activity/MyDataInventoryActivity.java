@@ -86,7 +86,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
     private List<ProductDao> productList;
     private List<ProductTypeDao> productTypeList;
-    private List<ProviderDao> providerList;
 
     private List<ProductEachSize> productEachSizes;
 
@@ -117,13 +116,15 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             productList.clear();
             providerDaoList.clear();
 
-            init();
-            vpHorizontalNtb.setCurrentItem(changeViewpager);
 
+            init();
+            vpHorizontalNtb.setCurrentItem(changeViewpager,true);
+            Log.d(TAG, "onChangessssssss: "+testProductTypes.size());
 
 //            productAdapter.notifyDataSetChanged();
         }
     };
+
 
 
     @Override
@@ -132,7 +133,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_data_inventory);
         ButterKnife.bind(this);
         realm = Realm.getDefaultInstance();
-        testProductTypes = realm.where(TestProductType.class).findAllAsync();
+        testProductTypes = realm.where(TestProductType.class).findAll();
         realm.addChangeListener(listener);
         setupPageDrawer();
         declarInit();
@@ -147,7 +148,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         productTypeList = new ArrayList<>();
         providerDaoList = new ArrayList<>();
 
-        providerList = new ArrayList<>();
         if (getIntent().getParcelableExtra("data") != null) {
             dataDao = getIntent().getParcelableExtra("data");
             //Log.d(TAG, "init: "+dataDao.getProductType().get(0).getName());
@@ -168,18 +168,18 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
     private void init() {
         // product type list dummy
-        for (int i = 0; i < dataDao.getProductType().size(); i++) {
+        for (int i = 0; i < testProductTypes.size(); i++) {
 
             ProductTypeDao productTypeDao = new ProductTypeDao();
-            productTypeDao.setProdTypeName(dataDao.getProductType().get(i).getName());
-            productTypeDao.setProdTypeCode(dataDao.getProductType().get(i).getTypeCode());
-            productTypeDao.setProdTypeDes(dataDao.getProductType().get(i).getTypeDes());
+            productTypeDao.setProdTypeName(testProductTypes.get(i).getName());
+            productTypeDao.setProdTypeCode(testProductTypes.get(i).getTypeCode());
+            productTypeDao.setProdTypeDes(testProductTypes.get(i).getTypeDes());
             productTypeList.add(productTypeDao);
 
-            if (dataDao.getProductType().get(i).getData() != null) {
+            if (testProductTypes.get(i).getData() != null) {
                 // product list dummy
-                for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
-                    Log.d(TAG, "init: " + i + " :" + dataDao.getProductType().get(i).getData().size());
+                for (int j = 0; j < testProductTypes.get(i).getData().size(); j++) {
+                    //Log.d(TAG, "init: " + i + " :" + dataDao.getProductType().get(i).getData().size());
 
                     List<ProductEachSize> productEachSizes = new ArrayList<>();
                     ProductDao productDao = new ProductDao();
@@ -743,7 +743,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                         }
 
 
-                        int index = sp.getInt("index", 0);
+                        final int index = sp.getInt("index", 0);
                         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
                         HashMap<String, Object> postValues = new HashMap<>();
@@ -758,11 +758,36 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                         mRootRef.updateChildren(childUpdates);
 
 
-                        ProductTypeDao productTypeDao = new ProductTypeDao();
-                        productTypeDao.setProdTypeName(edProdTypeName.getText().toString());
-                        productTypeDao.setProdTypeCode(edProdTypeCode.getText().toString());
-                        productTypeDao.setProdTypeDes(edProdTypeDes.getText().toString());
-                        productTypeList.add(productTypeDao);
+//                        ProductTypeDao productTypeDao = new ProductTypeDao();
+//                        productTypeDao.setProdTypeName(edProdTypeName.getText().toString());
+//                        productTypeDao.setProdTypeCode(edProdTypeCode.getText().toString());
+//                        productTypeDao.setProdTypeDes(edProdTypeDes.getText().toString());
+//                        productTypeList.add(productTypeDao);
+
+                        realm.executeTransactionAsync(new Realm.Transaction() {
+                                                          @Override
+                                                          public void execute(Realm realm) {
+                                                              TestProductType testProduct = realm.createObject(TestProductType.class);
+                                                              testProduct.setTypeId(index + 1);
+                                                              testProduct.setName(edProdTypeName.getText().toString());
+                                                              testProduct.setTypeCode(edProdTypeCode.getText().toString());
+                                                              testProduct.setTypeDes(edProdTypeDes.getText().toString());
+                                                              testProduct.setStatus("success");
+                                                          }
+                                                      }, new Realm.Transaction.OnSuccess() {
+                                                          @Override
+                                                          public void onSuccess() {
+                                                              Log.d(TAG, "onSuccess: completed adding");
+                                                          }
+                                                      }, new Realm.Transaction.OnError() {
+                                                          @Override
+                                                          public void onError(Throwable error) {
+                                                              Log.d(TAG, "onError:"+error.getMessage());
+                                                          }
+                                                      }
+
+                        );
+
                         dialog.dismiss();
 
                     }
@@ -774,9 +799,10 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             dialog.show();
         } else if (1 == target) {
             Intent intent = new Intent(MyDataInventoryActivity.this, AddProductOnFabActivity.class);
-            intent.putExtra("data", dataDao);
-            intent.putParcelableArrayListExtra("dataType", (ArrayList<ProductTypeDao>) productTypeList);
-            startActivityForResult(intent, PRODUCT);
+            //intent.putExtra("data", dataDao);
+            intent.putParcelableArrayListExtra("data",(ArrayList<ProductDao>)productList);
+            //intent.putParcelableArrayListExtra("dataType", (ArrayList<ProductTypeDao>) productTypeList);
+            startActivity(intent);
         } else if (2 == target) {
             final Dialog dialog = new Dialog(MyDataInventoryActivity.this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

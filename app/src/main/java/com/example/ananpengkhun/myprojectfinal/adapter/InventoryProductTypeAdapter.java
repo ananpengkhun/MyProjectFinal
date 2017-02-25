@@ -135,7 +135,7 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
                 public void onClick(View view) {
                     Log.d(TAG, "onClick: " + position);
                     Intent intent = new Intent(mContext, DetailOfListProductTypeActivity.class);
-                    intent.putExtra("dataDao_item_product",dataDao);
+                    //intent.putExtra("dataDao_item_product",dataDao);
                     //intent.putExtra("product_type_object_index",productTypeList.get(position).g);
                     intent.putExtra("index", position);
                     Log.d(TAG, "onClick: " + position);
