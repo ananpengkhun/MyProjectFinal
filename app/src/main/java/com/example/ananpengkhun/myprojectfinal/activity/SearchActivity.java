@@ -257,7 +257,7 @@ public class SearchActivity extends AppCompatActivity {
                     Log.d("loaddata", "onDataChange: " + providerDao.getProvName());
                     providerDaoload.add(providerDao);
                 }
-                if (getIntent().getParcelableExtra("data") != null) {
+                if (getIntent().getCharSequenceExtra("selected") != null) {
                     //dataDao = getIntent().getParcelableExtra("data");
                     SelectedData = getIntent().getCharSequenceExtra("selected").toString();
                 }

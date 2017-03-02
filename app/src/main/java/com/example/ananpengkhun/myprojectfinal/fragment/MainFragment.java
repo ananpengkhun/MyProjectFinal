@@ -25,6 +25,7 @@ import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.ProductExpiredAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,6 +38,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,8 +57,17 @@ public class MainFragment extends Fragment {
     private MoveFragmentPage moveFragmentPage;
     private ProductExpiredAdapter productExpiredAdapter;
     private List<ProductDao> productDaolist;
+    private Realm realm;
+    private RealmChangeListener<Realm> listener = new RealmChangeListener<Realm>() {
+        @Override
+        public void onChange(Realm element) {
+            productDaolist.clear();
+            loadData();
+            productExpiredAdapter.notifyDataSetChanged();
+        }
+    };
 
-    private DataDao dataDao;
+    //private DataDao dataDao;
     //private List<DataDao.ProductTypeBean> productTypeDaos;
 
     public interface MoveFragmentPage{
@@ -74,31 +87,18 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
+        //Bundle bundle = getArguments();
         //if(bundle != null){
-        dataDao = bundle.getParcelable("data");
+        //dataDao = bundle.getParcelable("data");
+        realm = Realm.getDefaultInstance();
+        realm.addChangeListener(listener);
         productDaolist = new ArrayList<>();
+        productExpiredAdapter = new ProductExpiredAdapter(getActivity());
 
 
 
         //}
-        for(int i=0;i<dataDao.getProductType().size();i++){
-            if(dataDao.getProductType().get(i).getData() != null) {
-                for (int j = 0; j < dataDao.getProductType().get(i).getData().size(); j++) {
-                    if (dataDao.getProductType().get(i).getData().get(j).getProductAlert() > dataDao.getProductType().get(i).getData().get(j).getProductQuantity()) {
-                        ProductDao productDao = new ProductDao();
-                        productDao.setProdName(dataDao.getProductType().get(i).getData().get(j).getNameItem());
-                        productDao.setProdCode(dataDao.getProductType().get(i).getData().get(j).getNameCode());
-                        productDao.setProviderId(dataDao.getProductType().get(i).getData().get(j).getProductId());
-                        if (dataDao.getProductType().get(i).getData().get(j).getProductImg() != null) {
-                            productDao.setProductImg(dataDao.getProductType().get(i).getData().get(j).getProductImg());
-                        }
-                        productDaolist.add(productDao);
 
-                    }
-                }
-            }
-        }
 
     }
 
@@ -118,7 +118,7 @@ public class MainFragment extends Fragment {
     }
 
     private void init() {
-        productExpiredAdapter = new ProductExpiredAdapter(getActivity());
+        loadData();
         productExpiredAdapter.setData(productDaolist);
         rcExpiredProduct.setLayoutManager(new LinearLayoutManager(getActivity()));
         rcExpiredProduct.setHasFixedSize(true);
@@ -127,6 +127,27 @@ public class MainFragment extends Fragment {
 
 
         btnClick.setOnClickListener(btnSlideUpClicklisner);
+    }
+
+    private void loadData() {
+        RealmResults<TestProductType> testProductType = realm.where(TestProductType.class).findAll();
+        for(int i=0;i<testProductType.size();i++){
+            if(testProductType.get(i).getData() != null) {
+                for (int j = 0; j < testProductType.get(i).getData().size(); j++) {
+                    if (testProductType.get(i).getData().get(j).getProductAlert() > testProductType.get(i).getData().get(j).getProductQuantity()) {
+                        ProductDao productDao = new ProductDao();
+                        productDao.setProdName(testProductType.get(i).getData().get(j).getNameItem());
+                        productDao.setProdCode(testProductType.get(i).getData().get(j).getNameCode());
+                        productDao.setProviderId(testProductType.get(i).getData().get(j).getProductId());
+                        if (testProductType.get(i).getData().get(j).getProductImg() != null) {
+                            productDao.setProductImg(testProductType.get(i).getData().get(j).getProductImg());
+                        }
+                        productDaolist.add(productDao);
+
+                    }
+                }
+            }
+        }
     }
 
     private View.OnClickListener btnSlideUpClicklisner = new View.OnClickListener() {
@@ -162,9 +183,9 @@ public class MainFragment extends Fragment {
 //                            break;
                         case R.id.prodct :
                             Intent intent = new Intent(getActivity(),MyDataInventoryActivity.class);
-                            if(dataDao != null){
-                                intent.putExtra("data",dataDao);
-                            }
+//                            if(dataDao != null){
+//                                intent.putExtra("data",dataDao);
+//                            }
                             startActivity(intent);
                             //setDrawerState(true);
                             break;
@@ -174,10 +195,10 @@ public class MainFragment extends Fragment {
         }
     };
 
-    public static Fragment newInstant(DataDao dataDao) {
+    public static Fragment newInstant() {
         MainFragment mainFragment = new MainFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("data", dataDao);
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("data", dataDao);
         //Log.d(TAG, "newInstant: "+dataDao.size());
 
         //DataDao dataDao1 = bundle.getParcelable("data");
@@ -185,7 +206,13 @@ public class MainFragment extends Fragment {
 
 
         //Log.d(TAG, "newInstant: "+dataDao.getProductType().get(0).getName());
-        mainFragment.setArguments(bundle);
+        //mainFragment.setArguments(bundle);
         return mainFragment;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }

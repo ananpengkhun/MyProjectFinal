@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     private String TAG = MainActivity.class.getSimpleName();
     private List<String> data;
 
-    private DataDao dataDao;
+    //private DataDao dataDao;
     private Realm realm;
     private RealmResults<TestProductType> testProductTypes;
     private RealmChangeListener<Realm> realmListener = new RealmChangeListener<Realm>() {
@@ -103,9 +103,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
 
     private void setData() {
         data = new ArrayList<>();
-        if (getIntent().getParcelableExtra("data") != null) {
-            dataDao = getIntent().getParcelableExtra("data");
-        }
+//        if (getIntent().getParcelableExtra("data") != null) {
+//            dataDao = getIntent().getParcelableExtra("data");
+//        }
     }
 
     @Override
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
             public void onPopupItemClick(CharSequence charSequence) {
                 //Toast.makeText(MainActivity.this, charSequence.toString(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                intent.putExtra("data", dataDao);
+                //intent.putExtra("data", dataDao);
                 intent.putExtra("selected", charSequence);
                 Log.d(TAG, "onPopupItemClick+++++: "+charSequence);
                 startActivity(intent);
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
 
     private void init() {
 
-        mainMenuAdapter = new MainMenuAdapter(getSupportFragmentManager(), dataDao);
+        mainMenuAdapter = new MainMenuAdapter(getSupportFragmentManager());
         vpPagerFragment.setAdapter(mainMenuAdapter);
 
 //        tvNavAddData.setOnClickListener(AddDataClicklistener);
@@ -213,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         }
         if (item.getItemId() == R.id.action_search) {
             Intent intent = new Intent(MainActivity.this, StartAppActivity.class);
+            intent.putExtra("refresh",2328);
             startActivity(intent);
             finish();
         }

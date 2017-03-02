@@ -44,7 +44,7 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
     private List<ProductTypeDao> productTypeList;
     private RealmResults<TestProductType> listRealm;
 
-    private DataDao dataDao;
+    //private DataDao dataDao;
     //private List<DataDao.ProductTypeBean> productTypeDaos;
     private Button btnConfirm;
     private Button btnCancel;
@@ -54,7 +54,7 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     public void setProductTypeDaos(DataDao productTypeDaos) {
-        this.dataDao = productTypeDaos;
+        //this.dataDao = productTypeDaos;
     }
 
     public InventoryProductTypeAdapter(MyDataInventoryActivity myDataInventoryActivity) {
@@ -98,30 +98,30 @@ public class InventoryProductTypeAdapter extends RecyclerView.Adapter<RecyclerVi
                         public void onClick(View view) {
                             Log.d(TAG, "onClick: row deleted.");
                             //some row deleted
-                            mRootRef = FirebaseDatabase.getInstance().getReference();
-                            mType = mRootRef.child("/productType/" + position);
-                            productTypeList.remove(position);
-                            mType.removeValue();
-
-                            // position: 2 size : 3
-                            Log.d(TAG, "onClick position: "+position);
-                            Log.d(TAG, "onClick size: "+productTypeList.size());
-                            for (int i = position; i < productTypeList.size(); i++) {
-
-                                HashMap<String, Object> postValues = new HashMap<>();
-                                postValues.put("name", productTypeList.get(position).getProdTypeName());
-                                postValues.put("status", "success");
-                                postValues.put("typeCode", productTypeList.get(position).getProdTypeCode());
-                                postValues.put("typeDes", productTypeList.get(position).getProdTypeDes());
-                                postValues.put("typeId", position + 1);
-
-                                Map<String, Object> childUpdates = new HashMap<>();
-                                childUpdates.put("/productType/" + position, postValues);
-                                mRootRef.updateChildren(childUpdates);
-                            }
-
-
-                            notifyDataSetChanged();
+//                            mRootRef = FirebaseDatabase.getInstance().getReference();
+//                            mType = mRootRef.child("/productType/" + position);
+//                            productTypeList.remove(position);
+//                            mType.removeValue();
+//
+//                            // position: 2 size : 3
+//                            Log.d(TAG, "onClick position: "+position);
+//                            Log.d(TAG, "onClick size: "+productTypeList.size());
+//                            for (int i = position; i < productTypeList.size(); i++) {
+//
+//                                HashMap<String, Object> postValues = new HashMap<>();
+//                                postValues.put("name", productTypeList.get(position).getProdTypeName());
+//                                postValues.put("status", "success");
+//                                postValues.put("typeCode", productTypeList.get(position).getProdTypeCode());
+//                                postValues.put("typeDes", productTypeList.get(position).getProdTypeDes());
+//                                postValues.put("typeId", position + 1);
+//
+//                                Map<String, Object> childUpdates = new HashMap<>();
+//                                childUpdates.put("/productType/" + position, postValues);
+//                                mRootRef.updateChildren(childUpdates);
+//                            }
+//
+//
+//                            notifyDataSetChanged();
                             dialog.dismiss();
                         }
                     });
