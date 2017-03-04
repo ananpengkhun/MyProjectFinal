@@ -211,12 +211,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
             Log.d(TAG, "onOptionsItemSelected: ");
             return true;
         }
-        if (item.getItemId() == R.id.action_search) {
-            Intent intent = new Intent(MainActivity.this, StartAppActivity.class);
-            intent.putExtra("refresh",2328);
-            startActivity(intent);
-            finish();
-        }
+//        if (item.getItemId() == R.id.action_search) {
+//            Intent intent = new Intent(MainActivity.this, StartAppActivity.class);
+//            intent.putExtra("refresh",2328);
+//            startActivity(intent);
+//            finish();
+//        }
         return super.onOptionsItemSelected(item);
     }
 

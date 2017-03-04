@@ -34,9 +34,12 @@ public class ProductEachSize implements Parcelable{
     private String totalItemBigUnit;
     private String unit;
     private String weightPerWrap;
+    private int productSizeAlert;
+    private int indexInProduct;
 
     public ProductEachSize() {
     }
+
 
     protected ProductEachSize(Parcel in) {
         amongPerWrap = in.readString();
@@ -50,6 +53,8 @@ public class ProductEachSize implements Parcelable{
         totalItemBigUnit = in.readString();
         unit = in.readString();
         weightPerWrap = in.readString();
+        productSizeAlert = in.readInt();
+        indexInProduct = in.readInt();
     }
 
     public static final Creator<ProductEachSize> CREATOR = new Creator<ProductEachSize>() {
@@ -63,6 +68,22 @@ public class ProductEachSize implements Parcelable{
             return new ProductEachSize[size];
         }
     };
+
+    public int getIndexInProduct() {
+        return indexInProduct;
+    }
+
+    public void setIndexInProduct(int indexInProduct) {
+        this.indexInProduct = indexInProduct;
+    }
+
+    public int getProductSizeAlert() {
+        return productSizeAlert;
+    }
+
+    public void setProductSizeAlert(int productSizeAlert) {
+        this.productSizeAlert = productSizeAlert;
+    }
 
     public String getAmongPerWrap() {
         return amongPerWrap;
@@ -170,7 +191,10 @@ public class ProductEachSize implements Parcelable{
         parcel.writeString(totalItemBigUnit);
         parcel.writeString(unit);
         parcel.writeString(weightPerWrap);
+        parcel.writeInt(productSizeAlert);
+        parcel.writeInt(indexInProduct);
     }
+
 
     public static class PriceUBahtBean implements Parcelable{
         /**

@@ -19,6 +19,24 @@ public class Productsize extends RealmObject {
     private String totalItemBigUnit;
     private String unit;
     private PricePerBath pricePerBath;
+    private int productSizeAlert;
+    private int indexInProduct;
+
+    public int getIndexInProduct() {
+        return indexInProduct;
+    }
+
+    public void setIndexInProduct(int indexInProduct) {
+        this.indexInProduct = indexInProduct;
+    }
+
+    public int getProductSizeAlert() {
+        return productSizeAlert;
+    }
+
+    public void setProductSizeAlert(int productSizeAlert) {
+        this.productSizeAlert = productSizeAlert;
+    }
 
     public int getNameItemId() {
         return nameItemId;

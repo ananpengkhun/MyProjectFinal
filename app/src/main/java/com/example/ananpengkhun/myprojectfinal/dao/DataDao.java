@@ -354,6 +354,8 @@ public class DataDao implements Parcelable {
                 private String effordUBaht;
                 private String contrainUPiecePerBox;
                 private String totalItemBigUnit;
+                private int productSizeAlert;
+                private int indexInProduct;
                 private String unit;
                 private PriceUBahtBean priceUBaht;
 
@@ -368,6 +370,8 @@ public class DataDao implements Parcelable {
                     effordUBaht = in.readString();
                     contrainUPiecePerBox = in.readString();
                     totalItemBigUnit = in.readString();
+                    productSizeAlert = in.readInt();
+                    indexInProduct = in.readInt();
                     unit = in.readString();
                     priceUBaht = in.readParcelable(PriceUBahtBean.class.getClassLoader());
                 }
@@ -383,6 +387,22 @@ public class DataDao implements Parcelable {
                         return new DataItemBean[size];
                     }
                 };
+
+                public int getIndexInProduct() {
+                    return indexInProduct;
+                }
+
+                public void setIndexInProduct(int indexInProduct) {
+                    this.indexInProduct = indexInProduct;
+                }
+
+                public int getProductSizeAlert() {
+                    return productSizeAlert;
+                }
+
+                public void setProductSizeAlert(int productSizeAlert) {
+                    this.productSizeAlert = productSizeAlert;
+                }
 
                 public String getUnit() {
                     return unit;
@@ -488,6 +508,8 @@ public class DataDao implements Parcelable {
                     parcel.writeString(effordUBaht);
                     parcel.writeString(contrainUPiecePerBox);
                     parcel.writeString(totalItemBigUnit);
+                    parcel.writeInt(productSizeAlert);
+                    parcel.writeInt(indexInProduct);
                     parcel.writeString(unit);
                     parcel.writeParcelable(priceUBaht, i);
                 }

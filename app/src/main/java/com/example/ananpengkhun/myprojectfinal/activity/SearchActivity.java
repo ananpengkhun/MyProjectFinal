@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -27,11 +26,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.EachItemSizeAdapter;
-import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.Product;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
-import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.Productsize;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
 import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
@@ -161,6 +158,8 @@ public class SearchActivity extends AppCompatActivity {
                             productEachSize.setTotalItemBigUnit(list.get(z).getTotalItemBigUnit());
                             productEachSize.setUnit(list.get(z).getUnit());
                             productEachSize.setWeightPerWrap(list.get(z).getWeightPerWrap());
+                            productEachSize.setProductSizeAlert(list.get(z).getProductSizeAlert());
+                            productEachSize.setIndexInProduct(list.get(z).getIndexInProduct());
 
                             ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
                             priceUBahtBean.setClassEightFive(list.get(z).getPricePerBath().getClassEightFive());
@@ -233,7 +232,8 @@ public class SearchActivity extends AppCompatActivity {
 
                     rcSizeItem.setHasFixedSize(true);
                     rcSizeItem.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
-                    eachItemSizeAdapter = new EachItemSizeAdapter(SearchActivity.this, productList.get(i).getProductEachSizes());
+                    eachItemSizeAdapter = new EachItemSizeAdapter(SearchActivity.this, productList.get(i).getProductEachSizes(),productList.get(i));
+                    eachItemSizeAdapter.setRealm(realm);
                     rcSizeItem.setAdapter(eachItemSizeAdapter);
                 }
             }

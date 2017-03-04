@@ -163,6 +163,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             Intent intent = getIntent();
             productDao = intent.getParcelableExtra("product_object_index");
+            Log.d("detailproduct", "init: "+productDao.getProdName());
             productId = intent.getIntExtra("product_id",-1);
             providerDaoList = intent.getParcelableArrayListExtra("provider_arraylist");
             tvNamePro.setText(productDao.getProdName());
@@ -201,7 +202,8 @@ public class DetailOfListProductActivity extends AppCompatActivity {
 
             rcSizeItem.setHasFixedSize(true);
             rcSizeItem.setLayoutManager(new LinearLayoutManager(DetailOfListProductActivity.this));
-            eachItemSizeAdapter = new EachItemSizeAdapter(DetailOfListProductActivity.this, productDao.getProductEachSizes());
+            eachItemSizeAdapter = new EachItemSizeAdapter(DetailOfListProductActivity.this, productDao.getProductEachSizes(),productDao);
+            eachItemSizeAdapter.setRealm(realm);
             rcSizeItem.setAdapter(eachItemSizeAdapter);
         }
 

@@ -122,6 +122,10 @@ public class StartAppActivity extends AppCompatActivity {
                                             productEachSize.setUnit(list.getDataItem().get(z).getUnit());
                                             productEachSize.setWeightPerWrap(list.getDataItem().get(z).getWeightPerWrap());
 
+                                            Log.d("prosizealert", "execute: "+list.getDataItem().get(z).getProductSizeAlert());
+                                            productEachSize.setProductSizeAlert(list.getDataItem().get(z).getProductSizeAlert());
+                                            productEachSize.setIndexInProduct(list.getDataItem().get(z).getIndexInProduct());
+
                                             //product.getDataItem().add(productEachSize);
 
                                             PricePerBath pricePerBath = new PricePerBath();

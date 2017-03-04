@@ -156,6 +156,9 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                                     productEachSize.setTotalItemBigUnit(list.getDataItem().get(z).getTotalItemBigUnit());
                                     productEachSize.setUnit(list.getDataItem().get(z).getUnit());
                                     productEachSize.setWeightPerWrap(list.getDataItem().get(z).getWeightPerWrap());
+                                    productEachSize.setProductSizeAlert(list.getDataItem().get(z).getProductSizeAlert());
+                                    productEachSize.setIndexInProduct(list.getDataItem().get(z).getIndexInProduct());
+
 
                                     ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
                                     priceUBahtBean.setClassEightFive(list.getDataItem().get(z).getPricePerBath().getClassEightFive());
@@ -291,6 +294,9 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                             productEachSize.setTotalItemBigUnit(list.getDataItem().get(z).getTotalItemBigUnit());
                             productEachSize.setUnit(list.getDataItem().get(z).getUnit());
                             productEachSize.setWeightPerWrap(list.getDataItem().get(z).getWeightPerWrap());
+                            productEachSize.setProductSizeAlert(list.getDataItem().get(z).getProductSizeAlert());
+                            productEachSize.setIndexInProduct(list.getDataItem().get(z).getIndexInProduct());
+                            Log.d(TAG, "initsssssszxzxzxzxzx: "+list.getDataItem().get(z).getIndexInProduct());
 
                             ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
                             priceUBahtBean.setClassEightFive(list.getDataItem().get(z).getPricePerBath().getClassEightFive());
