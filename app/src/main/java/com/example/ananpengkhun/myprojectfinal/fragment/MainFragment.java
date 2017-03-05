@@ -143,8 +143,24 @@ public class MainFragment extends Fragment {
                             productDao.setProductImg(testProductType.get(i).getData().get(j).getProductImg());
                         }
                         productDaolist.add(productDao);
-
                     }
+
+                    if(testProductType.get(i).getData().get(j).getDataItem() != null){
+                        for(int z=0;z<testProductType.get(i).getData().get(j).getDataItem().size();z++){
+                           if(testProductType.get(i).getData().get(j).getDataItem().get(z).getProductSizeAlert() >
+                                   Integer.parseInt(testProductType.get(i).getData().get(j).getDataItem().get(z).getTotalItemBigUnit())){
+                               ProductDao productDao = new ProductDao();
+                               productDao.setProdName(testProductType.get(i).getData().get(j).getNameItem() + " - " + testProductType.get(i).getData().get(j).getDataItem().get(z).getNameItemSize());
+                               productDao.setProdCode(testProductType.get(i).getData().get(j).getNameCode());
+                               productDao.setProviderId(testProductType.get(i).getData().get(j).getProductId());
+                               if (testProductType.get(i).getData().get(j).getProductImg() != null) {
+                                   productDao.setProductImg(testProductType.get(i).getData().get(j).getProductImg());
+                               }
+                               productDaolist.add(productDao);
+                           }
+                        }
+                    }
+
                 }
             }
         }

@@ -337,6 +337,11 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     providerDao.setProvPhone(snapshot.getValue(ProviderDao.class).getProvPhone());
                     providerDao.setProvEmail(snapshot.getValue(ProviderDao.class).getProvEmail());
                     providerDao.setProvAddress(snapshot.getValue(ProviderDao.class).getProvAddress());
+                    if(!"".equals(snapshot.getValue(ProviderDao.class).getProvImg())) {
+                        providerDao.setProvImg(snapshot.getValue(ProviderDao.class).getProvImg());
+                    }else{
+                        providerDao.setProvImg("");
+                    }
                     providerDaoList.add(providerDao);
                 }
             }
@@ -611,6 +616,11 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                             providerDao.setProvPhone(dataSnapshot.getValue(ProviderDao.class).getProvPhone());
                             providerDao.setProvEmail(dataSnapshot.getValue(ProviderDao.class).getProvEmail());
                             providerDao.setProvAddress(dataSnapshot.getValue(ProviderDao.class).getProvAddress());
+                            if(!"".equals(dataSnapshot.getValue(ProviderDao.class).getProvImg())) {
+                                providerDao.setProvImg(dataSnapshot.getValue(ProviderDao.class).getProvImg());
+                            }else{
+                                providerDao.setProvImg("");
+                            }
 
                             Log.d(TAG, "onDataChange1111112222: " + providerDao.getProvName());
                             for (int i = 0; i < providerDaoList.size(); i++) {

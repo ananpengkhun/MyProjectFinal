@@ -142,6 +142,11 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                     providerDao.setProvPhone(snapshot.getValue(ProviderDao.class).getProvPhone());
                     providerDao.setProvEmail(snapshot.getValue(ProviderDao.class).getProvEmail());
                     providerDao.setProvAddress(snapshot.getValue(ProviderDao.class).getProvAddress());
+                    if(!"".equals(snapshot.getValue(ProviderDao.class).getProvImg())) {
+                        providerDao.setProvImg(snapshot.getValue(ProviderDao.class).getProvImg());
+                    }else{
+                        providerDao.setProvImg("");
+                    }
                     Log.d("loaddata", "onDataChange: " + providerDao.getProvName());
                     providerDaoload.add(providerDao);
                 }

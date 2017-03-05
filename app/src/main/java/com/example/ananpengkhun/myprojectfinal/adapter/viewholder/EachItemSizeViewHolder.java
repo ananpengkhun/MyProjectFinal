@@ -4,6 +4,7 @@ import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.ananpengkhun.myprojectfinal.R;
@@ -36,11 +37,18 @@ public class EachItemSizeViewHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.tv_efford) public TextView tvEfford;
     @BindView(R.id.spinner) public SearchableSpinner spinner;
     @BindView(R.id.tv_amount_per_wrap) public  TextView tvAmountPerWrap;
-    @BindView(R.id.ed_alert_prod) public AppCompatEditText edAlertProd;
+    //@BindView(R.id.ed_alert_prod) public AppCompatEditText edAlertProd;
     @BindView(R.id.tv_alert_prod) public TextView tvAlertProd;
     @BindView(R.id.tv_alert) public TextView tvAlert;
     @BindView(R.id.ed_alert) public AppCompatEditText edAlert;
     @BindView(R.id.imv_box_for_edit) public ImageView imvBoxForEdit;
+
+    @BindView(R.id.ed_prod_amount) public LinearLayout edProdAmount;
+    @BindView(R.id.imv_minus) public ImageView imvMinus;
+    @BindView(R.id.imv_plus) public ImageView imvPlus;
+
+
+
 
 
 

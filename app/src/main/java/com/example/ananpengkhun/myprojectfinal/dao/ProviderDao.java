@@ -13,6 +13,7 @@ public class ProviderDao implements Parcelable{
     private String provAddress;
     private String provPhone;
     private String provEmail;
+    private String provImg;
 
     public ProviderDao() {
     }
@@ -23,6 +24,7 @@ public class ProviderDao implements Parcelable{
         provAddress = in.readString();
         provPhone = in.readString();
         provEmail = in.readString();
+        provImg = in.readString();
     }
 
     public static final Creator<ProviderDao> CREATOR = new Creator<ProviderDao>() {
@@ -36,6 +38,14 @@ public class ProviderDao implements Parcelable{
             return new ProviderDao[size];
         }
     };
+
+    public String getProvImg() {
+        return provImg;
+    }
+
+    public void setProvImg(String provImg) {
+        this.provImg = provImg;
+    }
 
     public int getProvId() {
         return provId;
@@ -77,6 +87,7 @@ public class ProviderDao implements Parcelable{
         this.provEmail = provEmail;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -89,5 +100,6 @@ public class ProviderDao implements Parcelable{
         parcel.writeString(provAddress);
         parcel.writeString(provPhone);
         parcel.writeString(provEmail);
+        parcel.writeString(provImg);
     }
 }

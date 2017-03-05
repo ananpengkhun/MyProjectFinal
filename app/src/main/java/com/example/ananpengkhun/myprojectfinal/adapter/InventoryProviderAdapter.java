@@ -3,6 +3,7 @@ package com.example.ananpengkhun.myprojectfinal.adapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 
+import com.bumptech.glide.Glide;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProviderActivity;
 import com.example.ananpengkhun.myprojectfinal.activity.MyDataInventoryActivity;
@@ -58,6 +60,9 @@ public class InventoryProviderAdapter extends RecyclerView.Adapter<RecyclerView.
         if (holder instanceof InventoryProviderViewHolder) {
             InventoryProviderViewHolder inventoryProviderViewHolder = (InventoryProviderViewHolder) holder;
             inventoryProviderViewHolder.tvProviderName.setText(providerList.get(position).getProvName());
+            if(!"".equals(providerList.get(position).getProvImg())){
+                Glide.with(mContext).load(providerList.get(position).getProvImg()).placeholder(ContextCompat.getDrawable(mContext, R.drawable.default_img)).into(inventoryProviderViewHolder.imvProv);
+            }
 
             inventoryProviderViewHolder.cvGroupView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

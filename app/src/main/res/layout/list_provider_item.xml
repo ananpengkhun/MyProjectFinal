@@ -24,13 +24,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <ImageView
+                android:id="@+id/imv_prov"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="#a721a5"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="asdasd"/>
+                android:src="@drawable/default_img"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"

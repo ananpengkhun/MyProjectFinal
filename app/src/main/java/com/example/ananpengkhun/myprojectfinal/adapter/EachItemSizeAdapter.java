@@ -1,17 +1,23 @@
 package com.example.ananpengkhun.myprojectfinal.adapter;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProductActivity;
+import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProviderActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.EachItemSizeViewHolder;
 import com.example.ananpengkhun.myprojectfinal.dao.Product;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
@@ -42,6 +48,7 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<ProductEachSize> productDao;
 
     private boolean swap = true;
+    private int prodAmount;
     private Realm realm;
 
 
@@ -61,12 +68,6 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
         if (holder instanceof EachItemSizeViewHolder) {
-//            setTextView(productDao.getProdCode(),
-//                    productDao.getProdName(),
-//                    productDao.getPrice(),
-//                    productDao.getProdAmount(),
-//                    productDao.getProdUnit(),
-//                    productDao.getProdAlert());
             final EachItemSizeViewHolder eachItemSizeViewHolder = (EachItemSizeViewHolder) holder;
             eachItemSizeViewHolder.tvNameProdSize.setText(productDao.get(position).getNameItemSize());
             eachItemSizeViewHolder.tvUnitProd.setText(productDao.get(position).getUnit());
@@ -96,46 +97,54 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         eachItemSizeViewHolder.imvBoxForEdit.setSelected(false);
 
 //                        textView Visible
-//                        eachItemSizeViewHolder.tvChooseSpinner.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.tvCodeProd.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.tvNamePro.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.tvPricePro.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.tvAmountProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvNameProdSize.setVisibility(View.VISIBLE);
 //                        eachItemSizeViewHolder.tvUnitProd.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.tvProviderProd.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvPriceClassOne.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvPriceClassTwo.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvPriceClassThree.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvPriceClassFive.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvPriceClassEightFive.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvPriceClassOneThreeFive.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvPricePerKilo.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvPricePerMeter.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvPricePerPiece.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvPricePerWrap.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvEfford.setVisibility(View.VISIBLE);
+//                        eachItemSizeViewHolder.tvAmountPerWrap.setVisibility(View.VISIBLE);
                         eachItemSizeViewHolder.tvAlertProd.setVisibility(View.VISIBLE);
+                        eachItemSizeViewHolder.tvAlert.setVisibility(View.VISIBLE);
 //
 //                        EditText Gone
-                        eachItemSizeViewHolder.edAlertProd.setVisibility(View.GONE);
+//                        eachItemSizeViewHolder.edNameProdSize.setVisibility(View.GONE);
 //                        eachItemSizeViewHolder.edUnitProd.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.edAmountProd.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.edPriceProd.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.edNameProd.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.spinner.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.spinnerProvider.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.edCodeProd.setVisibility(View.GONE);
+                        //eachItemSizeViewHolder.edPriceClassOne.setVisibility(View.VISIBLE);
+                        eachItemSizeViewHolder.edProdAmount.setVisibility(View.GONE);
+                        eachItemSizeViewHolder.edAlert.setVisibility(View.GONE);
+
+                        prodAmount = Integer.parseInt(productDao.get(position).getTotalItemBigUnit());
+
 //
                         //quantity.set(position, eachItemSizeViewHolder.edAlertProd.getText().toString());
                         ProductEachSize each = new ProductEachSize();
                         ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
                         priceUBahtBean.setClassOne(productDao.get(position).getPriceUBaht().getClassOne());
-                        priceUBahtBean.setClassOne(productDao.get(position).getPriceUBaht().getClassTwo());
-                        priceUBahtBean.setClassOne(productDao.get(position).getPriceUBaht().getClassThree());
-                        priceUBahtBean.setClassOne(productDao.get(position).getPriceUBaht().getClassFive());
-                        priceUBahtBean.setClassOne(productDao.get(position).getPriceUBaht().getClassEightFive());
-                        priceUBahtBean.setClassOne(productDao.get(position).getPriceUBaht().getClassOneThreeFive());
-                        priceUBahtBean.setClassOne(productDao.get(position).getPriceUBaht().getPerKilo());
-                        priceUBahtBean.setClassOne(productDao.get(position).getPriceUBaht().getPerMeter());
-                        priceUBahtBean.setClassOne(productDao.get(position).getPriceUBaht().getPerPiece());
-                        priceUBahtBean.setClassOne(productDao.get(position).getPriceUBaht().getPerWrap());
+                        priceUBahtBean.setClassTwo(productDao.get(position).getPriceUBaht().getClassTwo());
+                        priceUBahtBean.setClassThree(productDao.get(position).getPriceUBaht().getClassThree());
+                        priceUBahtBean.setClassFive(productDao.get(position).getPriceUBaht().getClassFive());
+                        priceUBahtBean.setClassEightFive(productDao.get(position).getPriceUBaht().getClassEightFive());
+                        priceUBahtBean.setClassOneThreeFive(productDao.get(position).getPriceUBaht().getClassOneThreeFive());
+                        priceUBahtBean.setPerKilo(productDao.get(position).getPriceUBaht().getPerKilo());
+                        priceUBahtBean.setPerMeter(productDao.get(position).getPriceUBaht().getPerMeter());
+                        priceUBahtBean.setPerPiece(productDao.get(position).getPriceUBaht().getPerPiece());
+                        priceUBahtBean.setPerWrap(productDao.get(position).getPriceUBaht().getPerWrap());
 
                         each.setPriceUBaht(priceUBahtBean);
                         each.setUnit(productDao.get(position).getUnit());
                         each.setNameItemSize(productDao.get(position).getNameItemSize());
-                        each.setTotalItemBigUnit(eachItemSizeViewHolder.edAlertProd.getText().toString());
+                        each.setTotalItemBigUnit(String.valueOf(prodAmount));
                         each.setEffordUBaht(productDao.get(position).getEffordUBaht());
                         each.setAmongPerWrap(productDao.get(position).getAmongPerWrap());
-                        each.setProductSizeAlert(productDao.get(position).getProductSizeAlert());
+                        each.setProductSizeAlert(Integer.parseInt(eachItemSizeViewHolder.edAlert.getText().toString()));
                         each.setIndexInProduct(productDao.get(position).getIndexInProduct());
                         each.setNameItemId(productDao.get(position).getNameItemId());
                         productDao.set(position,each);
@@ -152,12 +161,14 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         //edit realm
                         Productsize size = realm.where(Productsize.class).equalTo("nameItemId",productDao.get(position).getNameItemId()).findFirst();
                         realm.beginTransaction();
-                        size.setTotalItemBigUnit(eachItemSizeViewHolder.edAlertProd.getText().toString());
+                        size.setTotalItemBigUnit(String.valueOf(prodAmount));
+                        size.setProductSizeAlert(Integer.parseInt(eachItemSizeViewHolder.edAlert.getText().toString()));
                         realm.commitTransaction();
 
                         //edit firebase
                         DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/productType/" + dao.getProdInType());
-                        mRootRef.child("data/"+ productDao.get(position).getIndexInProduct() +"/dataItem/"+position+"/totalItemBigUnit").setValue(eachItemSizeViewHolder.edAlertProd.getText().toString());
+                        mRootRef.child("data/"+ productDao.get(position).getIndexInProduct() +"/dataItem/"+position+"/totalItemBigUnit").setValue(String.valueOf(prodAmount));
+                        mRootRef.child("data/"+ productDao.get(position).getIndexInProduct() +"/dataItem/"+position+"/productSizeAlert").setValue(Integer.parseInt(eachItemSizeViewHolder.edAlert.getText().toString()));
 
 
                     } else {
@@ -166,29 +177,83 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         eachItemSizeViewHolder.imvBoxForEdit.setSelected(true);
 //                        textView Gone
                         eachItemSizeViewHolder.tvAlertProd.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.tvProviderProd.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.tvUnitProd.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.tvAmountProd.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.tvPricePro.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.tvNamePro.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.tvChooseSpinner.setVisibility(View.GONE);
-//                        eachItemSizeViewHolder.tvCodeProd.setVisibility(View.GONE);
+                        eachItemSizeViewHolder.tvAlert.setVisibility(View.GONE);
+
 //                        EditText Visible
-                        eachItemSizeViewHolder.edAlertProd.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.edUnitProd.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.edAmountProd.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.edPriceProd.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.edNameProd.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.spinner.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.spinnerProvider.setVisibility(View.VISIBLE);
-//                        eachItemSizeViewHolder.edCodeProd.setVisibility(View.VISIBLE);
-//
+                        eachItemSizeViewHolder.edProdAmount.setVisibility(View.VISIBLE);
+                        eachItemSizeViewHolder.edAlert.setVisibility(View.VISIBLE);
+
+                        eachItemSizeViewHolder.imvMinus.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                final Dialog dialog = new Dialog(mContext);
+                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                dialog.setContentView(R.layout.minus_product_quatity);
+                                dialog.setCancelable(true);
+
+                                TextView textView = (TextView) dialog.findViewById(R.id.tv_dialog_quatity);
+                                final EditText editText = (EditText) dialog.findViewById(R.id.ed_dialog_quatity);
+                                Button button = (Button) dialog.findViewById(R.id.btn_dialog_confirm);
+
+                                textView.setText("จำนวนที่ต้องการลด");
+
+                                button.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if (!"".equals(editText.getText().toString())) {
+                                            int sum = Integer.parseInt(productDao.get(position).getTotalItemBigUnit()) - Integer.parseInt(editText.getText().toString());
+                                            productDao.get(position).setTotalItemBigUnit(String.valueOf(sum));
+                                            prodAmount = sum;
+                                        } else {
+                                            prodAmount = Integer.parseInt(productDao.get(position).getTotalItemBigUnit());
+                                            Log.d("amount", "onClick: " + prodAmount);
+                                        }
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.show();
+                            }
+                        });
+                        eachItemSizeViewHolder.imvPlus.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                final Dialog dialog = new Dialog(mContext);
+                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                dialog.setContentView(R.layout.minus_product_quatity);
+                                dialog.setCancelable(true);
+
+                                TextView textView = (TextView) dialog.findViewById(R.id.tv_dialog_quatity);
+                                final EditText editText = (EditText) dialog.findViewById(R.id.ed_dialog_quatity);
+                                Button button = (Button) dialog.findViewById(R.id.btn_dialog_confirm);
+
+                                textView.setText("จำนวนที่ต้องการเพิ่ม");
+
+                                button.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if (!"".equals(editText.getText().toString())) {
+                                            int sum = Integer.parseInt(productDao.get(position).getTotalItemBigUnit()) + Integer.parseInt(editText.getText().toString());
+                                            productDao.get(position).setTotalItemBigUnit(String.valueOf(sum));
+                                            prodAmount = sum;
+                                        } else {
+                                            prodAmount = Integer.valueOf(productDao.get(position).getTotalItemBigUnit());
+                                            Log.d("amount", "onClick: " + prodAmount);
+                                        }
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.show();
+                            }
+                        });
+
                         if (swap) {
                             swap = false;
-                            eachItemSizeViewHolder.edAlertProd.setText(productDao.get(position).getTotalItemBigUnit());
+                            //eachItemSizeViewHolder.edAlertProd.setText(productDao.get(position).getTotalItemBigUnit());
+                            eachItemSizeViewHolder.edAlert.setText(""+productDao.get(position).getProductSizeAlert());
 
                         } else {
-                            eachItemSizeViewHolder.edAlertProd.setText(eachItemSizeViewHolder.tvAlertProd.getText());
+                            //eachItemSizeViewHolder.edAlertProd.setText(eachItemSizeViewHolder.tvAlertProd.getText().toString());
+                            eachItemSizeViewHolder.edAlert.setText(eachItemSizeViewHolder.tvAlert.getText().toString());
                         }
                     }
 

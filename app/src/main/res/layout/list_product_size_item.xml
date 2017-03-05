@@ -331,23 +331,41 @@
                     android:layout_height="wrap_content"
                     android:text="จำนวน :"/>
 
-                <RelativeLayout
+                <LinearLayout
+                    android:id="@+id/ed_prod_amount"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
-                    <android.support.v7.widget.AppCompatEditText
-                        android:id="@+id/ed_alert_prod"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:digits="0123456789"
-                        android:inputType="numberDecimal"
-                        android:visibility="gone"/>
+                    <ImageView
+                        android:id="@+id/imv_minus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:src="@drawable/minus"/>
 
-                    <TextView
-                        android:id="@+id/tv_alert_prod"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/imv_plus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:src="@drawable/plusss"/>
+
+                </LinearLayout>
+
+
+                <!--<android.support.v7.widget.AppCompatEditText-->
+                <!--android:id="@+id/ed_alert_prod"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:digits="0123456789"-->
+                <!--android:inputType="numberDecimal"-->
+                <!--android:visibility="gone"/>-->
+
+                <TextView
+                    android:id="@+id/tv_alert_prod"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -378,6 +396,7 @@
                         android:layout_height="wrap_content"/>
                 </RelativeLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
