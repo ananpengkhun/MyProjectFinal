@@ -25,6 +25,7 @@ import com.example.ananpengkhun.myprojectfinal.adapter.MainMenuAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.example.ananpengkhun.myprojectfinal.fragment.MainFragment;
+import com.example.ananpengkhun.myprojectfinal.fragment.StatisticsFragment;
 
 import junit.framework.Test;
 
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     @BindView(R.id.img_backHome) ImageView imgBackHome;
     @BindView(R.id.tvAutoCompl) KMPAutoComplTextView tvAutoCompl;
     @BindView(R.id.imv_clear_text) ImageView imvClearText;
+    @BindView(R.id.tv_statis) TextView tvStatis;
 
 
     private BottomSheet dialog;
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
             Log.d(TAG, "_________execute: "+testProductTypes.get(0).getData().get(0).getNameItem());
         }
     };
+
 
 
     @Override
@@ -142,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
 
 //        tvNavAddData.setOnClickListener(AddDataClicklistener);
 //        tvNavData.setOnClickListener(DataClicklistener);
+        tvStatis.setOnClickListener(statisClicklistener);
         imgBackHome.setOnClickListener(imgBackHomeClicklistener);
         imvClearText.setOnClickListener(CleatTextClicklistener);
 
@@ -325,4 +329,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
         }
     };
 
+    private View.OnClickListener statisClicklistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            vpPagerFragment.setCurrentItem(4,true);
+        }
+    };
 }

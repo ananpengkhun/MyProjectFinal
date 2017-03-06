@@ -9,6 +9,7 @@ import com.example.ananpengkhun.myprojectfinal.fragment.AddProductFragment;
 import com.example.ananpengkhun.myprojectfinal.fragment.AddProductTypeFragment;
 import com.example.ananpengkhun.myprojectfinal.fragment.AddProviderFragment;
 import com.example.ananpengkhun.myprojectfinal.fragment.MainFragment;
+import com.example.ananpengkhun.myprojectfinal.fragment.StatisticsFragment;
 
 import java.util.List;
 
@@ -36,6 +37,8 @@ public class MainMenuAdapter extends FragmentStatePagerAdapter {
             fragment = AddProductTypeFragment.newInstant();
         }else if(3 == position){
             fragment = AddProviderFragment.newInstant();
+        }else if(4 == position){
+            fragment = StatisticsFragment.newInstant();
         }
 
         return fragment;
@@ -43,6 +46,6 @@ public class MainMenuAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return 5;
     }
 }

@@ -78,16 +78,16 @@
                 android:src="@drawable/error"/>
         </RelativeLayout>
 
-        <!--<TextView-->
-            <!--android:id="@+id/tv_navData"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="20dp"-->
-            <!--android:layout_marginRight="30dp"-->
-            <!--android:layout_marginTop="10dp"-->
-            <!--android:background="@drawable/nav_selected_data_selector"-->
-            <!--android:clickable="true"-->
-            <!--android:text="ข้อมูล"/>-->
+        <TextView
+            android:id="@+id/tv_statis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/nav_selected_data_selector"
+            android:clickable="true"
+            android:text="สถิติ"/>
 
         <!--<TextView-->
             <!--android:id="@+id/tv_navAddData"-->

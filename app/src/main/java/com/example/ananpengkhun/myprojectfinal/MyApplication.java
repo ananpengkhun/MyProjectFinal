@@ -6,6 +6,7 @@ import android.content.Context;
 import com.google.firebase.database.FirebaseDatabase;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by ananpengkhun on 12/28/16.
@@ -19,6 +20,7 @@ public class MyApplication extends Application{
         Contextor.getInstance().setmContext(getApplicationContext());
         //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         Realm.init(getApplicationContext());
+
     }
 
     @Override

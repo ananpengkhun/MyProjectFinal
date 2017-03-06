@@ -5,11 +5,11 @@ import java.util.List;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmModule;
 
 /**
  * Created by ananpengkhun on 1/9/17.
  */
-
 public class TestProductType extends RealmObject{
     private int typeId;
 

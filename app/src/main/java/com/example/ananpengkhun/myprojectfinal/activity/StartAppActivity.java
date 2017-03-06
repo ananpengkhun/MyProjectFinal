@@ -1,6 +1,5 @@
 package com.example.ananpengkhun.myprojectfinal.activity;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,34 +12,22 @@ import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.PricePerBath;
 import com.example.ananpengkhun.myprojectfinal.dao.Product;
-import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
-import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
 import com.example.ananpengkhun.myprojectfinal.dao.Productsize;
+import com.example.ananpengkhun.myprojectfinal.dao.ReportDao;
 import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmAsyncTask;
 import io.realm.RealmConfiguration;
-import io.realm.RealmList;
-import io.realm.RealmModel;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
-import io.realm.annotations.PrimaryKey;
 
 public class StartAppActivity extends AppCompatActivity {
 
 
     private Realm realm;
+    private Realm realmReport;
     private RealmAsyncTask realmAsyncTask;
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
@@ -53,12 +40,52 @@ public class StartAppActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_app);
         ButterKnife.bind(this);
-        realm = Realm.getDefaultInstance();
+
+
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                .name("default.realm")
+                .build();
+        RealmConfiguration realmConfigurationReport = new RealmConfiguration.Builder()
+                .name("report.realm")
+                .build();
+
+        realmReport = Realm.getInstance(realmConfigurationReport);
+        realm = Realm.getInstance(realmConfiguration);
+        Log.d("start", "onCreate realm: " + realm.getPath());
+        Log.d("start", "onCreate realmReport: " + realmReport.getPath());
+
+        realmReport.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                for (int i = 0; i < 3; i++) {
+                    ReportDao reportDao = realm.createObject(ReportDao.class);
+                    reportDao.setProdNameRep("name:" + i);
+                    reportDao.setProdQuantityRep(i);
+                }
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+
+                RealmResults<ReportDao> results = realmReport.where(ReportDao.class).findAll();
+                results.load();
+                for (int i = 0; i < 3; i++) {
+                    Log.d("realmReport", "onSuccess: " + results.get(i).getProdNameRep() + " ---- " + results.get(i).getProdQuantityRep());
+                }
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                Log.d("realmReport", "onError realmReport: " + error.getMessage());
+            }
+        });
+
+
         Intent intent = getIntent();
-        if(intent.getIntExtra("refresh",-1) == 2328){
+        if (intent.getIntExtra("refresh", -1) == 2328) {
             // refresh data
 
-        }else {
+        } else {
             if (intent.getParcelableExtra("data") != null) {
                 dataDao = intent.getParcelableExtra("data");
                 Log.d("start", "onCreate: " + dataDao.getProductType().size());
@@ -122,7 +149,7 @@ public class StartAppActivity extends AppCompatActivity {
                                             productEachSize.setUnit(list.getDataItem().get(z).getUnit());
                                             productEachSize.setWeightPerWrap(list.getDataItem().get(z).getWeightPerWrap());
 
-                                            Log.d("prosizealert", "execute: "+list.getDataItem().get(z).getProductSizeAlert());
+                                            Log.d("prosizealert", "execute: " + list.getDataItem().get(z).getProductSizeAlert());
                                             productEachSize.setProductSizeAlert(list.getDataItem().get(z).getProductSizeAlert());
                                             productEachSize.setIndexInProduct(list.getDataItem().get(z).getIndexInProduct());
 
