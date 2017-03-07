@@ -27,7 +27,7 @@ public class StartAppActivity extends AppCompatActivity {
 
 
     private Realm realm;
-    private Realm realmReport;
+    //private Realm realmReport;
     private RealmAsyncTask realmAsyncTask;
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
@@ -45,40 +45,40 @@ public class StartAppActivity extends AppCompatActivity {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
                 .name("default.realm")
                 .build();
-        RealmConfiguration realmConfigurationReport = new RealmConfiguration.Builder()
-                .name("report.realm")
-                .build();
+//        RealmConfiguration realmConfigurationReport = new RealmConfiguration.Builder()
+//                .name("report.realm")
+//                .build();
 
-        realmReport = Realm.getInstance(realmConfigurationReport);
+        //realmReport = Realm.getInstance(realmConfigurationReport);
         realm = Realm.getInstance(realmConfiguration);
         Log.d("start", "onCreate realm: " + realm.getPath());
-        Log.d("start", "onCreate realmReport: " + realmReport.getPath());
+        //Log.d("start", "onCreate realmReport: " + realmReport.getPath());
 
-        realmReport.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                for (int i = 0; i < 3; i++) {
-                    ReportDao reportDao = realm.createObject(ReportDao.class);
-                    reportDao.setProdNameRep("name:" + i);
-                    reportDao.setProdQuantityRep(i);
-                }
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-
-                RealmResults<ReportDao> results = realmReport.where(ReportDao.class).findAll();
-                results.load();
-                for (int i = 0; i < 3; i++) {
-                    Log.d("realmReport", "onSuccess: " + results.get(i).getProdNameRep() + " ---- " + results.get(i).getProdQuantityRep());
-                }
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                Log.d("realmReport", "onError realmReport: " + error.getMessage());
-            }
-        });
+//        realmReport.executeTransactionAsync(new Realm.Transaction() {
+//            @Override
+//            public void execute(Realm realm) {
+//                for (int i = 0; i < 3; i++) {
+//                    ReportDao reportDao = realm.createObject(ReportDao.class);
+//                    reportDao.setProdNameRep("name:" + i);
+//                    reportDao.setProdQuantityRep(i);
+//                }
+//            }
+//        }, new Realm.Transaction.OnSuccess() {
+//            @Override
+//            public void onSuccess() {
+//
+//                RealmResults<ReportDao> results = realmReport.where(ReportDao.class).findAll();
+//                results.load();
+//                for (int i = 0; i < results.size(); i++) {
+//                    Log.d("realmReport", "onSuccess: " + results.get(i).getProdNameRep() + " ---- " + results.get(i).getProdQuantityRep());
+//                }
+//            }
+//        }, new Realm.Transaction.OnError() {
+//            @Override
+//            public void onError(Throwable error) {
+//                Log.d("realmReport", "onError realmReport: " + error.getMessage());
+//            }
+//        });
 
 
         Intent intent = getIntent();

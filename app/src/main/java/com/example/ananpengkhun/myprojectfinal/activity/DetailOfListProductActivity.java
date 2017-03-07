@@ -30,6 +30,7 @@ import com.example.ananpengkhun.myprojectfinal.adapter.EachItemSizeAdapter;
 import com.example.ananpengkhun.myprojectfinal.dao.Product;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.example.ananpengkhun.myprojectfinal.dao.ReportDao;
 import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,7 +43,10 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +54,8 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
 public class DetailOfListProductActivity extends AppCompatActivity {
 
@@ -103,7 +109,10 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     private EachItemSizeAdapter eachItemSizeAdapter;
     private int index;
     private Realm realm;
+    private Realm realmReport;
     private int productId;
+    private int existReport = 0;
+    private int total;
     // private int sum;
 
 
@@ -142,9 +151,9 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                     providerDao.setProvPhone(snapshot.getValue(ProviderDao.class).getProvPhone());
                     providerDao.setProvEmail(snapshot.getValue(ProviderDao.class).getProvEmail());
                     providerDao.setProvAddress(snapshot.getValue(ProviderDao.class).getProvAddress());
-                    if(!"".equals(snapshot.getValue(ProviderDao.class).getProvImg())) {
+                    if (!"".equals(snapshot.getValue(ProviderDao.class).getProvImg())) {
                         providerDao.setProvImg(snapshot.getValue(ProviderDao.class).getProvImg());
-                    }else{
+                    } else {
                         providerDao.setProvImg("");
                     }
                     Log.d("loaddata", "onDataChange: " + providerDao.getProvName());
@@ -168,11 +177,12 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             Intent intent = getIntent();
             productDao = intent.getParcelableExtra("product_object_index");
-            Log.d("detailproduct", "init: "+productDao.getProdName());
-            productId = intent.getIntExtra("product_id",-1);
+            Log.d("detailproduct", "init: " + productDao.getProdName());
+            productId = intent.getIntExtra("product_id", -1);
             providerDaoList = intent.getParcelableArrayListExtra("provider_arraylist");
             tvNamePro.setText(productDao.getProdName());
             tvCodeProd.setText(productDao.getProdCode());
+            total = productDao.getProductQuantity();
 
             if (productDao.getProductQuantity() == 0) {
                 llAmount.setVisibility(View.GONE);
@@ -207,7 +217,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
 
             rcSizeItem.setHasFixedSize(true);
             rcSizeItem.setLayoutManager(new LinearLayoutManager(DetailOfListProductActivity.this));
-            eachItemSizeAdapter = new EachItemSizeAdapter(DetailOfListProductActivity.this, productDao.getProductEachSizes(),productDao);
+            eachItemSizeAdapter = new EachItemSizeAdapter(DetailOfListProductActivity.this, productDao.getProductEachSizes(), productDao);
             eachItemSizeAdapter.setRealm(realm);
             rcSizeItem.setAdapter(eachItemSizeAdapter);
         }
@@ -264,19 +274,71 @@ public class DetailOfListProductActivity extends AppCompatActivity {
 
                 // save data
 
+                //report
+                if (prodAmount < total) {
+                    RealmConfiguration realmConfigurationReport = new RealmConfiguration.Builder()
+                            .name("report.realm")
+                            .build();
+                    realmReport = Realm.getInstance(realmConfigurationReport);
+                    RealmResults<ReportDao> reportDaos = realmReport.where(ReportDao.class).findAll();
+                    for(int i=0;i<reportDaos.size();i++){
+                        if(prodName.equals(reportDaos.get(i).getProdNameRep())){
+                            existReport = 1;
+                        }
+                    }
+                    if(existReport != 1) {
+                        realmReport.executeTransactionAsync(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                DateFormat df = new SimpleDateFormat("d/MMM/yyyy");
+                                String now = df.format(new Date());
+                                ReportDao reportDao = realm.createObject(ReportDao.class);
+                                reportDao.setProdNameRep(prodName);
+                                int leave = total - prodAmount;
+                                Log.d("leave", "execute total: "+total);
+                                Log.d("leave", "execute prodamount: "+prodAmount);
+                                Log.d("leave", "execute: "+leave);
+                                reportDao.setProdQuantityRep(leave);
+                                reportDao.setDate(now);
+                            }
+                        }, new Realm.Transaction.OnSuccess() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d("report", "onSuccess: ");
+                            }
+                        }, new Realm.Transaction.OnError() {
+                            @Override
+                            public void onError(Throwable error) {
+                                Log.d("report", "onError: ");
+                            }
+                        });
+                    }else {
+                        ReportDao reportDao = realmReport.where(ReportDao.class).equalTo("prodNameRep",prodName).findFirst();
+                        realmReport.beginTransaction();
+                        reportDao.setProdNameRep(prodName);
+                        int leave = total - prodAmount;
+                        Log.d("leave", "execute total222: "+total);
+                        Log.d("leave", "execute prodamount22: "+prodAmount);
+                        Log.d("leave", "execute leave: "+leave);
+                        Log.d("leave", "execute getpro: "+reportDao.getProdQuantityRep());
+                        reportDao.setProdQuantityRep(reportDao.getProdQuantityRep() + leave);
+                        realmReport.commitTransaction();
+                    }
+
+                }
+                total = prodAmount;
 
                 //realm edit
-
-                Product product = realm.where(Product.class).equalTo("productId",productId).findFirst();
+                Product product = realm.where(Product.class).equalTo("productId", productId).findFirst();
                 realm.beginTransaction();
                 product.setNameItem(prodName);
                 product.setNameCode(prodCode);
                 product.setProductQuantity(prodAmount);
-                if(pathFile != null){
+                if (pathFile != null) {
                     product.setProductImg(pathFile.toString());
                 }
                 product.setProductPrice(prodPrice);
-                if(spinProvider != -1){
+                if (spinProvider != -1) {
                     product.setProvider(providerDaoload.get(spinProvider).getProvId());
                 }
                 product.setProductAlert(prodAlert);
@@ -303,7 +365,6 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                                 snapshot.getRef().child("provider").setValue(providerDaoload.get(spinProvider).getProvId());
                             }
                             snapshot.getRef().child("productAlert").setValue(prodAlert);
-
 
 
                         }
@@ -598,4 +659,10 @@ public class DetailOfListProductActivity extends AppCompatActivity {
             dialog.show();
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
 }

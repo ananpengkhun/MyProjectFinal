@@ -2,25 +2,22 @@ package com.example.ananpengkhun.myprojectfinal.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.ananpengkhun.myprojectfinal.R;
-import com.github.aakira.expandablelayout.ExpandableLinearLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
 /**
- * Created by ananpengkhun on 3/6/17.
+ * Created by ananpengkhun on 3/7/17.
  */
 
-public class ReportViewHolder extends RecyclerView.ViewHolder {
+public class DialogInReportViewHolder extends RecyclerView.ViewHolder {
+    @BindView(R.id.tv_name) public TextView tvName;
+    @BindView(R.id.tv_many) public TextView tvMany;
 
-    @BindView(R.id.textView) public TextView textView;
-
-    public ReportViewHolder(View itemView) {
+    public DialogInReportViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }

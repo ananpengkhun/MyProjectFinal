@@ -1,28 +1,38 @@
 package com.example.ananpengkhun.myprojectfinal.adapter;
 
 import android.animation.ObjectAnimator;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Interpolator;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.ananpengkhun.myprojectfinal.R;
+import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProviderActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.ReportViewHolder;
-import com.github.aakira.expandablelayout.ExpandableLayout;
-import com.github.aakira.expandablelayout.ExpandableLayoutListenerAdapter;
-import com.github.aakira.expandablelayout.ExpandableLinearLayout;
-import com.github.aakira.expandablelayout.Utils;
+import com.example.ananpengkhun.myprojectfinal.dao.ReportDao;
+
+
+import java.io.File;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.RealmResults;
 
 /**
  * Created by ananpengkhun on 3/6/17.
@@ -31,12 +41,13 @@ import butterknife.ButterKnife;
 public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
-    private SparseBooleanArray expandState = new SparseBooleanArray();
+    private RealmResults<ReportDao> data;
+    private RecyclerView rcDialogReport;
+    private DialogInReportAdapter dialogInReportAdapter;
+
     public ReportAdapter(FragmentActivity activity) {
         this.context = activity;
-        for(int i=0;i<3;i++){
-            expandState.append(i,false);
-        }
+        dialogInReportAdapter = new DialogInReportAdapter();
     }
 
     @Override
@@ -49,50 +60,42 @@ public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(RecyclerView.ViewHolder holder,final int position) {
         if(holder instanceof ReportViewHolder){
             final ReportViewHolder reportViewHolder = (ReportViewHolder) holder;
-            reportViewHolder.setIsRecyclable(false);
-            reportViewHolder.textView.setText("my text:"+position);
+            reportViewHolder.textView.setText(data.get(position).getDate());
             reportViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
-            reportViewHolder.expandable.setInRecyclerView(true);
-            reportViewHolder.expandable.setBackgroundColor(ContextCompat.getColor(context, R.color.gray));
-            reportViewHolder.expandable.setInterpolator(Utils.createInterpolator(Utils.ACCELERATE_DECELERATE_INTERPOLATOR));
-            reportViewHolder.expandable.setExpanded(expandState.get(position));
-            reportViewHolder.expandable.setListener(new ExpandableLayoutListenerAdapter() {
-                @Override
-                public void onPreClose() {
-                    createRotateAnimator(reportViewHolder.buttonLayout, 180f, 0f).start();
-                    expandState.put(position, false);
-                }
+            //reportViewHolder.tvData.setText(data.get(position).getProdNameRep() +"--------"+data.get(position).getProdQuantityRep());
 
-                @Override
-                public void onPreOpen() {
-                    createRotateAnimator(reportViewHolder.buttonLayout, 0f, 180f).start();
-                    expandState.put(position, true);
-                }
-            });
-            reportViewHolder.buttonLayout.setRotation(expandState.get(position) ? 180f : 0f);
-            reportViewHolder.buttonLayout.setOnClickListener(new View.OnClickListener() {
+            reportViewHolder.textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onClickButton(reportViewHolder.expandable);
+                    final Dialog dialog = new Dialog(context);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.dialog_report_list);
+                    dialog.setCancelable(true);
+                    bindId(dialog);
+                    rcDialogReport.setLayoutManager(new LinearLayoutManager(context));
+                    rcDialogReport.setHasFixedSize(true);
+                    dialogInReportAdapter.setData(data);
+                    rcDialogReport.setAdapter(dialogInReportAdapter);
+                    dialog.show();
                 }
             });
         }
     }
 
-    public ObjectAnimator createRotateAnimator(final View target, final float from, final float to) {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(target, "rotation", from, to);
-        animator.setDuration(300);
-        animator.setInterpolator(Utils.createInterpolator(Utils.LINEAR_INTERPOLATOR));
-        return animator;
+    private void bindId(Dialog dialog) {
+        rcDialogReport = (RecyclerView) dialog.findViewById(R.id.rc_dialog_report);
     }
 
-    private void onClickButton(final ExpandableLayout expandableLayout) {
-        expandableLayout.toggle();
-    }
 
     @Override
     public int getItemCount() {
-        return 3;
+        if(data.size() == 0){
+            return 0;
+        }
+        return data.size();
     }
 
+    public void setData(RealmResults<ReportDao> data) {
+        this.data = data;
+    }
 }

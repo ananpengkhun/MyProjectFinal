@@ -6,15 +6,30 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.adapter.ReportAdapter;
+import com.example.ananpengkhun.myprojectfinal.dao.ReportDao;
+import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
+
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +38,16 @@ public class StatisticsFragment extends Fragment {
 
     @BindView(R.id.rc_report) RecyclerView rcReport;
     private ReportAdapter reportAdapter;
+    private String TAG = StatisticsFragment.class.getSimpleName();
+    private Realm realmReport;
+    private RealmResults<ReportDao> reportDaos;
+    private RealmChangeListener<Realm> DataChangeListener = new RealmChangeListener<Realm>() {
+        @Override
+        public void onChange(Realm element) {
+            loadData();
+            reportAdapter.notifyDataSetChanged();
+        }
+    };
 
     private StatisticsFragment() {
         // Required empty public constructor
@@ -32,6 +57,11 @@ public class StatisticsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         reportAdapter = new ReportAdapter(getActivity());
+        RealmConfiguration realmConfigurationReport = new RealmConfiguration.Builder()
+                .name("report.realm")
+                .build();
+        realmReport = Realm.getInstance(realmConfigurationReport);
+        realmReport.addChangeListener(DataChangeListener);
     }
 
     @Override
@@ -54,6 +84,7 @@ public class StatisticsFragment extends Fragment {
         loadData();
         rcReport.setLayoutManager(new LinearLayoutManager(getActivity()));
         rcReport.setHasFixedSize(true);
+        reportAdapter.setData(reportDaos);
         rcReport.setAdapter(reportAdapter);
     }
 
@@ -62,7 +93,14 @@ public class StatisticsFragment extends Fragment {
     }
 
     private void loadData() {
+        reportDaos = realmReport.where(ReportDao.class).findAll();
 
+//        DateFormat df = new SimpleDateFormat("d/MMM/yyyy");
+//        String now = df.format(new Date());
+//
+//
+//
+//        Log.d(TAG, "loadData day: "+ now);
     }
 
 
