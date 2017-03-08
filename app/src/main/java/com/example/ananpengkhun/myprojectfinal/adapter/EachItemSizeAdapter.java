@@ -23,6 +23,7 @@ import com.example.ananpengkhun.myprojectfinal.dao.Product;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
 import com.example.ananpengkhun.myprojectfinal.dao.Productsize;
+import com.example.ananpengkhun.myprojectfinal.dao.ReportDao;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,12 +32,17 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
 /**
  * Created by ananpengkhun on 12/27/16.
@@ -50,6 +56,10 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private boolean swap = true;
     private int prodAmount;
     private Realm realm;
+    private int total;
+    private Realm realmReport;
+    private String prodName;
+    private int existReport =0;
 
 
     public EachItemSizeAdapter(Context mContext, List<ProductEachSize> productDao, ProductDao dao) {
@@ -121,6 +131,7 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         eachItemSizeViewHolder.edProdAmount.setVisibility(View.GONE);
                         eachItemSizeViewHolder.edAlert.setVisibility(View.GONE);
 
+                        prodName = dao.getProdName()+"--"+ productDao.get(position).getNameItemSize();
                         prodAmount = Integer.parseInt(productDao.get(position).getTotalItemBigUnit());
 
 //
@@ -158,6 +169,59 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
 //                        save data
+
+                        //report
+
+                        if (prodAmount < total) {
+                            Log.d("leave", "onClick top prod: "+prodAmount);
+                            Log.d("leave", "onClick top total: "+total);
+                            RealmResults<ReportDao> reportDaos = realmReport.where(ReportDao.class).findAll();
+                            for(int i=0;i<reportDaos.size();i++){
+                                if(prodName.equals(reportDaos.get(i).getProdNameRep())){
+                                    existReport = 1;
+                                }
+                            }
+                            if(existReport != 1) {
+                                realmReport.executeTransactionAsync(new Realm.Transaction() {
+                                    @Override
+                                    public void execute(Realm realm) {
+                                        DateFormat df = new SimpleDateFormat("d/MMM/yyyy");
+                                        String now = df.format(new Date());
+                                        ReportDao reportDao = realm.createObject(ReportDao.class);
+                                        reportDao.setProdNameRep(prodName);
+                                        int leave = total - prodAmount;
+                                        Log.d("leave", "execute total: "+total);
+                                        Log.d("leave", "execute prodamount: "+prodAmount);
+                                        Log.d("leave", "execute: "+leave);
+                                        reportDao.setProdQuantityRep(leave);
+                                        reportDao.setDate(now);
+                                    }
+                                }, new Realm.Transaction.OnSuccess() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Log.d("report", "onSuccess: ");
+                                    }
+                                }, new Realm.Transaction.OnError() {
+                                    @Override
+                                    public void onError(Throwable error) {
+                                        Log.d("report", "onError: ");
+                                    }
+                                });
+                            }else {
+                                ReportDao reportDao = realmReport.where(ReportDao.class).equalTo("prodNameRep",prodName).findFirst();
+                                realmReport.beginTransaction();
+                                reportDao.setProdNameRep(prodName);
+                                int leave = total - prodAmount;
+                                Log.d("leave", "execute total222: "+total);
+                                Log.d("leave", "execute prodamount22: "+prodAmount);
+                                Log.d("leave", "execute leave: "+leave);
+                                Log.d("leave", "execute getpro: "+reportDao.getProdQuantityRep());
+                                reportDao.setProdQuantityRep(reportDao.getProdQuantityRep() + leave);
+                                realmReport.commitTransaction();
+                            }
+
+
+                        }
                         //edit realm
                         Productsize size = realm.where(Productsize.class).equalTo("nameItemId",productDao.get(position).getNameItemId()).findFirst();
                         realm.beginTransaction();
@@ -170,10 +234,10 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         mRootRef.child("data/"+ productDao.get(position).getIndexInProduct() +"/dataItem/"+position+"/totalItemBigUnit").setValue(String.valueOf(prodAmount));
                         mRootRef.child("data/"+ productDao.get(position).getIndexInProduct() +"/dataItem/"+position+"/productSizeAlert").setValue(Integer.parseInt(eachItemSizeViewHolder.edAlert.getText().toString()));
 
-
+                        total = prodAmount;
                     } else {
                         //edit data
-
+                        total = Integer.parseInt(productDao.get(position).getTotalItemBigUnit());
                         eachItemSizeViewHolder.imvBoxForEdit.setSelected(true);
 //                        textView Gone
                         eachItemSizeViewHolder.tvAlertProd.setVisibility(View.GONE);
@@ -274,5 +338,9 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void setRealm(Realm realm) {
         this.realm = realm;
+    }
+
+    public void setRealmReport(Realm realmReport) {
+        this.realmReport = realmReport;
     }
 }

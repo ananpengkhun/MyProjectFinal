@@ -3,6 +3,7 @@ package com.example.ananpengkhun.myprojectfinal.dao;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 import io.realm.annotations.RealmModule;
 
 /**
@@ -12,7 +13,27 @@ import io.realm.annotations.RealmModule;
 public class ReportDao extends RealmObject {
     private String prodNameRep;
     private int prodQuantityRep;
+    private int productIdRep;
+    private int productSizeIdRep;
+
+    @Index
     private String date;
+
+    public int getProductIdRep() {
+        return productIdRep;
+    }
+
+    public void setProductIdRep(int productIdRep) {
+        this.productIdRep = productIdRep;
+    }
+
+    public int getProductSizeIdRep() {
+        return productSizeIdRep;
+    }
+
+    public void setProductSizeIdRep(int productSizeIdRep) {
+        this.productSizeIdRep = productSizeIdRep;
+    }
 
     public String getProdNameRep() {
         return prodNameRep;

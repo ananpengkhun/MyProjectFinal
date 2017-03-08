@@ -100,8 +100,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     private int spinProvider;
     private String prodUnit;
     private int prodAlert;
-    private List<String> listProdType;
-    private List<String> listProvider;
+
     private List<ProviderDao> providerDaoList;
     private List<ProviderDao> providerDaoload;
     private List<String> getListProdType;
@@ -140,6 +139,10 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     }
 
     private void init() {
+        RealmConfiguration realmConfigurationReport = new RealmConfiguration.Builder()
+                .name("report.realm")
+                .build();
+        realmReport = Realm.getInstance(realmConfigurationReport);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://pipe-993d5.firebaseio.com/provider");
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
@@ -219,6 +222,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
             rcSizeItem.setLayoutManager(new LinearLayoutManager(DetailOfListProductActivity.this));
             eachItemSizeAdapter = new EachItemSizeAdapter(DetailOfListProductActivity.this, productDao.getProductEachSizes(), productDao);
             eachItemSizeAdapter.setRealm(realm);
+            eachItemSizeAdapter.setRealmReport(realmReport);
             rcSizeItem.setAdapter(eachItemSizeAdapter);
         }
 
@@ -275,11 +279,11 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                 // save data
 
                 //report
+
                 if (prodAmount < total) {
-                    RealmConfiguration realmConfigurationReport = new RealmConfiguration.Builder()
-                            .name("report.realm")
-                            .build();
-                    realmReport = Realm.getInstance(realmConfigurationReport);
+                    Log.d("leave", "onClick top prod: "+prodAmount);
+                    Log.d("leave", "onClick top total: "+total);
+
                     RealmResults<ReportDao> reportDaos = realmReport.where(ReportDao.class).findAll();
                     for(int i=0;i<reportDaos.size();i++){
                         if(prodName.equals(reportDaos.get(i).getProdNameRep())){
@@ -298,6 +302,8 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                                 Log.d("leave", "execute total: "+total);
                                 Log.d("leave", "execute prodamount: "+prodAmount);
                                 Log.d("leave", "execute: "+leave);
+                                reportDao.setProductIdRep(productId);
+                                reportDao.setProductSizeIdRep(0);
                                 reportDao.setProdQuantityRep(leave);
                                 reportDao.setDate(now);
                             }
@@ -325,9 +331,14 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                         realmReport.commitTransaction();
                     }
 
-                }
-                total = prodAmount;
 
+                }
+                ReportDao reportDao = realmReport.where(ReportDao.class).equalTo("productIdRep", productId).findFirst();
+                if(reportDao != null) {
+                    realmReport.beginTransaction();
+                    reportDao.setProdNameRep(prodName);
+                    realmReport.commitTransaction();
+                }
                 //realm edit
                 Product product = realm.where(Product.class).equalTo("productId", productId).findFirst();
                 realm.beginTransaction();
@@ -376,7 +387,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                     }
                 });
 
-
+                total = prodAmount;
             } else {
                 // edit data
                 imvBoxForEdit.setSelected(true);

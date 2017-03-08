@@ -20,6 +20,8 @@ import io.realm.RealmResults;
  */
 
 public class DialogInReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+
     private RealmResults<ReportDao> data;
 
     @Override

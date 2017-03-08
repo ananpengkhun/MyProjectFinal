@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmConfiguration;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 
@@ -85,6 +86,7 @@ public class StatisticsFragment extends Fragment {
         rcReport.setLayoutManager(new LinearLayoutManager(getActivity()));
         rcReport.setHasFixedSize(true);
         reportAdapter.setData(reportDaos);
+        reportAdapter.setDataRealm(realmReport);
         rcReport.setAdapter(reportAdapter);
     }
 
@@ -94,6 +96,9 @@ public class StatisticsFragment extends Fragment {
 
     private void loadData() {
         reportDaos = realmReport.where(ReportDao.class).findAll();
+        reportDaos.distinct("date");
+
+        Log.d(TAG, "loadData: "+reportDaos.size());
 
 //        DateFormat df = new SimpleDateFormat("d/MMM/yyyy");
 //        String now = df.format(new Date());

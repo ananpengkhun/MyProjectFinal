@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 import io.realm.RealmResults;
 
 /**
@@ -44,6 +46,7 @@ public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private RealmResults<ReportDao> data;
     private RecyclerView rcDialogReport;
     private DialogInReportAdapter dialogInReportAdapter;
+    private Realm dataRealm;
 
     public ReportAdapter(FragmentActivity activity) {
         this.context = activity;
@@ -72,9 +75,12 @@ public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     dialog.setContentView(R.layout.dialog_report_list);
                     dialog.setCancelable(true);
                     bindId(dialog);
+                    RealmResults<ReportDao> reportDaos = dataRealm.where(ReportDao.class).equalTo("date",data.get(position).getDate()).findAll();
                     rcDialogReport.setLayoutManager(new LinearLayoutManager(context));
                     rcDialogReport.setHasFixedSize(true);
-                    dialogInReportAdapter.setData(data);
+                    Log.d("report", "onClick: "+reportDaos.size());
+                    Log.d("report", "onClick: "+reportDaos.toString());
+                    dialogInReportAdapter.setData(reportDaos);
                     rcDialogReport.setAdapter(dialogInReportAdapter);
                     dialog.show();
                 }
@@ -97,5 +103,9 @@ public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public void setData(RealmResults<ReportDao> data) {
         this.data = data;
+    }
+
+    public void setDataRealm(Realm dataRealm) {
+        this.dataRealm = dataRealm;
     }
 }
