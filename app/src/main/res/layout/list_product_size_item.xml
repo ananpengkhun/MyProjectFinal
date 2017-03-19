@@ -298,6 +298,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_among_per_wrap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -316,6 +317,24 @@
 
                 <TextView
                     android:id="@+id/tv_amount_per_wrap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_contrain_piece_per_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ชิ้น/กล่อง :"/>
+
+                <TextView
+                    android:id="@+id/tv_contrain_piece_per_box"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 

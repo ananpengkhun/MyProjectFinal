@@ -2,10 +2,15 @@ package com.example.ananpengkhun.myprojectfinal.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.ananpengkhun.myprojectfinal.R;
@@ -13,9 +18,9 @@ import com.example.ananpengkhun.myprojectfinal.dao.DataDao;
 import com.example.ananpengkhun.myprojectfinal.dao.PricePerBath;
 import com.example.ananpengkhun.myprojectfinal.dao.Product;
 import com.example.ananpengkhun.myprojectfinal.dao.Productsize;
-import com.example.ananpengkhun.myprojectfinal.dao.ReportDao;
 import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmAsyncTask;
@@ -26,6 +31,8 @@ import io.realm.RealmResults;
 public class StartAppActivity extends AppCompatActivity {
 
 
+    @BindView(R.id.progress) ProgressBar progress;
+    @BindView(R.id.activity_start_app) RelativeLayout activityStartApp;
     private Realm realm;
     //private Realm realmReport;
     private RealmAsyncTask realmAsyncTask;
@@ -40,7 +47,6 @@ public class StartAppActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_app);
         ButterKnife.bind(this);
-
 
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
                 .name("default.realm")

@@ -81,6 +81,7 @@ public class DetailOfListProductTypeActivity extends AppCompatActivity {
                     ProductDao productDao = new ProductDao();
                     productDao.setProdName(testProductTypes.get(index).getData().get(i).getNameItem());
                     productDao.setProdCode(testProductTypes.get(index).getData().get(i).getNameCode());
+                    productDao.setProductImg(testProductTypes.get(index).getData().get(i).getProductImg());
 //                    productDao.setProdName(dataDao.getProductType().get(index).getData().get(i).getNameItem());
 //                    productDao.setProdCode(dataDao.getProductType().get(index).getData().get(i).getNameCode());
                     productDaoList.add(productDao);

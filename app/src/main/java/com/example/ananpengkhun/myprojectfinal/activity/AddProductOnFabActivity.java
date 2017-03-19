@@ -12,9 +12,12 @@ import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -37,6 +40,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.toptoche.searchablespinnerlibrary.SearchableListDialog;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.io.File;
@@ -86,6 +90,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
 
     private Realm realm;
     private RealmResults<TestProductType> testProductTypes;
+
 
 
     @Override
@@ -293,40 +298,20 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                     !("".equals(edProdAlert.getText().toString())) &&
                     !("".equals(edProdPrice.getText().toString())) &&
                     !("".equals(edProdAmount.getText().toString())) &&
-                    !("".equals(edProdUnit.getText().toString()))
-
+                    !("".equals(edProdUnit.getText().toString())) &&
+                    pathFile != null
                     ) {
 
                 sp = getSharedPreferences(MyPreference, MODE_PRIVATE);
-                //int indexData;
+
                 max = 0;
                 Log.d("addproduct", "onClick: " + sp.getInt("indexProduct", 0));
-//                for (int i = 0; i < testProductTypes.size(); i++) {
-//                    if (testProductTypes.get(i).getData() != null) {
                 max = productList.get(0).getProdId();
                 for (int j = 0; j < productList.size(); j++) {
-                    //Log.d("addwhynull", "onClick: " + dataDao.getProductType().get(i).getData().get(j).getProductId());
                     if (productList.get(j).getProdId() > max) {
                         max = productList.get(j).getProdId();
                     }
                 }
-                //}
-//                }
-                //Log.d("addwhynull", "max: " + max);
-//                if (0 == sp.getInt("indexProduct", 0)) {
-//                    editor = sp.edit();
-//                    editor.putInt("indexProduct", dataDao.getProductType().size() + 1);
-//                    editor.apply();
-//
-//                } else {
-//                    editor = sp.edit();
-//                    int i = sp.getInt("indexProduct", 0);
-//                    editor.putInt("indexProduct", i + 1);
-//                    editor.apply();
-//                }
-//
-//                int index = sp.getInt("indexProduct", 0);
-
                 int indexData;
                 if (testProductTypes.get(spinnerProductType.getSelectedItemPosition()).getData() == null) {
                     indexData = 0;

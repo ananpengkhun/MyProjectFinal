@@ -40,6 +40,9 @@ public class EachItemSizeViewHolder extends RecyclerView.ViewHolder{
     //@BindView(R.id.ed_alert_prod) public AppCompatEditText edAlertProd;
     @BindView(R.id.tv_alert_prod) public TextView tvAlertProd;
     @BindView(R.id.tv_alert) public TextView tvAlert;
+    @BindView(R.id.tv_contrain_piece_per_box) public TextView tvContrainPiecePerBox;
+    @BindView(R.id.ll_among_per_wrap) public LinearLayout llAmongPerWrap;
+    @BindView(R.id.ll_contrain_piece_per_box) public LinearLayout llContrainPiecePerBox;
     @BindView(R.id.ed_alert) public AppCompatEditText edAlert;
     @BindView(R.id.imv_box_for_edit) public ImageView imvBoxForEdit;
 

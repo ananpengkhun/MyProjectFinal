@@ -1,5 +1,6 @@
 package com.example.ananpengkhun.myprojectfinal.adapter;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.ananpengkhun.myprojectfinal.R;
 import com.example.ananpengkhun.myprojectfinal.activity.DetailOfListProductTypeActivity;
 import com.example.ananpengkhun.myprojectfinal.adapter.viewholder.ProductTypeAssociateViewHolder;
@@ -43,6 +45,9 @@ public class ProductTypeAssociateAdapter extends RecyclerView.Adapter<RecyclerVi
             ProductTypeAssociateViewHolder productTypeAssociateViewHolder = (ProductTypeAssociateViewHolder) holder;
             productTypeAssociateViewHolder.tvNamePro.setText(productDaoList.get(position).getProdName());
             productTypeAssociateViewHolder.tvCodePro.setText(productDaoList.get(position).getProdCode());
+            if(!"".equals(productDaoList.get(position).getProductImg())){
+                Glide.with(detailOfListProductTypeActivity).load(productDaoList.get(position).getProductImg()).placeholder(ContextCompat.getDrawable(detailOfListProductTypeActivity, R.drawable.folder)).into(productTypeAssociateViewHolder.imvProduct);
+            }
         }
 
     }

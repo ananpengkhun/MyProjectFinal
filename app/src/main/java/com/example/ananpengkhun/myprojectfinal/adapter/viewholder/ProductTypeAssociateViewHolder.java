@@ -3,6 +3,7 @@ package com.example.ananpengkhun.myprojectfinal.adapter.viewholder;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ananpengkhun.myprojectfinal.R;
@@ -18,6 +19,7 @@ public class ProductTypeAssociateViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.tv_namePro) public TextView tvNamePro;
     @BindView(R.id.tv_codePro) public TextView tvCodePro;
     @BindView(R.id.cv_groupView) public CardView cvGroupView;
+    @BindView(R.id.imv_product) public ImageView imvProduct;
     public ProductTypeAssociateViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);

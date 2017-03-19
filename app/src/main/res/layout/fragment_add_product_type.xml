@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/button_click_selector"
-                android:text="ยินยัน"/>
+                android:text="ยืนยัน"/>
 
         </LinearLayout>
     </RelativeLayout>

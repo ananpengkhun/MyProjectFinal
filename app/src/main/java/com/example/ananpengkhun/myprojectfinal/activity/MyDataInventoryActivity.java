@@ -21,6 +21,8 @@ import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -112,15 +114,27 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private Realm realm;
     private RealmResults<TestProductType> testProductTypes;
 
+    // product type
+    private String code = "";
+    private String name = "";
+    private String des = "";
+
+    // provider
+    private String ProvName = "";
+    private String ProvAddress = "";
+    private String ProvPhone = "";
+    private String ProvEmail = "";
+
+
 
     private RealmChangeListener<Realm> listener = new RealmChangeListener<Realm>() {
         @Override
         public void onChange(Realm element) {
 
             //inventoryProductTypeAdapter.notifyDataSetChanged();
-            if(changeViewpager == 0){ // product type
+            if (changeViewpager == 0) { // product type
                 inventoryProductTypeAdapter.notifyDataSetChanged();
-            }else if(changeViewpager == 1){ // product
+            } else if (changeViewpager == 1) { // product
                 productList.clear();
 
                 for (int i = 0; i < testProductTypes.size(); i++) {
@@ -189,7 +203,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                 Collections.sort(productList, new Comparator<ProductDao>() {
                     @Override
                     public int compare(ProductDao productDao, ProductDao t1) {
-                        return Integer.compare(t1.getProdId(),productDao.getProdId());
+                        return Integer.compare(t1.getProdId(), productDao.getProdId());
                     }
                 });
                 productAdapter.notifyDataSetChanged();
@@ -206,7 +220,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 //            productAdapter.notifyDataSetChanged();
         }
     };
-
 
 
     @Override
@@ -296,7 +309,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                             productEachSize.setWeightPerWrap(list.getDataItem().get(z).getWeightPerWrap());
                             productEachSize.setProductSizeAlert(list.getDataItem().get(z).getProductSizeAlert());
                             productEachSize.setIndexInProduct(list.getDataItem().get(z).getIndexInProduct());
-                            Log.d(TAG, "initsssssszxzxzxzxzx: "+list.getDataItem().get(z).getIndexInProduct());
+                            Log.d(TAG, "initsssssszxzxzxzxzx: " + list.getDataItem().get(z).getIndexInProduct());
 
                             ProductEachSize.PriceUBahtBean priceUBahtBean = new ProductEachSize.PriceUBahtBean();
                             priceUBahtBean.setClassEightFive(list.getDataItem().get(z).getPricePerBath().getClassEightFive());
@@ -337,9 +350,9 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     providerDao.setProvPhone(snapshot.getValue(ProviderDao.class).getProvPhone());
                     providerDao.setProvEmail(snapshot.getValue(ProviderDao.class).getProvEmail());
                     providerDao.setProvAddress(snapshot.getValue(ProviderDao.class).getProvAddress());
-                    if(!"".equals(snapshot.getValue(ProviderDao.class).getProvImg())) {
+                    if (!"".equals(snapshot.getValue(ProviderDao.class).getProvImg())) {
                         providerDao.setProvImg(snapshot.getValue(ProviderDao.class).getProvImg());
-                    }else{
+                    } else {
                         providerDao.setProvImg("");
                     }
                     providerDaoList.add(providerDao);
@@ -581,12 +594,11 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     Collections.sort(productList, new Comparator<ProductDao>() {
                         @Override
                         public int compare(ProductDao productDao, ProductDao t1) {
-                            return Integer.compare(t1.getProdId(),productDao.getProdId());
+                            return Integer.compare(t1.getProdId(), productDao.getProdId());
                         }
 
 
                     });
-
 
 
                     productAdapter.setProductList(productList, productTypeList, providerDaoList);
@@ -616,9 +628,9 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                             providerDao.setProvPhone(dataSnapshot.getValue(ProviderDao.class).getProvPhone());
                             providerDao.setProvEmail(dataSnapshot.getValue(ProviderDao.class).getProvEmail());
                             providerDao.setProvAddress(dataSnapshot.getValue(ProviderDao.class).getProvAddress());
-                            if(!"".equals(dataSnapshot.getValue(ProviderDao.class).getProvImg())) {
+                            if (!"".equals(dataSnapshot.getValue(ProviderDao.class).getProvImg())) {
                                 providerDao.setProvImg(dataSnapshot.getValue(ProviderDao.class).getProvImg());
-                            }else{
+                            } else {
                                 providerDao.setProvImg("");
                             }
 
@@ -662,7 +674,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             }
         });
 
-        final String[] colors = getResources().getStringArray(R.array.default_preview);
+        final String[] colors = getResources().getStringArray(R.array.vertical_ntb);
         final ArrayList<NavigationTabBar.Model> models = new ArrayList<>();
         models.add(
                 new NavigationTabBar.Model.Builder(
@@ -821,15 +833,102 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
     private void customDialog(int target) {
         if (0 == target) {
+            code = "";
+            name = "";
+            des = "";
+
             final Dialog dialog = new Dialog(MyDataInventoryActivity.this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.fragment_add_product_type);
             dialog.setCancelable(true);
-
             final AppCompatEditText edProdTypeCode = (AppCompatEditText) dialog.findViewById(R.id.ed_prod_type_code);
             final AppCompatEditText edProdTypeName = (AppCompatEditText) dialog.findViewById(R.id.ed_prod_type_name);
             final AppCompatEditText edProdTypeDes = (AppCompatEditText) dialog.findViewById(R.id.ed_prod_type_des);
-            Button btnAddProdTypeConfirm = (Button) dialog.findViewById(R.id.btn_add_prod_type_confirm);
+            final Button btnAddProdTypeConfirm = (Button) dialog.findViewById(R.id.btn_add_prod_type_confirm);
+
+            btnAddProdTypeConfirm.setEnabled(false);
+            btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
+
+            edProdTypeCode.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    code = edProdTypeCode.getText().toString();
+                    //if (charSequence.length() > 0) {
+                    if (!"".equals(name) && !"".equals(des) && !"".equals(code)) {
+                        btnAddProdTypeConfirm.setEnabled(true);
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.colorPrimary));
+                    } else {
+                        btnAddProdTypeConfirm.setEnabled(false);
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
+
+                    }
+
+                    //}
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            edProdTypeName.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    name = edProdTypeName.getText().toString();
+                    //if (charSequence.length() > 0) {
+                    if (!"".equals(name) && !"".equals(des) && !"".equals(code)) {
+                        btnAddProdTypeConfirm.setEnabled(true);
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.colorPrimary));
+                    } else {
+                        btnAddProdTypeConfirm.setEnabled(false);
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
+                    }
+                    //}
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            edProdTypeDes.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    des = edProdTypeDes.getText().toString();
+                    //if (charSequence.length() > 0) {
+                    if (!"".equals(name) && !"".equals(des) && !"".equals(code)) {
+                        btnAddProdTypeConfirm.setEnabled(true);
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.colorPrimary));
+                    } else {
+                        btnAddProdTypeConfirm.setEnabled(false);
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
+                    }
+                    //   }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
 
             btnAddProdTypeConfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -891,7 +990,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                                                       }, new Realm.Transaction.OnError() {
                                                           @Override
                                                           public void onError(Throwable error) {
-                                                              Log.d(TAG, "onError:"+error.getMessage());
+                                                              Log.d(TAG, "onError:" + error.getMessage());
                                                           }
                                                       }
 
@@ -909,10 +1008,15 @@ public class MyDataInventoryActivity extends AppCompatActivity {
         } else if (1 == target) {
             Intent intent = new Intent(MyDataInventoryActivity.this, AddProductOnFabActivity.class);
             //intent.putExtra("data", dataDao);
-            intent.putParcelableArrayListExtra("data",(ArrayList<ProductDao>)productList);
+            intent.putParcelableArrayListExtra("data", (ArrayList<ProductDao>) productList);
             //intent.putParcelableArrayListExtra("dataType", (ArrayList<ProductTypeDao>) productTypeList);
             startActivity(intent);
         } else if (2 == target) {
+            ProvName = "";
+            ProvAddress = "";
+            ProvPhone = "";
+            ProvEmail = "";
+
             final Dialog dialog = new Dialog(MyDataInventoryActivity.this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.fragment_add_provider);
@@ -922,7 +1026,82 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             final AppCompatEditText edProvAddress = (AppCompatEditText) dialog.findViewById(R.id.ed_prov_address);
             final AppCompatEditText edProvPhone = (AppCompatEditText) dialog.findViewById(R.id.ed_prov_phone);
             final AppCompatEditText edProvEmail = (AppCompatEditText) dialog.findViewById(R.id.ed_prov_email);
-            Button btnAddProvConfirm = (Button) dialog.findViewById(R.id.btn_add_prov_confirm);
+            final Button btnAddProvConfirm = (Button) dialog.findViewById(R.id.btn_add_prov_confirm);
+
+            btnAddProvConfirm.setEnabled(false);
+            btnAddProvConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
+
+            edProvName.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    ProvName = edProvName.getText().toString();
+                    switchButton(btnAddProvConfirm);
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            edProvAddress.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    ProvAddress = edProvAddress.getText().toString();
+                    switchButton(btnAddProvConfirm);
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            edProvPhone.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    ProvPhone = edProvPhone.getText().toString();
+                    switchButton(btnAddProvConfirm);
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            edProvEmail.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    ProvEmail = edProvEmail.getText().toString();
+                    switchButton(btnAddProvConfirm);
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
 
             btnAddProvConfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -982,6 +1161,16 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             });
 
             dialog.show();
+        }
+    }
+
+    private void switchButton(Button btnAddProvConfirm) {
+        if(!"".equals(ProvName) && !"".equals(ProvAddress) && !"".equals(ProvPhone) && !"".equals(ProvEmail)){
+            btnAddProvConfirm.setEnabled(true);
+            btnAddProvConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.colorPrimary));
+        }else{
+            btnAddProvConfirm.setEnabled(false);
+            btnAddProvConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
         }
     }
 

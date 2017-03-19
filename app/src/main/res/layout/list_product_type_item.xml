@@ -27,7 +27,7 @@
             <TextView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="#a721a5"
+                android:background="#EDD5D6"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"/>
 

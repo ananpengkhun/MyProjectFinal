@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF4081</color>
-    <color name="colorPrimaryDark">#ea2668</color>
+    <color name="colorPrimary">#EBA6E5</color>
+    <color name="colorPrimaryDark">#e981e0</color>
     <color name="colorAccent">#FF4081</color>
 
 
     <!--custom -->
-    <color name="slideMenu">#f9bb72</color>
+    <color name="slideMenu">#A6EBE3</color>
     <color name="gray">#86806d73</color>
     <color name="white">#ffffff</color>
     <color name="transparent">#00ffffff</color>

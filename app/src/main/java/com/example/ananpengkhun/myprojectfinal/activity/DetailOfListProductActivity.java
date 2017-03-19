@@ -285,8 +285,12 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                     Log.d("leave", "onClick top total: "+total);
 
                     RealmResults<ReportDao> reportDaos = realmReport.where(ReportDao.class).findAll();
+                    DateFormat df = new SimpleDateFormat("d/MMM/yyyy");
+                    final String now = df.format(new Date());
+                    //final String now = "10/มี.ค./2017";
                     for(int i=0;i<reportDaos.size();i++){
-                        if(prodName.equals(reportDaos.get(i).getProdNameRep())){
+                        if(prodName.equals(reportDaos.get(i).getProdNameRep())
+                                && now.equals(reportDaos.get(i).getDate())){
                             existReport = 1;
                         }
                     }
@@ -294,8 +298,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                         realmReport.executeTransactionAsync(new Realm.Transaction() {
                             @Override
                             public void execute(Realm realm) {
-                                DateFormat df = new SimpleDateFormat("d/MMM/yyyy");
-                                String now = df.format(new Date());
+
                                 ReportDao reportDao = realm.createObject(ReportDao.class);
                                 reportDao.setProdNameRep(prodName);
                                 int leave = total - prodAmount;
@@ -319,16 +322,21 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                             }
                         });
                     }else {
-                        ReportDao reportDao = realmReport.where(ReportDao.class).equalTo("prodNameRep",prodName).findFirst();
-                        realmReport.beginTransaction();
-                        reportDao.setProdNameRep(prodName);
-                        int leave = total - prodAmount;
-                        Log.d("leave", "execute total222: "+total);
-                        Log.d("leave", "execute prodamount22: "+prodAmount);
-                        Log.d("leave", "execute leave: "+leave);
-                        Log.d("leave", "execute getpro: "+reportDao.getProdQuantityRep());
-                        reportDao.setProdQuantityRep(reportDao.getProdQuantityRep() + leave);
-                        realmReport.commitTransaction();
+                        RealmResults<ReportDao> reportDao = realmReport.where(ReportDao.class).equalTo("prodNameRep",prodName).findAll();
+                        for(int i=0;i<reportDao.size();i++) {
+                            Log.d("leave", "onClick date: "+now);
+                            if(now.equals(reportDao.get(i).getDate())){
+                                realmReport.beginTransaction();
+                                reportDao.get(i).setProdNameRep(prodName);
+                                int leave = total - prodAmount;
+                                Log.d("leave", "execute total222: " + total);
+                                Log.d("leave", "execute prodamount22: " + prodAmount);
+                                Log.d("leave", "execute leave: " + leave);
+                                Log.d("leave", "execute getpro: " + reportDao.get(i).getProdQuantityRep());
+                                reportDao.get(i).setProdQuantityRep(reportDao.get(i).getProdQuantityRep() + leave);
+                                realmReport.commitTransaction();
+                            }
+                        }
                     }
 
 
@@ -498,7 +506,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
         tvCodeProd.setText(prodCode);
         tvPricePro.setText(prodPrice + "");
         if (spinProvider == -2) {
-            tvProviderProd.setText("");
+            tvProviderProd.setText(providerDaoList.get(index).getProvName());
         } else {
             tvProviderProd.setText(getListProdType.get(spinProvider));
         }
