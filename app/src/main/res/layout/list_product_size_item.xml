@@ -405,6 +405,7 @@
                         android:id="@+id/ed_alert"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:maxLength="4"
                         android:digits="0123456789"
                         android:inputType="numberDecimal"
                         android:visibility="gone"/>
