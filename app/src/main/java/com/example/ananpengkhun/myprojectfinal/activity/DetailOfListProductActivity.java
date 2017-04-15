@@ -13,6 +13,8 @@ import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -625,17 +627,48 @@ public class DetailOfListProductActivity extends AppCompatActivity {
 
             TextView textView = (TextView) dialog.findViewById(R.id.tv_dialog_quatity);
             final EditText editText = (EditText) dialog.findViewById(R.id.ed_dialog_quatity);
-            Button button = (Button) dialog.findViewById(R.id.btn_dialog_confirm);
+            final Button button = (Button) dialog.findViewById(R.id.btn_dialog_confirm);
+
+            button.setEnabled(false);
+            button.setBackgroundColor(ContextCompat.getColor(DetailOfListProductActivity.this,R.color.gray));
 
             textView.setText("จำนวนที่ต้องการลด");
+
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    Log.d("ontextchange", "onTextChanged: "+charSequence);
+                    if(!"".equals(charSequence.toString())) {
+                        if (productDao.getProductQuantity() > Integer.parseInt(charSequence.toString())) {
+                            button.setEnabled(true);
+                            button.setBackgroundColor(ContextCompat.getColor(DetailOfListProductActivity.this, R.color.colorPrimary));
+                        } else {
+                            button.setEnabled(false);
+                            button.setBackgroundColor(ContextCompat.getColor(DetailOfListProductActivity.this, R.color.gray));
+                        }
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
 
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (!"".equals(editText.getText().toString())) {
-                        int sum = productDao.getProductQuantity() - Integer.parseInt(editText.getText().toString());
-                        productDao.setProductQuantity(sum);
-                        prodAmount = sum;
+                        if(productDao.getProductQuantity() > Integer.parseInt(editText.getText().toString())) {
+                            int sum = productDao.getProductQuantity() - Integer.parseInt(editText.getText().toString());
+                            productDao.setProductQuantity(sum);
+                            prodAmount = sum;
+                        }
                     } else {
                         prodAmount = productDao.getProductQuantity();
                         Log.d("amount", "onClick: " + prodAmount);

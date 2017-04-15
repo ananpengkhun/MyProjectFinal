@@ -3,8 +3,11 @@ package com.example.ananpengkhun.myprojectfinal.adapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -270,9 +273,38 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                                 TextView textView = (TextView) dialog.findViewById(R.id.tv_dialog_quatity);
                                 final EditText editText = (EditText) dialog.findViewById(R.id.ed_dialog_quatity);
-                                Button button = (Button) dialog.findViewById(R.id.btn_dialog_confirm);
+                                final Button button = (Button) dialog.findViewById(R.id.btn_dialog_confirm);
+
+                                button.setEnabled(false);
+                                button.setBackgroundColor(ContextCompat.getColor(mContext,R.color.gray));
 
                                 textView.setText("จำนวนที่ต้องการลด");
+
+                                editText.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                                        Log.d("ontextchange", "onTextChanged: "+charSequence);
+                                        if(!"".equals(charSequence.toString())) {
+                                            if (Integer.parseInt(productDao.get(position).getTotalItemBigUnit()) > Integer.parseInt(charSequence.toString())) {
+                                                button.setEnabled(true);
+                                                button.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+                                            } else {
+                                                button.setEnabled(false);
+                                                button.setBackgroundColor(ContextCompat.getColor(mContext, R.color.gray));
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable editable) {
+
+                                    }
+                                });
 
                                 button.setOnClickListener(new View.OnClickListener() {
                                     @Override
