@@ -12,6 +12,8 @@ import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -31,6 +33,7 @@ import com.example.ananpengkhun.myprojectfinal.dao.ProductDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProductEachSize;
 import com.example.ananpengkhun.myprojectfinal.dao.Productsize;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
+import com.example.ananpengkhun.myprojectfinal.dao.ReportDao;
 import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,12 +46,16 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 public class SearchActivity extends AppCompatActivity {
@@ -65,7 +72,7 @@ public class SearchActivity extends AppCompatActivity {
     @BindView(R.id.ll_prod_price) LinearLayout llProdPrice;
     @BindView(R.id.tv_provider_prod) TextView tvProviderProd;
     @BindView(R.id.spinner_provider) SearchableSpinner spinnerProvider;
-    @BindView(R.id.ed_prod_amount) EditText edProdAmount;
+    @BindView(R.id.ed_prod_amount) LinearLayout edProdAmount;
     @BindView(R.id.tv_prod_amount) TextView tvProdAmount;
     @BindView(R.id.ll_amount) LinearLayout llAmount;
     @BindView(R.id.ed_prod_alert) EditText edProdAlert;
@@ -73,6 +80,9 @@ public class SearchActivity extends AppCompatActivity {
     @BindView(R.id.ll_alert) LinearLayout llAlert;
     @BindView(R.id.imv_box_for_edit) ImageView imvBoxForEdit;
     @BindView(R.id.rc_size_item) RecyclerView rcSizeItem;
+
+    @BindView(R.id.imv_minus) ImageView imvMinus;
+    @BindView(R.id.imv_plus) ImageView imvPlus;
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int TAKE_PHOTO_REQUEST = 2;
@@ -102,11 +112,20 @@ public class SearchActivity extends AppCompatActivity {
     private RealmResults<TestProductType> testProductTypes;
     private int productId;
 
+    private Realm realmReport;
+    private int total;
+    private int existReport = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
+        RealmConfiguration realmConfigurationReport = new RealmConfiguration.Builder()
+                .name("report.realm")
+                .build();
+        realmReport = Realm.getInstance(realmConfigurationReport);
+
         realm = Realm.getDefaultInstance();
         testProductTypes = realm.where(TestProductType.class).findAll();
         providerDaoload = new ArrayList<>();
@@ -198,6 +217,8 @@ public class SearchActivity extends AppCompatActivity {
                     productId = productList.get(i).getProdId();
                     tvNamePro.setText(productList.get(i).getProdName());
                     tvCodeProd.setText(productList.get(i).getProdCode());
+                    total = productList.get(i).getProductQuantity();
+
                     if (productList.get(i).getProductQuantity() == 0) {
                         llAmount.setVisibility(View.GONE);
                     } else {
@@ -328,7 +349,8 @@ public class SearchActivity extends AppCompatActivity {
                 edProdAlert.setVisibility(View.GONE);
 
 
-                prodAmount = Integer.parseInt(edProdAmount.getText().toString());
+                //prodAmount = Integer.parseInt(edProdAmount.getText().toString());
+                prodAmount = productList.get(indexSearch).getProductQuantity();
                 prodName = edNameProd.getText().toString();
                 prodCode = edCodeProd.getText().toString();
                 prodPrice = Integer.parseInt(edPricePro.getText().toString());
@@ -338,6 +360,75 @@ public class SearchActivity extends AppCompatActivity {
                 setTextView(prodAmount, prodName, prodCode, prodPrice, (spinProvider == -1) ? -2 :spinProvider, prodAlert);
 
                 // save data
+                //report
+
+                if (prodAmount < total) {
+                    Log.d("leave", "onClick top prod: "+prodAmount);
+                    Log.d("leave", "onClick top total: "+total);
+
+                    RealmResults<ReportDao> reportDaos = realmReport.where(ReportDao.class).findAll();
+                    DateFormat df = new SimpleDateFormat("d/MMM/yyyy");
+                    final String now = df.format(new Date());
+                    //final String now = "10/มี.ค./2017";
+                    for(int i=0;i<reportDaos.size();i++){
+                        if(prodName.equals(reportDaos.get(i).getProdNameRep())
+                                && now.equals(reportDaos.get(i).getDate())){
+                            existReport = 1;
+                        }
+                    }
+                    if(existReport != 1) {
+                        realmReport.executeTransactionAsync(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+
+                                ReportDao reportDao = realm.createObject(ReportDao.class);
+                                reportDao.setProdNameRep(prodName);
+                                int leave = total - prodAmount;
+                                Log.d("leave", "execute total: "+total);
+                                Log.d("leave", "execute prodamount: "+prodAmount);
+                                Log.d("leave", "execute: "+leave);
+                                reportDao.setProductIdRep(productId);
+                                reportDao.setProductSizeIdRep(0);
+                                reportDao.setProdQuantityRep(leave);
+                                reportDao.setDate(now);
+                            }
+                        }, new Realm.Transaction.OnSuccess() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d("report", "onSuccess: ");
+                            }
+                        }, new Realm.Transaction.OnError() {
+                            @Override
+                            public void onError(Throwable error) {
+                                Log.d("report", "onError: ");
+                            }
+                        });
+                    }else {
+                        RealmResults<ReportDao> reportDao = realmReport.where(ReportDao.class).equalTo("prodNameRep",prodName).findAll();
+                        for(int i=0;i<reportDao.size();i++) {
+                            Log.d("leave", "onClick date: "+now);
+                            if(now.equals(reportDao.get(i).getDate())){
+                                realmReport.beginTransaction();
+                                reportDao.get(i).setProdNameRep(prodName);
+                                int leave = total - prodAmount;
+                                Log.d("leave", "execute total222: " + total);
+                                Log.d("leave", "execute prodamount22: " + prodAmount);
+                                Log.d("leave", "execute leave: " + leave);
+                                Log.d("leave", "execute getpro: " + reportDao.get(i).getProdQuantityRep());
+                                reportDao.get(i).setProdQuantityRep(reportDao.get(i).getProdQuantityRep() + leave);
+                                realmReport.commitTransaction();
+                            }
+                        }
+                    }
+
+
+                }
+                ReportDao reportDao = realmReport.where(ReportDao.class).equalTo("productIdRep", productId).findFirst();
+                if(reportDao != null) {
+                    realmReport.beginTransaction();
+                    reportDao.setProdNameRep(prodName);
+                    realmReport.commitTransaction();
+                }
                 //realm edit
                 Product product = realm.where(Product.class).equalTo("productId",productId).findFirst();
                 realm.beginTransaction();
@@ -388,7 +479,7 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 });
 
-
+                total = prodAmount;
             } else {
                 // edit data
                 imvBoxForEdit.setSelected(true);
@@ -410,6 +501,9 @@ public class SearchActivity extends AppCompatActivity {
                 edPricePro.setVisibility(View.VISIBLE);
                 spinnerProvider.setVisibility(View.VISIBLE);
                 edProdAlert.setVisibility(View.VISIBLE);
+
+                imvMinus.setOnClickListener(imvMinusClicklistener);
+                imvPlus.setOnClickListener(imvPlusClicklistener);
 
                 if (swap) {
                     swap = false;
@@ -439,7 +533,7 @@ public class SearchActivity extends AppCompatActivity {
         tvCodeProd.setText(prodCode);
         tvPricePro.setText(prodPrice+"");
         if(spinProvider == -2){
-            tvProviderProd.setText("");
+            tvProviderProd.setText(providerDaoload.get(indexSearch).getProvName());
         }else{
             tvProviderProd.setText(getListProdType.get(spinProvider));
         }
@@ -448,7 +542,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void setTextEdit(int productQuantity, String prodName, String prodCode, int productPrice, String provName, int alert) {
         Log.d("detailpro", "setTextEdit: "+provName);
-        edProdAmount.setText(productQuantity + "");
+        //edProdAmount.setText(productQuantity + "");
         edNameProd.setText(prodName);
         edCodeProd.setText(prodCode);
         edPricePro.setText(productPrice+"");
@@ -541,6 +635,102 @@ public class SearchActivity extends AppCompatActivity {
             }
         }
     }
+
+    private View.OnClickListener imvMinusClicklistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            final Dialog dialog = new Dialog(SearchActivity.this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.minus_product_quatity);
+            dialog.setCancelable(true);
+
+            TextView textView = (TextView) dialog.findViewById(R.id.tv_dialog_quatity);
+            final EditText editText = (EditText) dialog.findViewById(R.id.ed_dialog_quatity);
+            final Button button = (Button) dialog.findViewById(R.id.btn_dialog_confirm);
+
+            button.setEnabled(false);
+            button.setBackgroundColor(ContextCompat.getColor(SearchActivity.this,R.color.gray));
+
+            textView.setText("จำนวนที่ต้องการลด");
+
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    Log.d("ontextchange", "onTextChanged: "+charSequence);
+                    if(!"".equals(charSequence.toString())) {
+                        if (productList.get(indexSearch).getProductQuantity() > Integer.parseInt(charSequence.toString())) {
+                            button.setEnabled(true);
+                            button.setBackgroundColor(ContextCompat.getColor(SearchActivity.this, R.color.colorPrimary));
+                        } else {
+                            button.setEnabled(false);
+                            button.setBackgroundColor(ContextCompat.getColor(SearchActivity.this, R.color.gray));
+                        }
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!"".equals(editText.getText().toString())) {
+                        if(productList.get(indexSearch).getProductQuantity() > Integer.parseInt(editText.getText().toString())) {
+                            int sum = productList.get(indexSearch).getProductQuantity() - Integer.parseInt(editText.getText().toString());
+                            productList.get(indexSearch).setProductQuantity(sum);
+                            prodAmount = sum;
+                        }
+                    } else {
+                        prodAmount = productList.get(indexSearch).getProductQuantity();
+                        Log.d("amount", "onClick: " + prodAmount);
+                    }
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    };
+
+    private View.OnClickListener imvPlusClicklistener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            final Dialog dialog = new Dialog(SearchActivity.this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.minus_product_quatity);
+            dialog.setCancelable(true);
+
+            TextView textView = (TextView) dialog.findViewById(R.id.tv_dialog_quatity);
+            final EditText editText = (EditText) dialog.findViewById(R.id.ed_dialog_quatity);
+            Button button = (Button) dialog.findViewById(R.id.btn_dialog_confirm);
+
+            textView.setText("จำนวนที่ต้องการเพิ่ม");
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!"".equals(editText.getText().toString())) {
+                        int sum = productList.get(indexSearch).getProductQuantity() + Integer.parseInt(editText.getText().toString());
+                        productList.get(indexSearch).setProductQuantity(sum);
+                        prodAmount = sum;
+                    } else {
+                        prodAmount = productList.get(indexSearch).getProductQuantity();
+                        Log.d("amount", "onClick: " + prodAmount);
+                    }
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    };
+
 
     @Override
     protected void onDestroy() {
