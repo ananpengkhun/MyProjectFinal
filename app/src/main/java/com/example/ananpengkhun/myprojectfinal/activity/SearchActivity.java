@@ -255,6 +255,7 @@ public class SearchActivity extends AppCompatActivity {
                     rcSizeItem.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
                     eachItemSizeAdapter = new EachItemSizeAdapter(SearchActivity.this, productList.get(i).getProductEachSizes(),productList.get(i));
                     eachItemSizeAdapter.setRealm(realm);
+                    eachItemSizeAdapter.setRealmReport(realmReport);
                     rcSizeItem.setAdapter(eachItemSizeAdapter);
                 }
             }
@@ -533,7 +534,7 @@ public class SearchActivity extends AppCompatActivity {
         tvCodeProd.setText(prodCode);
         tvPricePro.setText(prodPrice+"");
         if(spinProvider == -2){
-            tvProviderProd.setText(providerDaoload.get(indexSearch).getProvName());
+            tvProviderProd.setText(providerDaoload.get(indexProvider).getProvName());
         }else{
             tvProviderProd.setText(getListProdType.get(spinProvider));
         }
