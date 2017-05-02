@@ -857,7 +857,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    code = edProdTypeCode.getText().toString();
+                    code = edProdTypeCode.getText().toString().trim();
                     //if (charSequence.length() > 0) {
                     if (!"".equals(name) && !"".equals(des) && !"".equals(code)) {
                         btnAddProdTypeConfirm.setEnabled(true);
@@ -885,7 +885,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    name = edProdTypeName.getText().toString();
+                    name = edProdTypeName.getText().toString().trim();
                     //if (charSequence.length() > 0) {
                     if (!"".equals(name) && !"".equals(des) && !"".equals(code)) {
                         btnAddProdTypeConfirm.setEnabled(true);
@@ -911,7 +911,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    des = edProdTypeDes.getText().toString();
+                    des = edProdTypeDes.getText().toString().trim();
                     //if (charSequence.length() > 0) {
                     if (!"".equals(name) && !"".equals(des) && !"".equals(code)) {
                         btnAddProdTypeConfirm.setEnabled(true);
@@ -1039,7 +1039,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    ProvName = edProvName.getText().toString();
+                    ProvName = edProvName.getText().toString().trim();
                     switchButton(btnAddProvConfirm);
                 }
 
@@ -1057,7 +1057,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    ProvAddress = edProvAddress.getText().toString();
+                    ProvAddress = edProvAddress.getText().toString().trim();
                     switchButton(btnAddProvConfirm);
                 }
 
@@ -1075,7 +1075,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    ProvPhone = edProvPhone.getText().toString();
+                    ProvPhone = edProvPhone.getText().toString().trim();
                     switchButton(btnAddProvConfirm);
                 }
 
@@ -1093,7 +1093,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    ProvEmail = edProvEmail.getText().toString();
+                    ProvEmail = edProvEmail.getText().toString().trim();
                     switchButton(btnAddProvConfirm);
                 }
 

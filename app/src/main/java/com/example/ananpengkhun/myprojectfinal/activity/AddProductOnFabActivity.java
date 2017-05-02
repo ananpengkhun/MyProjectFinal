@@ -293,12 +293,12 @@ public class AddProductOnFabActivity extends AppCompatActivity {
             Log.d("spinner", "onClick spinnerProvider: " + spinnerProvider.getSelectedItemPosition());
             if (spinnerProductType.getSelectedItemPosition() != -1 &&
                     spinnerProvider.getSelectedItemPosition() != -1 &&
-                    !("".equals(edProdCode.getText().toString())) &&
-                    !("".equals(edProdName.getText().toString())) &&
+                    !("".equals(edProdCode.getText().toString().trim())) &&
+                    !("".equals(edProdName.getText().toString().trim())) &&
                     !("".equals(edProdAlert.getText().toString())) &&
                     !("".equals(edProdPrice.getText().toString())) &&
                     !("".equals(edProdAmount.getText().toString())) &&
-                    !("".equals(edProdUnit.getText().toString())) &&
+                    !("".equals(edProdUnit.getText().toString().trim())) &&
                     pathFile != null
                     ) {
 
