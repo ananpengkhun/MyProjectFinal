@@ -139,7 +139,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void init() {
         Log.d("search", "init: " + SelectedData);
-        Log.d("search", "init: "+testProductTypes.size());
+        Log.d("search", "init: " + testProductTypes.size());
         for (int i = 0; i < testProductTypes.size(); i++) {
             if (testProductTypes.get(i).getData() != null) {
                 // product list dummy
@@ -211,7 +211,7 @@ public class SearchActivity extends AppCompatActivity {
             for (int i = 0; i < productList.size(); i++) {
 
                 if (SelectedData.equals(productList.get(i).getProdName())) {
-                    Log.d("search", "init++++++++: "+productList.get(i).getProdName());
+                    Log.d("search", "init++++++++: " + productList.get(i).getProdName());
                     //show data after selected from search.
                     indexSearch = i;
                     productId = productList.get(i).getProdId();
@@ -226,7 +226,7 @@ public class SearchActivity extends AppCompatActivity {
                         tvProdAmount.setText(productList.get(i).getProductQuantity() + "");
                     }
 
-                    if (productList.get(i).getProductPrice() == 0) {
+                    if (productList.get(i).getProductPrice() == 0 && productList.get(i).getProductEachSizes().size() != 0) {
                         llProdPrice.setVisibility(View.GONE);
                     } else {
                         llProdPrice.setVisibility(View.VISIBLE);
@@ -239,7 +239,7 @@ public class SearchActivity extends AppCompatActivity {
                         }
                     }
 
-                    if (productList.get(i).getProductAlert() == 0) {
+                    if (productList.get(i).getProductAlert() == 0 && productList.get(i).getProductEachSizes().size() != 0) {
                         llAlert.setVisibility(View.GONE);
                     } else {
                         llAlert.setVisibility(View.VISIBLE);
@@ -247,13 +247,13 @@ public class SearchActivity extends AppCompatActivity {
                     }
 
                     if (!"".equals(productList.get(i).getProductImg())) {
-                        Log.d("image", "init: "+productList.get(i).getProductImg());
+                        Log.d("image", "init: " + productList.get(i).getProductImg());
                         Glide.with(SearchActivity.this).load(productList.get(i).getProductImg()).placeholder(ContextCompat.getDrawable(SearchActivity.this, R.drawable.folder)).into(imgProduct);
                     }
 
                     rcSizeItem.setHasFixedSize(true);
                     rcSizeItem.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
-                    eachItemSizeAdapter = new EachItemSizeAdapter(SearchActivity.this, productList.get(i).getProductEachSizes(),productList.get(i));
+                    eachItemSizeAdapter = new EachItemSizeAdapter(SearchActivity.this, productList.get(i).getProductEachSizes(), productList.get(i));
                     eachItemSizeAdapter.setRealm(realm);
                     eachItemSizeAdapter.setRealmReport(realmReport);
                     rcSizeItem.setAdapter(eachItemSizeAdapter);
@@ -318,8 +318,6 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
-
-
     private View.OnClickListener imvClicklistener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -329,16 +327,16 @@ public class SearchActivity extends AppCompatActivity {
                 //textView Visible
                 tvNamePro.setVisibility(View.VISIBLE);
                 tvCodeProd.setVisibility(View.VISIBLE);
-                if (productList.get(indexSearch).getProductPrice() != 0) {
-                    tvPricePro.setVisibility(View.VISIBLE);
-                }
-                if (productList.get(indexSearch).getProductQuantity() != 0) {
-                    tvProdAmount.setVisibility(View.VISIBLE);
-                }
+                //if (productList.get(indexSearch).getProductPrice() != 0) {
+                tvPricePro.setVisibility(View.VISIBLE);
+                //}
+//                if (productList.get(indexSearch).getProductQuantity() != 0) {
+                tvProdAmount.setVisibility(View.VISIBLE);
+                //}
                 tvProviderProd.setVisibility(View.VISIBLE);
-                if (productList.get(indexSearch).getProductAlert() != 0) {
-                    tvProdAlert.setVisibility(View.VISIBLE);
-                }
+                //if (productList.get(indexSearch).getProductAlert() != 0) {
+                tvProdAlert.setVisibility(View.VISIBLE);
+                //}
 
 
                 //EditText Gone
@@ -354,30 +352,37 @@ public class SearchActivity extends AppCompatActivity {
                 prodAmount = productList.get(indexSearch).getProductQuantity();
                 prodName = edNameProd.getText().toString();
                 prodCode = edCodeProd.getText().toString();
-                prodPrice = Integer.parseInt(edPricePro.getText().toString());
+                if ("".equals(edPricePro.getText().toString())) {
+                    prodPrice = 0;
+                } else {
+                    prodPrice = Integer.parseInt(edPricePro.getText().toString());
+                }
                 spinProvider = spinnerProvider.getSelectedItemPosition();
-                prodAlert = Integer.parseInt(edProdAlert.getText().toString());
-
-                setTextView(prodAmount, prodName, prodCode, prodPrice, (spinProvider == -1) ? -2 :spinProvider, prodAlert);
+                if ("".equals(edProdAlert.getText().toString())) {
+                    prodAlert = 0;
+                } else {
+                    prodAlert = Integer.parseInt(edProdAlert.getText().toString());
+                }
+                setTextView(prodAmount, prodName, prodCode, prodPrice, (spinProvider == -1) ? -2 : spinProvider, prodAlert);
 
                 // save data
                 //report
 
                 if (prodAmount < total) {
-                    Log.d("leave", "onClick top prod: "+prodAmount);
-                    Log.d("leave", "onClick top total: "+total);
+                    Log.d("leave", "onClick top prod: " + prodAmount);
+                    Log.d("leave", "onClick top total: " + total);
 
                     RealmResults<ReportDao> reportDaos = realmReport.where(ReportDao.class).findAll();
                     DateFormat df = new SimpleDateFormat("d/MMM/yyyy");
                     final String now = df.format(new Date());
                     //final String now = "10/มี.ค./2017";
-                    for(int i=0;i<reportDaos.size();i++){
-                        if(prodName.equals(reportDaos.get(i).getProdNameRep())
-                                && now.equals(reportDaos.get(i).getDate())){
+                    for (int i = 0; i < reportDaos.size(); i++) {
+                        if (prodName.equals(reportDaos.get(i).getProdNameRep())
+                                && now.equals(reportDaos.get(i).getDate())) {
                             existReport = 1;
                         }
                     }
-                    if(existReport != 1) {
+                    if (existReport != 1) {
                         realmReport.executeTransactionAsync(new Realm.Transaction() {
                             @Override
                             public void execute(Realm realm) {
@@ -385,9 +390,9 @@ public class SearchActivity extends AppCompatActivity {
                                 ReportDao reportDao = realm.createObject(ReportDao.class);
                                 reportDao.setProdNameRep(prodName);
                                 int leave = total - prodAmount;
-                                Log.d("leave", "execute total: "+total);
-                                Log.d("leave", "execute prodamount: "+prodAmount);
-                                Log.d("leave", "execute: "+leave);
+                                Log.d("leave", "execute total: " + total);
+                                Log.d("leave", "execute prodamount: " + prodAmount);
+                                Log.d("leave", "execute: " + leave);
                                 reportDao.setProductIdRep(productId);
                                 reportDao.setProductSizeIdRep(0);
                                 reportDao.setProdQuantityRep(leave);
@@ -404,11 +409,11 @@ public class SearchActivity extends AppCompatActivity {
                                 Log.d("report", "onError: ");
                             }
                         });
-                    }else {
-                        RealmResults<ReportDao> reportDao = realmReport.where(ReportDao.class).equalTo("prodNameRep",prodName).findAll();
-                        for(int i=0;i<reportDao.size();i++) {
-                            Log.d("leave", "onClick date: "+now);
-                            if(now.equals(reportDao.get(i).getDate())){
+                    } else {
+                        RealmResults<ReportDao> reportDao = realmReport.where(ReportDao.class).equalTo("prodNameRep", prodName).findAll();
+                        for (int i = 0; i < reportDao.size(); i++) {
+                            Log.d("leave", "onClick date: " + now);
+                            if (now.equals(reportDao.get(i).getDate())) {
                                 realmReport.beginTransaction();
                                 reportDao.get(i).setProdNameRep(prodName);
                                 int leave = total - prodAmount;
@@ -425,22 +430,22 @@ public class SearchActivity extends AppCompatActivity {
 
                 }
                 ReportDao reportDao = realmReport.where(ReportDao.class).equalTo("productIdRep", productId).findFirst();
-                if(reportDao != null) {
+                if (reportDao != null) {
                     realmReport.beginTransaction();
                     reportDao.setProdNameRep(prodName);
                     realmReport.commitTransaction();
                 }
                 //realm edit
-                Product product = realm.where(Product.class).equalTo("productId",productId).findFirst();
+                Product product = realm.where(Product.class).equalTo("productId", productId).findFirst();
                 realm.beginTransaction();
                 product.setNameItem(prodName);
                 product.setNameCode(prodCode);
                 product.setProductQuantity(prodAmount);
-                if(pathFile != null){
+                if (pathFile != null) {
                     product.setProductImg(pathFile.toString());
                 }
                 product.setProductPrice(prodPrice);
-                if(spinProvider != -1){
+                if (spinProvider != -1) {
                     product.setProvider(providerDaoload.get(spinProvider).getProvId());
                 }
                 product.setProductAlert(prodAlert);
@@ -457,18 +462,17 @@ public class SearchActivity extends AppCompatActivity {
                             //Log.d("providers", "onDataChange: "+snapshot.toString());
                             snapshot.getRef().child("productQuantity").setValue(prodAmount);
                             //Log.d("insave", "onDataChange: "+pathFile.toString());
-                            if(pathFile != null) {
+                            if (pathFile != null) {
                                 snapshot.getRef().child("productImg").setValue(pathFile.toString());
                             }
                             snapshot.getRef().child("nameItem").setValue(prodName);
                             snapshot.getRef().child("nameCode").setValue(prodCode);
                             snapshot.getRef().child("productPrice").setValue(prodPrice);
-                            Log.d("detailpro", "onDataChange: "+spinProvider);
-                            if(spinProvider != -1 ){
+                            Log.d("detailpro", "onDataChange: " + spinProvider);
+                            if (spinProvider != -1) {
                                 snapshot.getRef().child("provider").setValue(providerDaoload.get(spinProvider).getProvId());
                             }
                             snapshot.getRef().child("productAlert").setValue(prodAlert);
-
 
 
                         }
@@ -515,7 +519,7 @@ public class SearchActivity extends AppCompatActivity {
                             providerDaoload.get(indexProvider).getProvName(),
                             productList.get(indexSearch).getProductAlert());
                 } else {
-                    Log.d("detailpro", "onClick: "+spinProvider);
+                    Log.d("detailpro", "onClick: " + spinProvider);
                     setTextEdit(prodAmount,
                             prodName,
                             prodCode,
@@ -532,28 +536,28 @@ public class SearchActivity extends AppCompatActivity {
         tvProdAmount.setText(prodAmount + "");
         tvNamePro.setText(prodName);
         tvCodeProd.setText(prodCode);
-        tvPricePro.setText(prodPrice+"");
-        if(spinProvider == -2){
+        tvPricePro.setText(prodPrice + "");
+        if (spinProvider == -2) {
             tvProviderProd.setText(providerDaoload.get(indexProvider).getProvName());
-        }else{
+        } else {
             tvProviderProd.setText(getListProdType.get(spinProvider));
         }
-        tvProdAlert.setText(Alert+"");
+        tvProdAlert.setText(Alert + "");
     }
 
     private void setTextEdit(int productQuantity, String prodName, String prodCode, int productPrice, String provName, int alert) {
-        Log.d("detailpro", "setTextEdit: "+provName);
+        Log.d("detailpro", "setTextEdit: " + provName);
         //edProdAmount.setText(productQuantity + "");
         edNameProd.setText(prodName);
         edCodeProd.setText(prodCode);
-        edPricePro.setText(productPrice+"");
+        edPricePro.setText(productPrice + "");
         spinnerProvider.setOnSearchTextChangedListener(new SearchableListDialog.OnSearchTextChanged() {
             @Override
             public void onSearchTextChanged(String strText) {
 
             }
         });
-        edProdAlert.setText(alert+"");
+        edProdAlert.setText(alert + "");
     }
 
     private void spinnerOfTypeProduct() {
@@ -650,7 +654,7 @@ public class SearchActivity extends AppCompatActivity {
             final Button button = (Button) dialog.findViewById(R.id.btn_dialog_confirm);
 
             button.setEnabled(false);
-            button.setBackgroundColor(ContextCompat.getColor(SearchActivity.this,R.color.gray));
+            button.setBackgroundColor(ContextCompat.getColor(SearchActivity.this, R.color.gray));
 
             textView.setText("จำนวนที่ต้องการลด");
 
@@ -662,8 +666,8 @@ public class SearchActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    Log.d("ontextchange", "onTextChanged: "+charSequence);
-                    if(!"".equals(charSequence.toString())) {
+                    Log.d("ontextchange", "onTextChanged: " + charSequence);
+                    if (!"".equals(charSequence.toString())) {
                         if (productList.get(indexSearch).getProductQuantity() > Integer.parseInt(charSequence.toString())) {
                             button.setEnabled(true);
                             button.setBackgroundColor(ContextCompat.getColor(SearchActivity.this, R.color.colorPrimary));
@@ -684,7 +688,7 @@ public class SearchActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     if (!"".equals(editText.getText().toString())) {
-                        if(productList.get(indexSearch).getProductQuantity() > Integer.parseInt(editText.getText().toString())) {
+                        if (productList.get(indexSearch).getProductQuantity() > Integer.parseInt(editText.getText().toString())) {
                             int sum = productList.get(indexSearch).getProductQuantity() - Integer.parseInt(editText.getText().toString());
                             productList.get(indexSearch).setProductQuantity(sum);
                             prodAmount = sum;
