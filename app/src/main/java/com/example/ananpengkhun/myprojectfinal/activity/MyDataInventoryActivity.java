@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.mtp.MtpConstants;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.CoordinatorLayout;
@@ -46,6 +47,7 @@ import com.example.ananpengkhun.myprojectfinal.dao.ProductTypeDao;
 import com.example.ananpengkhun.myprojectfinal.dao.ProviderDao;
 import com.example.ananpengkhun.myprojectfinal.dao.TestProductType;
 
+import com.example.ananpengkhun.myprojectfinal.utils.PhoneNumberTextInputType;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -63,6 +65,8 @@ import java.util.EventListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -113,6 +117,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private InventoryProviderAdapter inventoryProviderAdapter;
     private Realm realm;
     private RealmResults<TestProductType> testProductTypes;
+    private PhoneNumberTextInputType mTextInputType;
 
     // product type
     private String code = "";
@@ -124,7 +129,6 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     private String ProvAddress = "";
     private String ProvPhone = "";
     private String ProvEmail = "";
-
 
 
     private RealmChangeListener<Realm> listener = new RealmChangeListener<Realm>() {
@@ -847,7 +851,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             final Button btnAddProdTypeConfirm = (Button) dialog.findViewById(R.id.btn_add_prod_type_confirm);
 
             btnAddProdTypeConfirm.setEnabled(false);
-            btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
+            btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this, R.color.gray));
 
             edProdTypeCode.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -861,10 +865,10 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     //if (charSequence.length() > 0) {
                     if (!"".equals(name) && !"".equals(des) && !"".equals(code)) {
                         btnAddProdTypeConfirm.setEnabled(true);
-                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.colorPrimary));
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this, R.color.colorPrimary));
                     } else {
                         btnAddProdTypeConfirm.setEnabled(false);
-                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this, R.color.gray));
 
                     }
 
@@ -889,10 +893,10 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     //if (charSequence.length() > 0) {
                     if (!"".equals(name) && !"".equals(des) && !"".equals(code)) {
                         btnAddProdTypeConfirm.setEnabled(true);
-                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.colorPrimary));
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this, R.color.colorPrimary));
                     } else {
                         btnAddProdTypeConfirm.setEnabled(false);
-                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this, R.color.gray));
                     }
                     //}
                 }
@@ -915,10 +919,10 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                     //if (charSequence.length() > 0) {
                     if (!"".equals(name) && !"".equals(des) && !"".equals(code)) {
                         btnAddProdTypeConfirm.setEnabled(true);
-                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.colorPrimary));
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this, R.color.colorPrimary));
                     } else {
                         btnAddProdTypeConfirm.setEnabled(false);
-                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
+                        btnAddProdTypeConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this, R.color.gray));
                     }
                     //   }
                 }
@@ -1028,8 +1032,12 @@ public class MyDataInventoryActivity extends AppCompatActivity {
             final AppCompatEditText edProvEmail = (AppCompatEditText) dialog.findViewById(R.id.ed_prov_email);
             final Button btnAddProvConfirm = (Button) dialog.findViewById(R.id.btn_add_prov_confirm);
 
+            mTextInputType = new PhoneNumberTextInputType(edProvPhone, MyDataInventoryActivity.this);
+            edProvPhone.setFilters(mTextInputType.getInputFilters());
+            edProvPhone.addTextChangedListener(mTextInputType.getTextWatcher());
+
             btnAddProvConfirm.setEnabled(false);
-            btnAddProvConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
+            btnAddProvConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this, R.color.gray));
 
             edProvName.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -1076,6 +1084,7 @@ public class MyDataInventoryActivity extends AppCompatActivity {
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     ProvPhone = edProvPhone.getText().toString().trim();
+
                     switchButton(btnAddProvConfirm);
                 }
 
@@ -1165,14 +1174,41 @@ public class MyDataInventoryActivity extends AppCompatActivity {
     }
 
     private void switchButton(Button btnAddProvConfirm) {
-        if(!"".equals(ProvName) && !"".equals(ProvAddress) && !"".equals(ProvPhone) && !"".equals(ProvEmail)){
+        Log.d("longPhone", "switchButton: " + ProvPhone.length());
+        if (!"".equals(ProvName) &&
+                !"".equals(ProvAddress) &&
+                !"".equals(ProvPhone) &&
+                !"".equals(ProvEmail) &&
+                12 == ProvPhone.length() &&
+                isEmailValid(ProvEmail)) {
             btnAddProvConfirm.setEnabled(true);
-            btnAddProvConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.colorPrimary));
-        }else{
+            btnAddProvConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this, R.color.colorPrimary));
+        } else {
             btnAddProvConfirm.setEnabled(false);
-            btnAddProvConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this,R.color.gray));
+            btnAddProvConfirm.setBackgroundColor(ContextCompat.getColor(MyDataInventoryActivity.this, R.color.gray));
         }
     }
+
+    public boolean isEmailValid(String email) {
+        String regExpn =
+                "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+                        + "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                        + "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                        + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
+
+        CharSequence inputStr = email;
+
+        Pattern pattern = Pattern.compile(regExpn, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputStr);
+
+        if (matcher.matches())
+            return true;
+        else
+            return false;
+    }
+
 
     private View.OnClickListener toolbarClicklistener = new View.OnClickListener() {
         @Override

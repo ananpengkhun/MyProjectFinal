@@ -204,7 +204,7 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                 realmReport.executeTransactionAsync(new Realm.Transaction() {
                                     @Override
                                     public void execute(Realm realm) {
-                                        DateFormat df = new SimpleDateFormat("d/MMM/yyyy");
+                                        DateFormat df = new SimpleDateFormat("d/MM/yyyy");
                                         String now = df.format(new Date());
                                         ReportDao reportDao = realm.createObject(ReportDao.class);
                                         reportDao.setProdNameRep(prodName);

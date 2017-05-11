@@ -15,16 +15,20 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.ScrollingTabContainerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -74,6 +78,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
     @BindView(R.id.btn_add_product_confirm) Button btnAddProductConfirm;
     @BindView(R.id.parent) CoordinatorLayout parent;
     @BindView(R.id.activity_add_product_on_fab) RelativeLayout activityAddProductOnFab;
+    @BindView(R.id.tv_frontCodeProd) TextView tvFrontCodeProd;
 
 
     private Button takeByCamera;
@@ -87,6 +92,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
     private int max;
     //    private List<ProductTypeDao> productTypeList;
     private List<ProductDao> productList;
+    private String codeNameProd;
 
     private Realm realm;
     private RealmResults<TestProductType> testProductTypes;
@@ -118,6 +124,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
     private void processData() {
         imvAddPicture.setOnClickListener(importPictureClicklistener);
         btnAddProductConfirm.setOnClickListener(addProductClickListener);
+        spinnerProductType.setOnItemSelectedListener(selectedItemListener);
     }
 
 
@@ -322,9 +329,10 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 Log.d("start", "onClick: " + indexData);
                 DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
+                codeNameProd = tvFrontCodeProd.getText().toString().concat(edProdCode.getText().toString());
                 HashMap<String, Object> postValues = new HashMap<>();
                 postValues.put("productImg", pathFile.toString());
-                postValues.put("nameCode", edProdCode.getText().toString());
+                postValues.put("nameCode", codeNameProd);
                 postValues.put("nameItem", edProdName.getText().toString());
                 postValues.put("productAlert", Integer.parseInt(edProdAlert.getText().toString()));
                 postValues.put("productId", max + 1);
@@ -361,7 +369,7 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                                                           if (testProductTypes.get(i).getTypeId() == spinnerProductType.getSelectedItemPosition() + 1) {
 //                                                          if (spinnerProductType.getSelectedItemPosition() == testProductTypes.getTypeId() - 1) {
                                                               Product product = new Product();
-                                                              product.setNameCode(edProdCode.getText().toString());
+                                                              product.setNameCode(codeNameProd);
                                                               product.setNameItem(edProdName.getText().toString());
                                                               product.setProvider(providerDaoList.get(spinnerProvider.getSelectedItemPosition()).getProvId());
                                                               product.setProductImg(pathFile.toString());
@@ -398,6 +406,23 @@ public class AddProductOnFabActivity extends AppCompatActivity {
                 Toast.makeText(AddProductOnFabActivity.this, "Insert Fail.", Toast.LENGTH_LONG).show();
                 finish();
             }
+        }
+    };
+
+    private AdapterView.OnItemSelectedListener selectedItemListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            int textSelected = testProductTypes.get(spinnerProductType.getSelectedItemPosition()).getTypeId();
+            if(textSelected < 10) {
+                tvFrontCodeProd.setText("0"+textSelected);
+            }else{
+                tvFrontCodeProd.setText(String.valueOf(textSelected));
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
         }
     };
 

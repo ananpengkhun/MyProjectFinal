@@ -373,7 +373,7 @@ public class SearchActivity extends AppCompatActivity {
                     Log.d("leave", "onClick top total: " + total);
 
                     RealmResults<ReportDao> reportDaos = realmReport.where(ReportDao.class).findAll();
-                    DateFormat df = new SimpleDateFormat("d/MMM/yyyy");
+                    DateFormat df = new SimpleDateFormat("d/MM/yyyy");
                     final String now = df.format(new Date());
                     //final String now = "10/มี.ค./2017";
                     for (int i = 0; i < reportDaos.size(); i++) {
