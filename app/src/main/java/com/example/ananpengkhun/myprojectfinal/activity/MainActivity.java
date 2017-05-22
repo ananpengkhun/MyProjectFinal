@@ -332,7 +332,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Move
     private View.OnClickListener statisClicklistener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            vpPagerFragment.setCurrentItem(4,true);
+            //vpPagerFragment.setCurrentItem(4,true);
+            Intent intent = new Intent(MainActivity.this, ReportMainActivity.class);
+            startActivity(intent);
         }
     };
 }

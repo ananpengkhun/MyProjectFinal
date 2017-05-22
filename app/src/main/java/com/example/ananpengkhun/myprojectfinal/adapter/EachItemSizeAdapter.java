@@ -36,6 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,6 +64,7 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Realm realmReport;
     private String prodName;
     private int existReport = 0;
+    private Date date;
 
 
     public EachItemSizeAdapter(Context mContext, List<ProductEachSize> productDao, ProductDao dao) {
@@ -195,6 +197,7 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             Log.d("leave", "onClick top prod: " + prodAmount);
                             Log.d("leave", "onClick top total: " + total);
                             RealmResults<ReportDao> reportDaos = realmReport.where(ReportDao.class).findAll();
+
                             for (int i = 0; i < reportDaos.size(); i++) {
                                 if (prodName.equals(reportDaos.get(i).getProdNameRep())) {
                                     existReport = 1;
@@ -206,6 +209,11 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                     public void execute(Realm realm) {
                                         DateFormat df = new SimpleDateFormat("d/MM/yyyy");
                                         String now = df.format(new Date());
+                                        try {
+                                            date = df.parse(now);
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
                                         ReportDao reportDao = realm.createObject(ReportDao.class);
                                         reportDao.setProdNameRep(prodName);
                                         int leave = total - prodAmount;
@@ -213,7 +221,7 @@ public class EachItemSizeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                         Log.d("leave", "execute prodamount: " + prodAmount);
                                         Log.d("leave", "execute: " + leave);
                                         reportDao.setProdQuantityRep(leave);
-                                        reportDao.setDate(now);
+                                        reportDao.setDate(date);
                                     }
                                 }, new Realm.Transaction.OnSuccess() {
                                     @Override

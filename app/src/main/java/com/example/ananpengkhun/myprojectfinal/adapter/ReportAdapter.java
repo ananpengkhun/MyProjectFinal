@@ -30,6 +30,8 @@ import com.example.ananpengkhun.myprojectfinal.dao.ReportDao;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,7 +65,10 @@ public class ReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(RecyclerView.ViewHolder holder,final int position) {
         if(holder instanceof ReportViewHolder){
             final ReportViewHolder reportViewHolder = (ReportViewHolder) holder;
-            reportViewHolder.textView.setText(data.get(position).getDate());
+            DateFormat df = new SimpleDateFormat("d/MM/yyyy");
+            String strdate = df.format(data.get(position).getDate());
+            Log.d("date", "onBindViewHoldersssssssss: "+data.get(position).getDate());
+            reportViewHolder.textView.setText(strdate);
             reportViewHolder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
             //reportViewHolder.tvData.setText(data.get(position).getProdNameRep() +"--------"+data.get(position).getProdQuantityRep());
 

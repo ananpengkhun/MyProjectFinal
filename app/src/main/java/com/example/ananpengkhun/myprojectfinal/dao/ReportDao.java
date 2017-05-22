@@ -11,13 +11,14 @@ import io.realm.annotations.RealmModule;
  */
 
 public class ReportDao extends RealmObject {
+    @Index
     private String prodNameRep;
     private int prodQuantityRep;
     private int productIdRep;
     private int productSizeIdRep;
 
     @Index
-    private String date;
+    private Date date;
 
     public int getProductIdRep() {
         return productIdRep;
@@ -51,11 +52,11 @@ public class ReportDao extends RealmObject {
         this.prodQuantityRep = prodQuantityRep;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 }

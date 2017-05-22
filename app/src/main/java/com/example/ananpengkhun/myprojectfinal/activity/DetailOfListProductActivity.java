@@ -46,6 +46,7 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -114,6 +115,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
     private int productId;
     private int existReport = 0;
     private int total;
+    private Date date;
     // private int sum;
 
 
@@ -298,10 +300,17 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                     RealmResults<ReportDao> reportDaos = realmReport.where(ReportDao.class).findAll();
                     DateFormat df = new SimpleDateFormat("d/MM/yyyy");
                     final String now = df.format(new Date());
+//                    final String now = "24/05/2017";
+                    try {
+                        date = df.parse(now);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                     //final String now = "10/มี.ค./2017";
                     for (int i = 0; i < reportDaos.size(); i++) {
+                        String strdate = df.format(reportDaos.get(i).getDate());
                         if (prodName.equals(reportDaos.get(i).getProdNameRep())
-                                && now.equals(reportDaos.get(i).getDate())) {
+                                && now.equals(strdate)) {
                             existReport = 1;
                         }
                     }
@@ -319,7 +328,7 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                                 reportDao.setProductIdRep(productId);
                                 reportDao.setProductSizeIdRep(0);
                                 reportDao.setProdQuantityRep(leave);
-                                reportDao.setDate(now);
+                                reportDao.setDate(date);
                             }
                         }, new Realm.Transaction.OnSuccess() {
                             @Override
@@ -335,8 +344,9 @@ public class DetailOfListProductActivity extends AppCompatActivity {
                     } else {
                         RealmResults<ReportDao> reportDao = realmReport.where(ReportDao.class).equalTo("prodNameRep", prodName).findAll();
                         for (int i = 0; i < reportDao.size(); i++) {
+                            String strdate = df.format(reportDaos.get(i).getDate());
                             Log.d("leave", "onClick date: " + now);
-                            if (now.equals(reportDao.get(i).getDate())) {
+                            if (now.equals(strdate)) {
                                 realmReport.beginTransaction();
                                 reportDao.get(i).setProdNameRep(prodName);
                                 int leave = total - prodAmount;
